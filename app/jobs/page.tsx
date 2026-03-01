@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import PostCard from '@/components/PostCard'
 import type { Post } from '@/lib/types'
 
@@ -32,7 +32,8 @@ const EXAMPLE_POSTS = [
 ]
 
 export default async function JobsPage() {
-  const { data: postsData } = await supabase
+  const admin = getSupabaseAdmin()
+  const { data: postsData } = await admin
     .from('posts')
     .select('*, profiles(username, avatar_url), contractors(full_name, trade, location_city, location_state)')
     .eq('category', 'jobs')

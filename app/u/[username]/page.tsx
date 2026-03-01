@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import CertificationBadge from '@/components/CertificationBadge'
 import PostCard from '@/components/PostCard'
 import type { Post, Certification } from '@/lib/types'
@@ -12,7 +12,8 @@ interface PageProps {
 }
 
 export default async function PublicProfilePage({ params }: PageProps) {
-  const { data: profile } = await supabase
+  const admin = getSupabaseAdmin()
+  const { data: profile } = await admin
     .from('profiles')
     .select('*')
     .eq('username', params.username)
@@ -21,13 +22,13 @@ export default async function PublicProfilePage({ params }: PageProps) {
   if (!profile) notFound()
 
   const [{ data: contractorData }, { data: postsData }] = await Promise.all([
-    supabase
+    admin
       .from('contractors')
       .select('*')
       .eq('user_id', profile.id)
       .eq('status', 'approved')
       .single(),
-    supabase
+    admin
       .from('posts')
       .select('*')
       .eq('user_id', profile.id)
@@ -39,7 +40,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
 
   let certifications: Certification[] = []
   if (contractor) {
-    const { data: certData } = await supabase
+    const { data: certData } = await admin
       .from('certifications')
       .select('*')
       .eq('contractor_id', contractor.id)

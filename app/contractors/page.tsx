@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import ContractorCard from '@/components/ContractorCard'
 import SearchFilters from '@/components/SearchFilters'
 import PostCard from '@/components/PostCard'
@@ -11,7 +11,8 @@ interface PageProps {
 }
 
 export default async function ContractorsPage({ searchParams }: PageProps) {
-  let query = supabase
+  const admin = getSupabaseAdmin()
+  let query = admin
     .from('contractors')
     .select('id, user_id, full_name, trade, specialties, location_city, location_state, years_experience, bio, website, profile_photo_url, status, created_at')
     .eq('status', 'approved')
@@ -34,7 +35,7 @@ export default async function ContractorsPage({ searchParams }: PageProps) {
 
   const [{ data, error }, { data: postsData }] = await Promise.all([
     query,
-    supabase
+    admin
       .from('posts')
       .select('*, profiles(username, avatar_url), contractors(full_name, trade, location_city, location_state)')
       .eq('category', 'jobs')

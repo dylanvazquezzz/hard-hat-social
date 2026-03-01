@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import ProfileHeader from '@/components/ProfileHeader'
 import CertificationBadge from '@/components/CertificationBadge'
 import ContactSection from '@/components/ContactSection'
@@ -10,14 +10,15 @@ interface PageProps {
 }
 
 export default async function ContractorProfilePage({ params }: PageProps) {
+  const admin = getSupabaseAdmin()
   const [{ data: contractorData }, { data: certData }] = await Promise.all([
-    supabase
+    admin
       .from('contractors')
       .select('id, user_id, full_name, trade, specialties, location_city, location_state, years_experience, bio, website, profile_photo_url, status, created_at')
       .eq('id', params.id)
       .eq('status', 'approved')
       .single(),
-    supabase.from('certifications').select('*').eq('contractor_id', params.id),
+    admin.from('certifications').select('*').eq('contractor_id', params.id),
   ])
 
   if (!contractorData) {
