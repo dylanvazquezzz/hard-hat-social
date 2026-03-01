@@ -62,7 +62,14 @@ export default function AuthPage() {
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm text-slate-400">Password</label>
+          <div className="mb-1 flex items-center justify-between">
+            <label className="text-sm text-slate-400">Password</label>
+            {mode === 'signin' && (
+              <a href="/auth/reset" className="text-xs text-amber-400 hover:text-amber-300">
+                Forgot password?
+              </a>
+            )}
+          </div>
           <input
             type="password"
             value={password}
