@@ -73,29 +73,29 @@ Deferred — worthwhile but not blocking the founding cohort.
 
 Which phases cover which requirements. Updated during roadmap creation.
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| PROD-01 | Phase 1 | Pending |
-| PROD-02 | Phase 1 | Pending |
-| PROD-03 | Phase 1 | Pending |
-| PROD-04 | Phase 1 | Pending |
-| CERT-01 | Phase 2 | Pending |
-| HOME-01 | Phase 3 | Pending |
-| HOME-02 | Phase 3 | Pending |
-| HOME-03 | Phase 3 | Pending |
-| SEO-01 | Phase 2 | Pending |
-| SEO-02 | Phase 2 | Pending |
-| SEO-03 | Phase 2 | Pending |
-| SEO-04 | Phase 2 | Pending |
-| UX-01 | Phase 4 | Pending |
-| UX-02 | Phase 4 | Pending |
-| UX-03 | Phase 4 | Pending |
+| Requirement | Phase | Phase Name | Status |
+|-------------|-------|------------|--------|
+| PROD-01 | Phase 1 | Production Hardening | Pending |
+| PROD-02 | Phase 1 | Production Hardening | Pending |
+| PROD-03 | Phase 1 | Production Hardening | Pending |
+| PROD-04 | Phase 1 | Production Hardening | Pending |
+| CERT-01 | Phase 2 | SEO and Cert Automation | Pending |
+| SEO-01 | Phase 2 | SEO and Cert Automation | Pending |
+| SEO-02 | Phase 2 | SEO and Cert Automation | Pending |
+| SEO-03 | Phase 2 | SEO and Cert Automation | Pending |
+| SEO-04 | Phase 2 | SEO and Cert Automation | Pending |
+| UX-01 | Phase 3 | UX Polish | Pending |
+| UX-02 | Phase 3 | UX Polish | Pending |
+| UX-03 | Phase 3 | UX Polish | Pending |
+| HOME-01 | Phase 4 | Homepage Redesign | Pending |
+| HOME-02 | Phase 4 | Homepage Redesign | Pending |
+| HOME-03 | Phase 4 | Homepage Redesign | Pending |
 
 **Coverage:**
 - v1 requirements: 15 total
 - Mapped to phases: 15
-- Unmapped: 0 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-01*
-*Last updated: 2026-03-01 after initial definition*
+*Last updated: 2026-03-01 after roadmap creation — phase assignments finalized*
