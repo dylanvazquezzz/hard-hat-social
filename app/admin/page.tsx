@@ -32,9 +32,17 @@ export default async function AdminPage() {
             {pending.length} pending application{pending.length !== 1 ? 's' : ''}
           </p>
         </div>
-        <span className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-sm text-amber-400">
-          Admin only
-        </span>
+        <div className="flex items-center gap-3">
+          <a
+            href="/admin/contractors"
+            className="rounded-md border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:border-amber-500 hover:text-amber-400 transition-colors"
+          >
+            Approved Contractors
+          </a>
+          <span className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-sm text-amber-400">
+            Admin only
+          </span>
+        </div>
       </div>
 
       {pending.length === 0 ? (
