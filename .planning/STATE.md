@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-03-01)
 ## Current Position
 
 Phase: 1 of 5 (Production Hardening)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-01 — Roadmap created; phases derived from 15 v1 requirements
+Plan: 1 completed in current phase
+Status: Executing
+Last activity: 2026-03-02 — Plan 01-01 complete: server-only guards added to lib/supabase-admin.ts and lib/email.ts
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 5%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0 hours
+- Total plans completed: 1
+- Average duration: ~1 min
+- Total execution time: ~1 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01-production-hardening | 1 | ~1 min | ~1 min |
 
 **Recent Trend:**
-- Last 5 plans: -
+- Last 5 plans: 01-01 (~1 min)
 - Trend: -
 
 *Updated after each plan completion*
@@ -45,6 +45,8 @@ Recent decisions affecting current work:
 - Roadmap: Phase 5 is operational (no new v1 requirements); it validates phases 1-4 under real conditions with actual founding cohort welders
 - Research: Homepage placeholder strategy (teasers vs. count-only) is a product decision to be made at Phase 4 planning time — research identified the risk but did not prescribe the design
 - Research: DNS propagation for Resend takes up to 48 hours — Phase 1 must start before anything else
+- 01-01: Use `server-only` package (not just comments) to enforce server boundary — build fails hard instead of silently leaking secrets
+- 01-01: Any future server-only lib file should use `import 'server-only'` as its first line
 
 ### Pending Todos
 
@@ -57,6 +59,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-01
-Stopped at: Roadmap created — ROADMAP.md, STATE.md, and REQUIREMENTS.md traceability written
+Last session: 2026-03-02
+Stopped at: Completed 01-01-PLAN.md — server-only guards added, build verified, SUMMARY.md created
 Resume file: None
