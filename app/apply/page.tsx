@@ -165,11 +165,28 @@ export default function ApplyPage() {
 
     // Upload credential documents if any were attached
     if (docs.length > 0) {
+      // Resolve the upload user ID: userId is null for returning users (user_already_exists).
+      // Fall back to the current authenticated session in that case.
+      let uploadUserId = userId
+      if (!uploadUserId) {
+        const { data: { session } } = await supabase.auth.getSession()
+        uploadUserId = session?.user?.id ?? null
+      }
+
+      if (!uploadUserId) {
+        // No authenticated user to key upload path on — skip document upload.
+        // Application is still created; admin can request docs separately.
+        setLoading(false)
+        setSubmitted(true)
+        return
+      }
+
       const uploadedUrls: string[] = []
 
       for (const file of docs) {
         const ext = file.name.split('.').pop()
-        const path = `${appData.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
+        // Use uploadUserId so path matches RLS policy: (storage.foldername(name))[1] = auth.uid()::text
+        const path = `${uploadUserId}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
         const { error: uploadErr } = await supabase.storage
           .from('application-docs')
           .upload(path, file)
