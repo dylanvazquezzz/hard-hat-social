@@ -29,7 +29,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Clicking the link in a password reset email on a real device opens the correct update-password page (not localhost)
   3. An authenticated user can upload a file to `avatars` and `post-images` buckets; the `application-docs` bucket enforces that upload paths are restricted to the applicant's own folder
   4. Running `npm run build` with `server-only` added to `lib/supabase-admin.ts` and `lib/email.ts` fails with a build error if either file is imported in a client component
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Install server-only package and add import guards to lib/supabase-admin.ts and lib/email.ts (PROD-04)
+- [ ] 01-02-PLAN.md — Create migration 007_storage_policies.sql and fix apply/page.tsx upload path (PROD-03)
+- [ ] 01-03-PLAN.md — Create deployment checklist for Resend domain verification and Supabase Auth URL configuration (PROD-01, PROD-02)
 
 ### Phase 2: SEO and Cert Automation
 **Goal**: Contractor profile pages are discoverable by search engines with accurate metadata, and approving an application automatically creates a certification record so approved profiles are not empty
@@ -79,7 +84,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Production Hardening | 0/TBD | Not started | - |
+| 1. Production Hardening | 0/3 | Not started | - |
 | 2. SEO and Cert Automation | 0/TBD | Not started | - |
 | 3. UX Polish | 0/TBD | Not started | - |
 | 4. Homepage Redesign | 0/TBD | Not started | - |
