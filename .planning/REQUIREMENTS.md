@@ -11,7 +11,7 @@ Requirements for this milestone (polish, production hardening, founding cohort r
 
 - [ ] **PROD-01**: Resend domain is verified (SPF + DKIM DNS records set) so approval/rejection emails land in inbox, not spam
 - [ ] **PROD-02**: Supabase Auth Site URL is updated to production URL so password reset and approval email links work correctly
-- [ ] **PROD-03**: Supabase storage bucket write policies are verified — authenticated users can upload to `avatars` and `post-images`; `application-docs` upload is restricted to the applicant's own folder
+- [x] **PROD-03**: Supabase storage bucket write policies are verified — authenticated users can upload to `avatars` and `post-images`; `application-docs` upload is restricted to the applicant's own folder
 - [x] **PROD-04**: `lib/supabase-admin.ts` is protected with `server-only` to prevent service role key from leaking into client bundles
 
 ### Certifications

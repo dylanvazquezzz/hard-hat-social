@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-03-01)
 ## Current Position
 
 Phase: 1 of 5 (Production Hardening)
-Plan: 1 completed in current phase
+Plan: 2 completed in current phase
 Status: Executing
-Last activity: 2026-03-02 — Plan 01-01 complete: server-only guards added to lib/supabase-admin.ts and lib/email.ts
+Last activity: 2026-03-02 — Plan 01-02 complete: storage RLS policies migration 007, apply/page.tsx upload path fixed
 
-Progress: [█░░░░░░░░░] 5%
+Progress: [██░░░░░░░░] 10%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: ~1 min
-- Total execution time: ~1 min
+- Total plans completed: 2
+- Average duration: ~4 min
+- Total execution time: ~8 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-production-hardening | 1 | ~1 min | ~1 min |
+| 01-production-hardening | 2 | ~8 min | ~4 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (~1 min)
+- Last 5 plans: 01-01 (~1 min), 01-02 (~7 min)
 - Trend: -
 
 *Updated after each plan completion*
@@ -47,6 +47,9 @@ Recent decisions affecting current work:
 - Research: DNS propagation for Resend takes up to 48 hours — Phase 1 must start before anything else
 - 01-01: Use `server-only` package (not just comments) to enforce server boundary — build fails hard instead of silently leaking secrets
 - 01-01: Any future server-only lib file should use `import 'server-only'` as its first line
+- 01-02: Storage migration must DROP old permissive policies before creating strict replacements (PostgreSQL OR-evaluates all matching policies)
+- 01-02: Storage path prefix = auth.uid()::text (not DB row IDs) for per-user RLS enforcement
+- 01-02: avatars bucket needs UPDATE policy (not just INSERT) because profile/page.tsx uses upsert: true
 
 ### Pending Todos
 
@@ -60,5 +63,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-02
-Stopped at: Completed 01-01-PLAN.md — server-only guards added, build verified, SUMMARY.md created
+Stopped at: Completed 01-02-PLAN.md — storage RLS policies migration 007 created, apply/page.tsx upload path fixed
 Resume file: None
