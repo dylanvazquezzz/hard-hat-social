@@ -12,7 +12,7 @@ Contractors Connect has a working MVP. This milestone converts that foundation i
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Production Hardening** - Lock down env vars, DNS, migrations, storage, and server-only guards before any user data is created
+- [x] **Phase 1: Production Hardening** - Lock down env vars, DNS, migrations, storage, and server-only guards before any user data is created
 - [ ] **Phase 2: SEO and Cert Automation** - Add metadata and JSON-LD to existing pages; auto-create cert records on approval
 - [ ] **Phase 3: UX Polish** - Loading skeletons, empty states, and mobile nav so the directory feels complete before the homepage sends visitors there
 - [ ] **Phase 4: Homepage Redesign** - Clear value prop, honest social proof, and a single dominant CTA that converts visiting tradespeople into applicants
@@ -32,9 +32,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Install server-only package and add import guards to lib/supabase-admin.ts and lib/email.ts (PROD-04)
-- [ ] 01-02-PLAN.md — Create migration 007_storage_policies.sql and fix apply/page.tsx upload path (PROD-03)
-- [ ] 01-03-PLAN.md — Create deployment checklist for Resend domain verification and Supabase Auth URL configuration (PROD-01, PROD-02)
+- [x] 01-01-PLAN.md — Install server-only package and add import guards to lib/supabase-admin.ts and lib/email.ts (PROD-04)
+- [x] 01-02-PLAN.md — Create migration 007_storage_policies.sql and fix apply/page.tsx upload path (PROD-03)
+- [x] 01-03-PLAN.md — Create deployment checklist for Resend domain verification and Supabase Auth URL configuration (PROD-01, PROD-02)
 
 ### Phase 2: SEO and Cert Automation
 **Goal**: Contractor profile pages are discoverable by search engines with accurate metadata, and approving an application automatically creates a certification record so approved profiles are not empty
@@ -84,7 +84,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Production Hardening | 2/3 | In Progress|  |
+| 1. Production Hardening | 3/3 | Complete | 2026-03-03 |
 | 2. SEO and Cert Automation | 0/TBD | Not started | - |
 | 3. UX Polish | 0/TBD | Not started | - |
 | 4. Homepage Redesign | 0/TBD | Not started | - |
