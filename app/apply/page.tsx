@@ -135,25 +135,30 @@ export default function ApplyPage() {
 
     const userId = signUpData?.user?.id ?? null
 
-    // Insert application and get back the ID
+    // Insert application and get back the ID.
+    // Build payload without user_id when null — omitting it avoids including
+    // "user_id" in PostgREST's ?columns hint, which prevents 400 errors if the
+    // schema cache hasn't refreshed after migration 004 added the column.
+    const applicationPayload: Record<string, unknown> = {
+      full_name: form.full_name,
+      email: form.email,
+      phone: form.phone,
+      website: form.website || null,
+      trade: form.trade,
+      specialties: form.specialties,
+      location_city: form.location_city,
+      location_state: form.location_state.toUpperCase(),
+      years_experience: parseInt(form.years_experience),
+      bio: form.bio,
+      status: 'pending',
+    }
+    if (userId) {
+      applicationPayload.user_id = userId
+    }
+
     const { data: appData, error: dbError } = await supabase
       .from('applications')
-      .insert([
-        {
-          user_id: userId,
-          full_name: form.full_name,
-          email: form.email,
-          phone: form.phone,
-          website: form.website || null,
-          trade: form.trade,
-          specialties: form.specialties,
-          location_city: form.location_city,
-          location_state: form.location_state.toUpperCase(),
-          years_experience: parseInt(form.years_experience),
-          bio: form.bio,
-          status: 'pending',
-        },
-      ])
+      .insert([applicationPayload])
       .select('id')
       .single()
 
