@@ -71,12 +71,21 @@ export default async function ExplorePage({ searchParams }: PageProps) {
   const admin = getSupabaseAdmin()
   const { data: postsData } = await admin
     .from('posts')
-    .select('*, profiles(username, avatar_url), contractors(full_name, trade, location_city, location_state)')
+    .select('*, contractors(full_name, trade, location_city, location_state)')
     .eq('category', category)
     .order('created_at', { ascending: false })
     .limit(20)
 
   const posts = (postsData as Post[]) ?? []
+
+  // profiles.id references auth.users (not posts directly), so no FK exists for auto-join.
+  // Fetch profiles separately and merge.
+  const userIds = [...new Set(posts.map((p) => p.user_id))]
+  const { data: profilesData } = userIds.length > 0
+    ? await admin.from('profiles').select('id, username, avatar_url').in('id', userIds)
+    : { data: [] }
+  const profileMap = Object.fromEntries((profilesData ?? []).map((p) => [p.id, p]))
+  const postsWithProfiles = posts.map((p) => ({ ...p, profiles: profileMap[p.user_id] ?? null }))
   const examples = EXAMPLE_POSTS[category]
 
   return (
@@ -112,7 +121,7 @@ export default async function ExplorePage({ searchParams }: PageProps) {
         ))}
       </div>
 
-      {posts.length === 0 ? (
+      {postsWithProfiles.length === 0 ? (
         <div className="space-y-3">
           <div className="rounded-lg border border-slate-800 bg-slate-900/50 px-5 py-4 text-center">
             <p className="text-sm text-slate-400">
@@ -161,7 +170,7 @@ export default async function ExplorePage({ searchParams }: PageProps) {
         </div>
       ) : (
         <div className="space-y-3">
-          {posts.map((post) => (
+          {postsWithProfiles.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
         </div>
