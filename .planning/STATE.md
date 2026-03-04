@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-03-PLAN.md — approveApplication() now auto-inserts certification records from application document_urls on approval
-last_updated: "2026-03-04T00:55:21.805Z"
+stopped_at: Completed 02-02-PLAN.md — pending gate on /contractors, /jobs, /profile for applicants with status=pending
+last_updated: "2026-03-04T00:56:31.089Z"
 last_activity: "2026-03-03 — Plan 01-03 complete: DEPLOYMENT-CHECKLIST.md created, user confirmed checklist reviewed and Resend domain verification initiated"
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 6
   percent: 67
 ---
 
@@ -51,6 +51,7 @@ Progress: [███████░░░] 67%
 
 *Updated after each plan completion*
 | Phase 02-seo-and-cert-automation P03 | 92 | 1 tasks | 1 files |
+| Phase 02-seo-and-cert-automation P02 | 8 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,9 @@ Recent decisions affecting current work:
 - 01-03: Resend domain verification must start first — up to 48-hour DNS propagation is the longest lead-time task in Phase 1 deployment
 - 01-03: Supabase Auth Site URL is a dashboard-only setting (cannot be set via SQL or env var) — must be configured manually before real users attempt password reset
 - [Phase 02-seo-and-cert-automation]: 02-03: approveApplication() captures contractor UUID via .select('id').single() and maps document_urls to certifications rows with verified=true; cert name defaults to '{trade} Credential'
+- [Phase 02-seo-and-cert-automation]: 02-02: Query applications table (not contractors) for pending check — pending users have no contractors row yet
+- [Phase 02-seo-and-cert-automation]: 02-02: Use maybeSingle() not single() for pending gate queries — avoids error when no pending row exists
+- [Phase 02-seo-and-cert-automation]: 02-02: Jobs pending gate lives in app/jobs/layout.tsx (client component) because jobs/page.tsx is a server component
 
 ### Pending Todos
 
@@ -82,6 +86,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T00:55:21.803Z
-Stopped at: Completed 02-03-PLAN.md — approveApplication() now auto-inserts certification records from application document_urls on approval
+Last session: 2026-03-04T00:56:31.087Z
+Stopped at: Completed 02-02-PLAN.md — pending gate on /contractors, /jobs, /profile for applicants with status=pending
 Resume file: None

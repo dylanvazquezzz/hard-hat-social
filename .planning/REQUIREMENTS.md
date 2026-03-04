@@ -16,7 +16,7 @@ Requirements for this milestone (polish, production hardening, founding cohort r
 
 ### Access Control
 
-- [ ] **AUTH-01**: Logged-in users with a pending application see a restricted experience — Social and Q&A explore are accessible, but Jobs feed, Profile dashboard, and contractor directory are locked with a "pending review" message until their application is approved or rejected
+- [x] **AUTH-01**: Logged-in users with a pending application see a restricted experience — Social and Q&A explore are accessible, but Jobs feed, Profile dashboard, and contractor directory are locked with a "pending review" message until their application is approved or rejected
 
 ### Certifications
 

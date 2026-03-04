@@ -13,7 +13,7 @@ Contractors Connect has a working MVP. This milestone converts that foundation i
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Production Hardening** - Lock down env vars, DNS, migrations, storage, and server-only guards before any user data is created
-- [ ] **Phase 2: SEO and Cert Automation** - Add metadata and JSON-LD to existing pages; auto-create cert records on approval
+- [x] **Phase 2: SEO and Cert Automation** - Add metadata and JSON-LD to existing pages; auto-create cert records on approval (completed 2026-03-04)
 - [ ] **Phase 3: UX Polish** - Loading skeletons, empty states, and mobile nav so the directory feels complete before the homepage sends visitors there
 - [ ] **Phase 4: Homepage Redesign** - Clear value prop, honest social proof, and a single dominant CTA that converts visiting tradespeople into applicants
 - [ ] **Phase 5: Founding Cohort Onboarding** - Run the first 20-50 welders through the existing application and approval flow end-to-end
@@ -91,7 +91,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Production Hardening | 3/3 | Complete | 2026-03-03 |
-| 2. SEO and Cert Automation | 0/3 | Not started | - |
+| 2. SEO and Cert Automation | 3/3 | Complete   | 2026-03-04 |
 | 3. UX Polish | 0/TBD | Not started | - |
 | 4. Homepage Redesign | 0/TBD | Not started | - |
 | 5. Founding Cohort Onboarding | 0/TBD | Not started | - |
