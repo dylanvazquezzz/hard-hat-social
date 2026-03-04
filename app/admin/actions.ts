@@ -26,22 +26,39 @@ export async function approveApplication(applicationId: string) {
     if (match) userId = match.id
   }
 
-  await admin.from('contractors').insert([
-    {
-      user_id: userId,
-      full_name: application.full_name,
-      trade: application.trade,
-      specialties: application.specialties,
-      location_city: application.location_city,
-      location_state: application.location_state,
-      years_experience: application.years_experience,
-      bio: application.bio,
-      phone: application.phone,
-      email: application.email,
-      website: application.website,
-      status: 'approved',
-    },
-  ])
+  // Insert contractor — capture ID for cert records
+  const { data: newContractorData } = await admin
+    .from('contractors')
+    .insert([
+      {
+        user_id: userId,
+        full_name: application.full_name,
+        trade: application.trade,
+        specialties: application.specialties,
+        location_city: application.location_city,
+        location_state: application.location_state,
+        years_experience: application.years_experience,
+        bio: application.bio,
+        phone: application.phone,
+        email: application.email,
+        website: application.website,
+        status: 'approved',
+      },
+    ])
+    .select('id')
+    .single()
+
+  // Auto-create certification records from uploaded application documents
+  if (newContractorData && application.document_urls && application.document_urls.length > 0) {
+    const certRecords = application.document_urls.map((docUrl: string) => ({
+      contractor_id: newContractorData.id,
+      name: `${application.trade} Credential`,
+      issuing_body: 'Submitted via Application',
+      verified: true,
+      document_url: docUrl,
+    }))
+    await admin.from('certifications').insert(certRecords)
+  }
 
   // Upsert a profile row so the user has a username
   if (userId) {
