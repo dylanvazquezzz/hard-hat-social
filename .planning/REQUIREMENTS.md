@@ -30,10 +30,10 @@ Requirements for this milestone (polish, production hardening, founding cohort r
 
 ### SEO
 
-- [ ] **SEO-01**: `metadataBase` is set in root `app/layout.tsx` so all relative OpenGraph image URLs resolve correctly
-- [ ] **SEO-02**: `/contractors/[id]` has `generateMetadata` with unique title, description, and OpenGraph tags per contractor
-- [ ] **SEO-03**: `/u/[username]` has `generateMetadata` with unique title, description, and OpenGraph tags per user
-- [ ] **SEO-04**: `/contractors/[id]` includes JSON-LD structured data (LocalBusiness or Person schema) for Google rich results
+- [x] **SEO-01**: `metadataBase` is set in root `app/layout.tsx` so all relative OpenGraph image URLs resolve correctly
+- [x] **SEO-02**: `/contractors/[id]` has `generateMetadata` with unique title, description, and OpenGraph tags per contractor
+- [x] **SEO-03**: `/u/[username]` has `generateMetadata` with unique title, description, and OpenGraph tags per user
+- [x] **SEO-04**: `/contractors/[id]` includes JSON-LD structured data (LocalBusiness or Person schema) for Google rich results
 
 ### UX Polish
 

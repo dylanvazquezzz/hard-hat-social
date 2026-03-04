@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-02-PLAN.md — pending gate on /contractors, /jobs, /profile for applicants with status=pending
-last_updated: "2026-03-04T00:56:31.089Z"
+stopped_at: Completed 02-01-PLAN.md — OpenGraph metadata and JSON-LD Person schema added to /contractors/[id] and /u/[username], metadataBase set in root layout
+last_updated: "2026-03-04T00:57:07.388Z"
 last_activity: "2026-03-03 — Plan 01-03 complete: DEPLOYMENT-CHECKLIST.md created, user confirmed checklist reviewed and Resend domain verification initiated"
 progress:
   total_phases: 5
@@ -52,6 +52,7 @@ Progress: [███████░░░] 67%
 *Updated after each plan completion*
 | Phase 02-seo-and-cert-automation P03 | 92 | 1 tasks | 1 files |
 | Phase 02-seo-and-cert-automation P02 | 8 | 2 tasks | 3 files |
+| Phase 02-seo-and-cert-automation P01 | 2 | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,9 @@ Recent decisions affecting current work:
 - [Phase 02-seo-and-cert-automation]: 02-02: Query applications table (not contractors) for pending check — pending users have no contractors row yet
 - [Phase 02-seo-and-cert-automation]: 02-02: Use maybeSingle() not single() for pending gate queries — avoids error when no pending row exists
 - [Phase 02-seo-and-cert-automation]: 02-02: Jobs pending gate lives in app/jobs/layout.tsx (client component) because jobs/page.tsx is a server component
+- [Phase 02-seo-and-cert-automation]: Use Person schema (not LocalBusiness) for contractor JSON-LD per plan spec
+- [Phase 02-seo-and-cert-automation]: Exclude phone/email from all metadata and JSON-LD — access-gated fields remain gated in SEO output
+- [Phase 02-seo-and-cert-automation]: Two DB queries per request on contractor profile (generateMetadata + page fetch) — acceptable for MVP
 
 ### Pending Todos
 
@@ -86,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T00:56:31.087Z
-Stopped at: Completed 02-02-PLAN.md — pending gate on /contractors, /jobs, /profile for applicants with status=pending
+Last session: 2026-03-04T00:57:07.386Z
+Stopped at: Completed 02-01-PLAN.md — OpenGraph metadata and JSON-LD Person schema added to /contractors/[id] and /u/[username], metadataBase set in root layout
 Resume file: None
