@@ -37,15 +37,21 @@ Plans:
 - [x] 01-03-PLAN.md — Create deployment checklist for Resend domain verification and Supabase Auth URL configuration (PROD-01, PROD-02)
 
 ### Phase 2: SEO and Cert Automation
-**Goal**: Contractor profile pages are discoverable by search engines with accurate metadata, and approving an application automatically creates a certification record so approved profiles are not empty
+**Goal**: Contractor profile pages are discoverable by search engines with accurate metadata, approving an application automatically creates a certification record, and pending applicants see a restricted experience instead of full access
 **Depends on**: Phase 1
-**Requirements**: SEO-01, SEO-02, SEO-03, SEO-04, CERT-01
+**Requirements**: AUTH-01, SEO-01, SEO-02, SEO-03, SEO-04, CERT-01
 **Success Criteria** (what must be TRUE):
-  1. Pasting a contractor profile URL (`/contractors/[id]`) into a social media link preview tool shows the contractor's name, trade, location, and a valid image
-  2. Pasting a public profile URL (`/u/[username]`) into a social media link preview tool shows the user's name and a valid image
-  3. Viewing the page source of `/contractors/[id]` shows a valid JSON-LD `<script>` block with `LocalBusiness` or `Person` schema type
-  4. After an admin approves an application, the contractor's profile page shows at least one certification entry without the admin manually adding it
-**Plans**: TBD
+  1. A logged-in user with a pending application can view Social and Q&A explore pages but sees a "pending review" message when attempting to access Jobs, Profile, or the contractor directory
+  2. Pasting a contractor profile URL (`/contractors/[id]`) into a social media link preview tool shows the contractor's name, trade, location, and a valid image
+  3. Pasting a public profile URL (`/u/[username]`) into a social media link preview tool shows the user's name and a valid image
+  4. Viewing the page source of `/contractors/[id]` shows a valid JSON-LD `<script>` block with `LocalBusiness` or `Person` schema type
+  5. After an admin approves an application, the contractor's profile page shows at least one certification entry without the admin manually adding it
+**Plans**: 3 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Add metadataBase, generateMetadata, and JSON-LD to app/layout.tsx, /contractors/[id], and /u/[username] (SEO-01, SEO-02, SEO-03, SEO-04)
+- [ ] 02-02-PLAN.md — Extend contractors layout and add jobs layout with pending-user access guard; add pending check to profile page (AUTH-01)
+- [ ] 02-03-PLAN.md — Modify approveApplication() to auto-insert certification records from application document_urls (CERT-01)
 
 ### Phase 3: UX Polish
 **Goal**: The contractor directory feels complete and usable on mobile — data loads with visible feedback, empty filter states are actionable, and navigation is usable at 375px viewport
@@ -85,7 +91,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Production Hardening | 3/3 | Complete | 2026-03-03 |
-| 2. SEO and Cert Automation | 0/TBD | Not started | - |
+| 2. SEO and Cert Automation | 0/3 | Not started | - |
 | 3. UX Polish | 0/TBD | Not started | - |
 | 4. Homepage Redesign | 0/TBD | Not started | - |
 | 5. Founding Cohort Onboarding | 0/TBD | Not started | - |
