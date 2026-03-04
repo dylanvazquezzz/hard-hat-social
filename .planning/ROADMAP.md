@@ -65,8 +65,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Loading skeletons and upgraded empty state for /contractors directory (UX-01, UX-02)
-- [ ] 03-02-PLAN.md — Hamburger mobile navigation in NavBar.tsx (UX-03)
+- [x] 03-01-PLAN.md — Loading skeletons and upgraded empty state for /contractors directory (UX-01, UX-02)
+- [x] 03-02-PLAN.md — Hamburger mobile navigation in NavBar.tsx (UX-03)
 
 ### Phase 4: Homepage Redesign
 **Goal**: The homepage communicates the verified-only value proposition in under 5 seconds, shows honest social proof, and has a single primary CTA above the fold that drives applications
