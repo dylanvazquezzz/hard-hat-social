@@ -135,11 +135,11 @@ export default function ApplyPage() {
 
     const userId = signUpData?.user?.id ?? null
 
-    // Insert application and get back the ID.
-    // Build payload without user_id when null — omitting it avoids including
-    // "user_id" in PostgREST's ?columns hint, which prevents 400 errors if the
-    // schema cache hasn't refreshed after migration 004 added the column.
+    // Generate ID client-side so we never need to SELECT after insert.
+    // Avoids hitting the SELECT RLS policy (which requires auth.uid()) for anon users.
+    const appId = crypto.randomUUID()
     const applicationPayload: Record<string, unknown> = {
+      id: appId,
       full_name: form.full_name,
       email: form.email,
       phone: form.phone,
@@ -156,17 +156,17 @@ export default function ApplyPage() {
       applicationPayload.user_id = userId
     }
 
-    const { data: appData, error: dbError } = await supabase
+    const { error: dbError } = await supabase
       .from('applications')
       .insert([applicationPayload])
-      .select('id')
-      .single()
 
-    if (dbError || !appData) {
+    if (dbError) {
       setError('Something went wrong. Please try again.')
       setLoading(false)
       return
     }
+
+    const appData = { id: appId }
 
     // Upload credential documents if any were attached
     if (docs.length > 0) {
