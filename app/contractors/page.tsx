@@ -75,8 +75,27 @@ export default async function ContractorsPage({ searchParams }: PageProps) {
           {/* Contractor grid */}
           {contractors.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-lg border border-slate-800 bg-slate-900 py-24 text-center">
-              <p className="text-slate-400">No contractors found.</p>
-              <p className="mt-1 text-sm text-slate-500">Try adjusting your filters.</p>
+              <svg
+                className="mb-4 h-12 w-12 text-slate-700"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
+              <p className="font-medium text-slate-300">No contractors match your filters</p>
+              <p className="mt-1 text-sm text-slate-500">Try broadening your search or clearing all filters.</p>
+              <a
+                href="/contractors"
+                className="mt-6 rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-slate-700 transition-colors"
+              >
+                Reset filters
+              </a>
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
