@@ -76,7 +76,10 @@ Plans:
   1. A first-time visitor landing on the homepage can identify what Contractors Connect is and what makes it different from Angi or Thumbtack without scrolling
   2. The homepage displays a real, accurate count of at least one trust indicator (applications reviewed, trades represented, or contractors approved) — no fabricated numbers or placeholder profiles using the Verified badge
   3. A user on a 375px-wide phone can tap the primary CTA button without zooming and is taken to the correct destination page
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 04-01-PLAN.md — Rewrite app/page.tsx: contractor-first hero, live DB stats, Apply CTA primary, updated How it Works copy (HOME-01, HOME-02, HOME-03)
 
 ### Phase 5: Founding Cohort Onboarding
 **Goal**: The first 20-50 welders are successfully onboarded through the existing application and approval flow with working emails, populated certification records, and visible profiles in the directory
