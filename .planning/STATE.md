@@ -1,3 +1,19 @@
+---
+gsd_state_version: 1.0
+milestone: v1.1
+milestone_name: milestone
+status: executing
+stopped_at: Completed 02-03-PLAN.md — approveApplication() now auto-inserts certification records from application document_urls on approval
+last_updated: "2026-03-04T00:55:21.805Z"
+last_activity: "2026-03-03 — Plan 01-03 complete: DEPLOYMENT-CHECKLIST.md created, user confirmed checklist reviewed and Resend domain verification initiated"
+progress:
+  total_phases: 5
+  completed_phases: 1
+  total_plans: 6
+  completed_plans: 4
+  percent: 67
+---
+
 # Project State
 
 ## Project Reference
@@ -14,7 +30,7 @@ Plan: 3 completed in current phase
 Status: Executing
 Last activity: 2026-03-03 — Plan 01-03 complete: DEPLOYMENT-CHECKLIST.md created, user confirmed checklist reviewed and Resend domain verification initiated
 
-Progress: [███░░░░░░░] 15%
+Progress: [███████░░░] 67%
 
 ## Performance Metrics
 
@@ -34,6 +50,7 @@ Progress: [███░░░░░░░] 15%
 - Trend: -
 
 *Updated after each plan completion*
+| Phase 02-seo-and-cert-automation P03 | 92 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -52,6 +69,7 @@ Recent decisions affecting current work:
 - 01-02: avatars bucket needs UPDATE policy (not just INSERT) because profile/page.tsx uses upsert: true
 - 01-03: Resend domain verification must start first — up to 48-hour DNS propagation is the longest lead-time task in Phase 1 deployment
 - 01-03: Supabase Auth Site URL is a dashboard-only setting (cannot be set via SQL or env var) — must be configured manually before real users attempt password reset
+- [Phase 02-seo-and-cert-automation]: 02-03: approveApplication() captures contractor UUID via .select('id').single() and maps document_urls to certifications rows with verified=true; cert name defaults to '{trade} Credential'
 
 ### Pending Todos
 
@@ -64,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-03
-Stopped at: Completed 01-03-PLAN.md — DEPLOYMENT-CHECKLIST.md created, user confirmed checklist reviewed and Resend domain verification initiated
+Last session: 2026-03-04T00:55:21.803Z
+Stopped at: Completed 02-03-PLAN.md — approveApplication() now auto-inserts certification records from application document_urls on approval
 Resume file: None

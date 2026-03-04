@@ -14,9 +14,13 @@ Requirements for this milestone (polish, production hardening, founding cohort r
 - [x] **PROD-03**: Supabase storage bucket write policies are verified — authenticated users can upload to `avatars` and `post-images`; `application-docs` upload is restricted to the applicant's own folder
 - [x] **PROD-04**: `lib/supabase-admin.ts` is protected with `server-only` to prevent service role key from leaking into client bundles
 
+### Access Control
+
+- [ ] **AUTH-01**: Logged-in users with a pending application see a restricted experience — Social and Q&A explore are accessible, but Jobs feed, Profile dashboard, and contractor directory are locked with a "pending review" message until their application is approved or rejected
+
 ### Certifications
 
-- [ ] **CERT-01**: `approveApplication()` in `admin/actions.ts` automatically creates a basic certification record in the `certifications` table from the application data when a contractor is approved
+- [x] **CERT-01**: `approveApplication()` in `admin/actions.ts` automatically creates a basic certification record in the `certifications` table from the application data when a contractor is approved
 
 ### Homepage
 
@@ -79,6 +83,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROD-02 | Phase 1 | Production Hardening | Pending |
 | PROD-03 | Phase 1 | Production Hardening | Pending |
 | PROD-04 | Phase 1 | Production Hardening | Pending |
+| AUTH-01 | Phase 2 | SEO and Cert Automation | Pending |
 | CERT-01 | Phase 2 | SEO and Cert Automation | Pending |
 | SEO-01 | Phase 2 | SEO and Cert Automation | Pending |
 | SEO-02 | Phase 2 | SEO and Cert Automation | Pending |
@@ -92,8 +97,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HOME-03 | Phase 4 | Homepage Redesign | Pending |
 
 **Coverage:**
-- v1 requirements: 15 total
-- Mapped to phases: 15
+- v1 requirements: 16 total
+- Mapped to phases: 16
 - Unmapped: 0
 
 ---
