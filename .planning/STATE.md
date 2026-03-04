@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-01-PLAN.md — OpenGraph metadata and JSON-LD Person schema added to /contractors/[id] and /u/[username], metadataBase set in root layout
-last_updated: "2026-03-04T01:00:39.005Z"
+stopped_at: Completed 03-01-PLAN.md — Loading skeleton (loading.tsx, 9-card grid) and upgraded empty state with Reset filters added to /contractors directory
+last_updated: "2026-03-04T16:19:27.014Z"
 last_activity: "2026-03-03 — Plan 01-03 complete: DEPLOYMENT-CHECKLIST.md created, user confirmed checklist reviewed and Resend domain verification initiated"
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 8
+  completed_plans: 7
   percent: 67
 ---
 
@@ -53,6 +53,7 @@ Progress: [███████░░░] 67%
 | Phase 02-seo-and-cert-automation P03 | 92 | 1 tasks | 1 files |
 | Phase 02-seo-and-cert-automation P02 | 8 | 2 tasks | 3 files |
 | Phase 02-seo-and-cert-automation P01 | 2 | 3 tasks | 5 files |
+| Phase 03-ux-polish P01 | 1 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,8 @@ Recent decisions affecting current work:
 - [Phase 02-seo-and-cert-automation]: Use Person schema (not LocalBusiness) for contractor JSON-LD per plan spec
 - [Phase 02-seo-and-cert-automation]: Exclude phone/email from all metadata and JSON-LD — access-gated fields remain gated in SEO output
 - [Phase 02-seo-and-cert-automation]: Two DB queries per request on contractor profile (generateMetadata + page fetch) — acceptable for MVP
+- [Phase 03-ux-polish]: 03-01: Sidebar excluded from skeleton — empty div reserves space without visual noise per plan spec
+- [Phase 03-ux-polish]: 03-01: Reset filters uses <a href=/contractors> not router.push — page.tsx remains a server component
 
 ### Pending Todos
 
@@ -90,6 +93,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T00:57:07.386Z
-Stopped at: Completed 02-01-PLAN.md — OpenGraph metadata and JSON-LD Person schema added to /contractors/[id] and /u/[username], metadataBase set in root layout
+Last session: 2026-03-04T16:19:27.012Z
+Stopped at: Completed 03-01-PLAN.md — Loading skeleton (loading.tsx, 9-card grid) and upgraded empty state with Reset filters added to /contractors directory
 Resume file: None

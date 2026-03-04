@@ -37,8 +37,8 @@ Requirements for this milestone (polish, production hardening, founding cohort r
 
 ### UX Polish
 
-- [ ] **UX-01**: `/contractors` directory shows card-shaped loading skeletons while data is fetching (instead of blank or spinner)
-- [ ] **UX-02**: `/contractors` shows a clear empty state with a "reset filters" action when no contractors match the active search/filters
+- [x] **UX-01**: `/contractors` directory shows card-shaped loading skeletons while data is fetching (instead of blank or spinner)
+- [x] **UX-02**: `/contractors` shows a clear empty state with a "reset filters" action when no contractors match the active search/filters
 - [ ] **UX-03**: Mobile navigation is usable at 375px viewport — larger tap targets, collapsed menu accessible without tiny icons
 
 ## v2 Requirements
