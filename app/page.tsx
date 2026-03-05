@@ -38,7 +38,7 @@ export default async function HomePage() {
           </div>
           <h1 className="mt-4 text-4xl font-bold tracking-tight text-slate-100 sm:text-5xl lg:text-6xl">
             The verified network for{' '}
-            <span className="text-amber-500">serious tradespeople</span>
+            <span className="text-amber-500">all tradespeople</span>
           </h1>
           <p className="mt-6 text-lg text-slate-400">
             Apply, get verified, and connect with credentialed subs in your trade. No spam. No unqualified people. Just vetted professionals.
