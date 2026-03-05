@@ -89,7 +89,13 @@ Plans:
   1. A founding cohort welder completes the application form, receives an approval email in their inbox (not spam), signs in, and sees their profile in the `/contractors` directory — all within one session
   2. Each approved contractor profile shows at least one certification entry (auto-created from the application or manually added via admin cert management)
   3. An approved contractor can search the directory by trade and find at least one other approved contractor's contact info (phone or email) displayed on the profile page
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Fix approval email CTA URL bug and add auth redirect + /apply invite banner (email fix, auth redirect, apply banner)
+- [ ] 05-02-PLAN.md — Replace profile onboarding checklist with welcome banner for approved contractors (profile welcome banner)
+- [ ] 05-03-PLAN.md — Add inline cert editing to admin cert management page (CertRow client component, updateCertification server action)
+- [ ] 05-04-PLAN.md — Write founding cohort operational runbook (setup checklist, end-to-end test, outreach templates)
 
 ## Progress
 
@@ -102,4 +108,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. SEO and Cert Automation | 3/3 | Complete   | 2026-03-04 |
 | 3. UX Polish | 2/2 | Complete   | 2026-03-04 |
 | 4. Homepage Redesign | 1/1 | Complete    | 2026-03-05 |
-| 5. Founding Cohort Onboarding | 0/TBD | Not started | - |
+| 5. Founding Cohort Onboarding | 0/4 | Not started | - |
