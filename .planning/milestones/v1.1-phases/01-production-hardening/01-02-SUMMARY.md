@@ -102,6 +102,14 @@ None - no external service configuration required. Migration 007 is ready to run
 - apply/page.tsx will correctly upload documents to user-scoped paths matching RLS policy
 - Next: remaining production hardening tasks (Vercel deployment, env vars, Resend DNS)
 
+## Self-Check: PASSED
+
+- FOUND: supabase/migrations/007_storage_policies.sql
+- FOUND: app/apply/page.tsx (uploadUserId present, appData.id not used in storage path)
+- FOUND: .planning/phases/01-production-hardening/01-02-SUMMARY.md
+- FOUND commit 796e494 (Task 1: migration 007)
+- FOUND commit c33f4c5 (Task 2: apply/page.tsx fix)
+
 ---
 *Phase: 01-production-hardening*
 *Completed: 2026-03-02*
