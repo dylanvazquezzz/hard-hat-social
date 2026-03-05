@@ -240,6 +240,20 @@ export default function ApplyPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8">
+      {process.env.NEXT_PUBLIC_CONTACT_EMAIL && (
+        <div className="mb-8 rounded-lg border border-slate-700 bg-slate-800/60 px-5 py-4 text-sm text-slate-300">
+          <strong className="text-slate-100">Invite-only onboarding:</strong>{' '}
+          Contractors Connect is currently onboarding by invitation. If you were referred by someone,
+          fill out the form below. To request an invite, email{' '}
+          <a
+            href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`}
+            className="text-amber-400 hover:text-amber-300"
+          >
+            {process.env.NEXT_PUBLIC_CONTACT_EMAIL}
+          </a>
+          .
+        </div>
+      )}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-100">Apply to Join</h1>
         <p className="mt-2 text-slate-400">
