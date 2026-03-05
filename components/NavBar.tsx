@@ -9,6 +9,7 @@ export default function NavBar() {
   const router = useRouter()
   const [session, setSession] = useState<Session | null>(null)
   const [username, setUsername] = useState<string | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -17,15 +18,30 @@ export default function NavBar() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
-      if (session) fetchUsername(session.user.id)
+      if (session) {
+        fetchUsername(session.user.id)
+        if (session?.user?.email) {
+          const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? '')
+            .split(',')
+            .map((e) => e.trim().toLowerCase())
+          setIsAdmin(adminEmails.includes(session.user.email.toLowerCase()))
+        }
+      }
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       if (session) {
         fetchUsername(session.user.id)
+        if (session?.user?.email) {
+          const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? '')
+            .split(',')
+            .map((e) => e.trim().toLowerCase())
+          setIsAdmin(adminEmails.includes(session.user.email.toLowerCase()))
+        }
       } else {
         setUsername(null)
+        setIsAdmin(false)
       }
     })
 
@@ -126,6 +142,15 @@ export default function NavBar() {
                       >
                         Profile
                       </a>
+                      {isAdmin && (
+                        <a
+                          href="/admin"
+                          onClick={() => setDropdownOpen(false)}
+                          className="block px-4 py-2 text-sm text-amber-400 hover:bg-slate-700 transition-colors"
+                        >
+                          Admin
+                        </a>
+                      )}
                       <button
                         onClick={handleSignOut}
                         className="block w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-colors rounded-b-md"
@@ -205,6 +230,15 @@ export default function NavBar() {
                       >
                         {username ? `@${username}` : 'Profile'}
                       </a>
+                      {isAdmin && (
+                        <a
+                          href="/admin"
+                          onClick={() => setMenuOpen(false)}
+                          className="block px-4 py-3 text-sm text-amber-400 hover:bg-slate-700 transition-colors"
+                        >
+                          Admin
+                        </a>
+                      )}
                       <button
                         onClick={() => { setMenuOpen(false); handleSignOut() }}
                         className="block w-full text-left px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-colors rounded-b-md"
