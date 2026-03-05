@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: planning
-stopped_at: "04-01 Tasks 1+2 complete — awaiting checkpoint:human-verify before plan close"
-last_updated: "2026-03-05T00:02:50.277Z"
+stopped_at: Completed 04-01-PLAN.md — Phase 04 homepage redesign complete
+last_updated: "2026-03-05T00:20:38.817Z"
 last_activity: 2026-03-04 — Phase 03 UX Polish complete (2/2 plans, all requirements verified)
 progress:
   total_phases: 5
@@ -44,6 +44,7 @@ Progress: [██████░░░░] 60%
 | 01-production-hardening | 3 | ~4 min |
 | 02-seo-and-cert-automation | 3 | ~5 min |
 | 03-ux-polish | 2 | ~5 min |
+| Phase 04-homepage-redesign P01 | 15 | 3 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -69,6 +70,7 @@ Progress: [██████░░░░] 60%
 - [Phase 04-01]: Tasks 1 and 2 combined in single file write — hero overhaul and How it Works copy updated atomically in one commit to app/page.tsx
 - [Phase 04-01]: py-16 sm:py-24 on hero reduces mobile padding so stats row stays above fold on 375px iPhone SE
 - [Phase 04-01]: distinctTrades computed via JavaScript Set from select('trade') query — avoids raw SQL DISTINCT
+- [Phase 04-01]: Hero h1 changed from 'serious tradespeople' to 'all tradespeople' after user approved mobile layout — more inclusive and cleaner at small viewports
 
 ### Pending Todos
 
@@ -81,7 +83,7 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-05T00:02:46.103Z
-Stopped at: 04-01 Tasks 1+2 complete — awaiting checkpoint:human-verify before plan close
+Last session: 2026-03-05T00:20:38.816Z
+Stopped at: Completed 04-01-PLAN.md — Phase 04 homepage redesign complete
 Next action: `/gsd:plan-phase 4` to plan Homepage Redesign
 Resume file: None
