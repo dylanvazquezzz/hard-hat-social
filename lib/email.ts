@@ -3,19 +3,19 @@ import 'server-only'
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-const FROM = process.env.RESEND_FROM_EMAIL ?? 'noreply@contractorsconnect.com'
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://contractorsconnect.com'
+const FROM = process.env.RESEND_FROM_EMAIL ?? 'noreply@hardhatsocial.net'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://hardhatsocial.net'
 
 export async function sendApprovalEmail(to: string, name: string) {
   await resend.emails.send({
     from: FROM,
     to,
-    subject: "You're approved — Welcome to Contractors Connect",
+    subject: "You're approved — Welcome to Hard Hat Social",
     html: `
       <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#e2e8f0;background:#0f172a;padding:32px;border-radius:8px;">
         <h1 style="color:#f8fafc;font-size:24px;margin-bottom:8px;">Welcome aboard, ${name}.</h1>
         <p style="color:#94a3b8;margin-bottom:24px;">
-          Your application to Contractors Connect has been reviewed and <strong style="color:#10b981;">approved</strong>.
+          Your application to Hard Hat Social has been reviewed and <strong style="color:#10b981;">approved</strong>.
           You're now part of a verified network of credentialed tradespeople.
         </p>
 
@@ -31,7 +31,7 @@ export async function sendApprovalEmail(to: string, name: string) {
         </a>
 
         <p style="color:#475569;font-size:12px;margin-top:32px;">
-          Contractors Connect · Verified tradespeople only
+          Hard Hat Social · Verified tradespeople only
         </p>
       </div>
     `,
@@ -42,12 +42,12 @@ export async function sendRejectionEmail(to: string, name: string) {
   await resend.emails.send({
     from: FROM,
     to,
-    subject: 'Application update — Contractors Connect',
+    subject: 'Application update — Hard Hat Social',
     html: `
       <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#e2e8f0;background:#0f172a;padding:32px;border-radius:8px;">
         <h1 style="color:#f8fafc;font-size:24px;margin-bottom:8px;">Hi ${name},</h1>
         <p style="color:#94a3b8;margin-bottom:16px;">
-          Thank you for applying to Contractors Connect. After reviewing your application,
+          Thank you for applying to Hard Hat Social. After reviewing your application,
           we're unable to approve it at this time.
         </p>
         <p style="color:#94a3b8;margin-bottom:24px;">
@@ -59,7 +59,7 @@ export async function sendRejectionEmail(to: string, name: string) {
           Reapply
         </a>
         <p style="color:#475569;font-size:12px;margin-top:32px;">
-          Contractors Connect · Verified tradespeople only
+          Hard Hat Social · Verified tradespeople only
         </p>
       </div>
     `,
