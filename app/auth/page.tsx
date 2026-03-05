@@ -1,11 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 type Mode = 'signin' | 'signup'
 
-export default function AuthPage() {
+function AuthPageInner() {
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') ?? '/contractors'
+
   const [mode, setMode] = useState<Mode>('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -22,7 +26,7 @@ export default function AuthPage() {
       if (error) {
         setMessage(error.message)
       } else {
-        window.location.href = '/contractors'
+        window.location.href = redirectTo
       }
     } else {
       const { error } = await supabase.auth.signUp({ email, password })
@@ -106,5 +110,13 @@ export default function AuthPage() {
         </button>
       </p>
     </div>
+  )
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={null}>
+      <AuthPageInner />
+    </Suspense>
   )
 }

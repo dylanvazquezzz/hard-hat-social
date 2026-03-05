@@ -21,12 +21,12 @@ export async function sendApprovalEmail(to: string, name: string) {
 
         <h2 style="color:#f8fafc;font-size:16px;margin-bottom:8px;">What's next</h2>
         <ol style="color:#94a3b8;padding-left:20px;margin-bottom:24px;line-height:1.8;">
-          <li>Sign in at <a href="${APP_URL}/auth" style="color:#f59e0b;">${APP_URL}/auth</a></li>
+          <li>Sign in at <a href="${APP_URL}/auth?redirect=/profile" style="color:#f59e0b;">${APP_URL}/auth?redirect=/profile</a></li>
           <li>Complete your profile — add a photo and set your @username</li>
           <li>Browse the directory to find subs or work opportunities</li>
         </ol>
 
-        <a href="${APP_URL}/auth" style="display:inline-block;background:#f59e0b;color:#0f172a;font-weight:700;padding:12px 24px;border-radius:6px;text-decoration:none;">
+        <a href="${APP_URL}/auth?redirect=/profile" style="display:inline-block;background:#f59e0b;color:#0f172a;font-weight:700;padding:12px 24px;border-radius:6px;text-decoration:none;">
           Sign In Now
         </a>
 
