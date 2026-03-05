@@ -1,407 +1,312 @@
 # Stack Research
 
-**Domain:** Verified contractor directory — Next.js 14 App Router, Supabase, Resend
-**Researched:** 2026-03-01
-**Confidence:** HIGH (all primary claims verified against official Next.js docs, Supabase docs, Resend docs)
+**Domain:** Verified contractor social platform — milestone v1.2 (rebrand + jobs + ratings + feed redesign)
+**Researched:** 2026-03-04
+**Confidence:** HIGH — all claims verified against official Supabase docs, Tailwind v3 docs, Vercel docs, and existing codebase inspection
 
 ---
 
 ## Context: What This Research Covers
 
-The core stack (Next.js 14, Supabase, Tailwind, TypeScript, Resend, Vercel) is already chosen and locked. This research focuses on the specific APIs, patterns, and tooling needed for the active milestone:
+The core stack (Next.js 14, Supabase, Tailwind v3, TypeScript, Resend, Vercel) is locked and validated. This research answers only what is NEEDED for the five new milestone features:
 
-1. **Next.js `generateMetadata` + OpenGraph** — correct API usage, params handling
-2. **JSON-LD structured data** — official pattern, TypeScript types
-3. **Supabase Storage bucket setup** — RLS policies for public read / authenticated write
-4. **Resend domain verification** — DNS records required for deliverability
-5. **Loading skeletons and Suspense** — Next.js App Router pattern
+1. **Bug fixes** — admin nav, email URL (localhost), contractor visibility post-approval, certs not showing
+2. **Rebrand** — Hard Hat Social / hardhatsocial.net / lighter blue + yellow + white color scheme
+3. **Feed redesign** — full-width posts on explore, right sidebar with suggested connections
+4. **Jobs system** — GC marks job hired → completed; completed jobs appear as portfolio on contractor profiles
+5. **Ratings system** — mutual GC ↔ sub ratings after platform-verified job completion
 
----
-
-## Recommended Stack
-
-### Core Technologies (Already in place — verify versions)
-
-| Technology | Current Version | Purpose | Status |
-|------------|----------------|---------|--------|
-| Next.js | ^14.2.18 | App Router, SSR, metadata API, streaming | In use |
-| Supabase JS | ^2.45.4 | Database, auth, storage | In use |
-| Tailwind CSS | ^3.4.14 | Styling, skeleton animations | In use |
-| TypeScript | ^5.6.3 | Type safety | In use |
-| Resend | ^6.9.3 | Transactional email | In use |
-
-All current versions are within range for the features described below. No upgrades are required.
+**Verdict: Zero new npm packages required.** Every new feature is achievable with the existing stack plus new Supabase migrations and Tailwind config changes.
 
 ---
 
-### Feature 1: SEO Metadata (generateMetadata)
+## Current Stack (Do Not Upgrade)
 
-**Use the built-in `metadata` object and `generateMetadata` function — no library needed.**
+| Technology | Version | Status |
+|------------|---------|--------|
+| Next.js | ^14.2.18 | Locked — no upgrade needed |
+| Supabase JS | ^2.45.4 | Locked — no upgrade needed |
+| Tailwind CSS | ^3.4.14 | Locked — v3, NOT v4 |
+| TypeScript | ^5.6.3 | Locked |
+| Resend | ^6.9.3 | Locked |
 
-Official Next.js docs (last updated 2026-02-27, version 16.1.6) confirm these are the canonical patterns.
+---
 
-#### Static metadata (layout.tsx or page.tsx)
+## Feature Analysis: What Each Feature Actually Needs
 
-Use for pages where content is fixed at build time: homepage, `/contractors`, `/apply`.
+### Feature 1: Bug Fixes
+
+No stack changes. These are code-level fixes:
+
+| Bug | Root Cause (likely) | Fix Layer |
+|-----|---------------------|-----------|
+| Admin nav link broken | Hardcoded path or missing auth check | `components/NavBar.tsx` |
+| Email URLs point to localhost | `NEXT_PUBLIC_APP_URL` not set in Vercel prod env | Vercel dashboard env var |
+| Contractor not appearing post-approval | RLS policy or missing status filter in query | Supabase SQL + query fix |
+| Certs not showing on profiles | Admin approval action (`actions.ts`) doesn't create `certifications` rows | Server action logic |
+
+**Stack requirement:** None. Environment variable `NEXT_PUBLIC_APP_URL` must be set to `https://hardhatsocial.net` (or current prod URL) in Vercel dashboard. This already exists in the stack.
+
+---
+
+### Feature 2: Rebrand — Hard Hat Social / hardhatsocial.net
+
+**Two parts: brand colors in Tailwind config + domain in Vercel.**
+
+#### Part A: Tailwind Color Scheme
+
+The project uses Tailwind CSS v3 with `tailwind.config.ts`. The current theme is `slate-950` background, `amber-500` accents. The rebrand calls for lighter blue + yellow + white.
+
+**Pattern:** Extend `theme.colors` (not `theme.extend.colors`) in `tailwind.config.ts` to add brand-specific tokens. Keep Tailwind's default slate/blue/etc. available via `theme.extend` so existing components don't break.
+
+The correct v3 approach (verified against Tailwind v3 docs — this project is NOT on v4):
 
 ```typescript
-// app/page.tsx
-import type { Metadata } from 'next'
+// tailwind.config.ts
+import type { Config } from 'tailwindcss'
 
-export const metadata: Metadata = {
-  title: 'Contractors Connect — Verified Contractor Network',
-  description: 'Find verified, credentialed contractors. Welders, HVAC, Electricians — verified before they join.',
-  openGraph: {
-    title: 'Contractors Connect — Verified Contractor Network',
-    description: 'Find verified, credentialed contractors. Welders, HVAC, Electricians — verified before they join.',
-    url: 'https://contractorsconnect.com',
-    siteName: 'Contractors Connect',
-    images: [
-      {
-        url: '/og-image.png',  // relative path works with metadataBase
-        width: 1200,
-        height: 630,
-        alt: 'Contractors Connect — Verified Contractor Directory',
+const config: Config = {
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // Hard Hat Social brand colors
+        brand: {
+          blue:   '#1E6FBF',   // primary — lighter steel blue
+          yellow: '#F5C518',   // accent — hard hat yellow
+          white:  '#F8FAFC',   // surface — near-white
+        },
       },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Contractors Connect — Verified Contractor Network',
-    description: 'Find verified, credentialed contractors.',
-    images: ['/og-image.png'],
-  },
-}
-```
-
-#### metadataBase (required in root layout)
-
-Set once in `app/layout.tsx`. Without it, relative paths in OG images cause a build error.
-
-```typescript
-// app/layout.tsx
-import type { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://contractorsconnect.com'),
-  title: {
-    template: '%s | Contractors Connect',
-    default: 'Contractors Connect — Verified Contractor Network',
-  },
-  description: 'A curated network of verified, credentialed contractors.',
-}
-```
-
-#### Title template pattern
-
-The `title.template` in the root layout (`'%s | Contractors Connect'`) means child pages only need:
-
-```typescript
-// app/contractors/page.tsx
-export const metadata: Metadata = {
-  title: 'Find Contractors',  // renders as "Find Contractors | Contractors Connect"
-}
-```
-
-#### Dynamic metadata (generateMetadata)
-
-Use for pages where content comes from the database: `/contractors/[id]`, `/u/[username]`.
-
-```typescript
-// app/contractors/[id]/page.tsx
-import type { Metadata, ResolvingMetadata } from 'next'
-
-type Props = {
-  params: Promise<{ id: string }>
-}
-
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  const { id } = await params
-  const admin = getSupabaseAdmin()
-  const { data: contractor } = await admin
-    .from('contractors')
-    .select('full_name, trade, location_city, location_state, bio, profile_photo_url')
-    .eq('id', id)
-    .eq('status', 'approved')
-    .single()
-
-  if (!contractor) return {}
-
-  const title = `${contractor.full_name} — Verified ${contractor.trade} Contractor`
-  const description = contractor.bio
-    ? contractor.bio.slice(0, 155)
-    : `Verified ${contractor.trade} contractor in ${contractor.location_city}, ${contractor.location_state}.`
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: 'profile',
-      images: contractor.profile_photo_url
-        ? [{ url: contractor.profile_photo_url, width: 400, height: 400 }]
-        : [],
     },
-  }
+  },
+  plugins: [],
 }
+
+export default config
 ```
 
-**Key constraint:** `generateMetadata` must be in a Server Component. Cannot coexist with `'use client'` in the same file. Cannot export both `metadata` object and `generateMetadata` from the same segment.
+This adds `bg-brand-blue`, `text-brand-yellow`, `border-brand-white` etc. without touching existing Tailwind utilities.
 
-**Performance note:** `fetch` calls inside `generateMetadata` are automatically memoized — Supabase admin queries are not `fetch`-based, so React `cache()` should be used if the same query runs in both `generateMetadata` and the page component. (MEDIUM confidence — this is the documented behavior for `fetch`; Supabase JS uses its own request layer.)
+**Also update `app/globals.css`:** The current body defaults to `bg-slate-950 text-slate-100`. The rebrand should update this to lighter base (or leave it and apply new classes per-component if the dark theme is partially retained).
+
+**No npm package required.** This is a config + class replacement across components.
+
+#### Part B: Domain — hardhatsocial.net on Vercel
+
+1. In Vercel dashboard → Project Settings → Domains → Add `hardhatsocial.net` and `www.hardhatsocial.net`
+2. Vercel provides an A record (for apex) and CNAME (for www). Add these at the domain registrar.
+3. Vercel auto-provisions SSL. DNS propagates in minutes to 48 hours.
+4. Update environment variable `NEXT_PUBLIC_APP_URL` from old value to `https://hardhatsocial.net` in Vercel dashboard.
+5. Trigger a redeployment after updating env vars (Vercel deployments don't pick up new env vars automatically).
+
+**Also update in code:**
+- `app/layout.tsx`: `metadataBase: new URL('https://hardhatsocial.net')`
+- Any hardcoded domain references (grep for `contractorsconnect.com`)
+- Resend: re-verify sending domain if sending from `@hardhatsocial.net` instead of old domain
+
+**No npm package required.**
 
 ---
 
-### Feature 2: JSON-LD Structured Data
+### Feature 3: Feed Redesign — Full-width Posts + Right Sidebar
 
-**Use the official Next.js pattern — inline `<script>` tag with XSS sanitization. Add `schema-dts` for TypeScript types.**
+The current explore layout uses `max-w-2xl` centered column. The redesign wants full-width posts with a right sidebar for suggested connections.
 
-Official Next.js docs (2026-02-27) recommend exactly this pattern. No external rendering library needed.
+**Pattern:** Pure Tailwind CSS grid layout. No library required.
 
-#### The pattern
+```
+Desktop:  [  Main Feed (2/3 width)  ] [  Right Sidebar (1/3 width)  ]
+Mobile:   [ Main Feed (full width) ]
+          [ Sidebar (hidden or below) ]
+```
+
+Tailwind v3 implementation:
 
 ```typescript
-// app/contractors/[id]/page.tsx
-import { WithContext, LocalBusiness } from 'schema-dts'
+// app/explore/page.tsx (layout wrapper)
+<div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:grid lg:grid-cols-3 lg:gap-8">
+  {/* Main feed — takes 2/3 on desktop */}
+  <div className="lg:col-span-2">
+    {/* PostCard list */}
+  </div>
 
-export default async function ContractorProfilePage({ params }) {
-  const { id } = await params
-  // ... fetch contractor data ...
-
-  const jsonLd: WithContext<LocalBusiness> = {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: contractor.full_name,
-    description: contractor.bio ?? undefined,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: contractor.location_city,
-      addressRegion: contractor.location_state,
-      addressCountry: 'US',
-    },
-    url: `${process.env.NEXT_PUBLIC_APP_URL}/contractors/${contractor.id}`,
-    image: contractor.profile_photo_url ?? undefined,
-  }
-
-  return (
-    <section>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
-        }}
-      />
-      {/* rest of page */}
-    </section>
-  )
-}
+  {/* Right sidebar — takes 1/3 on desktop, hidden on mobile */}
+  <aside className="hidden lg:block">
+    {/* SuggestedConnections component */}
+  </aside>
+</div>
 ```
 
-**XSS note:** The `.replace(/</g, '\\u003c')` is required — official Next.js docs flag this as a security requirement to prevent injection. Do not skip it.
+**Suggested Connections sidebar:** Fetches a small query of approved contractors from Supabase — no new API route needed, can be a server component alongside the feed. Query: `contractors` table, `status = 'approved'`, limit 5, exclude the current user's own record. RLS already allows this (public can view approved contractors).
 
-**Schema type for contractor profiles:** Use `LocalBusiness` (covers trade businesses). The `Person` type is also valid but `LocalBusiness` gives better Google rich result eligibility for service providers.
-
-**Validation:** Test with [Google Rich Results Test](https://search.google.com/test/rich-results) after adding.
-
-#### TypeScript types library
-
-| Library | Version | Purpose | Confidence |
-|---------|---------|---------|------------|
-| `schema-dts` | 1.1.5 | TypeScript types for Schema.org JSON-LD — compile-time validation, zero runtime cost | MEDIUM |
-
-**Note on schema-dts maintenance:** Latest release was v1.1.5 (March 2021). The library is type-only (zero runtime), so the lack of recent releases is low risk — Schema.org types are stable. Officially referenced in Next.js docs. Weekly downloads ~334K. Install as a dev dependency.
-
-**Install:**
-```bash
-npm install -D schema-dts
-```
-
-**Do NOT use:** `react-schemaorg` or similar runtime rendering packages. The official pattern is a plain `<script>` tag — no runtime overhead.
+**No npm package required.** This is layout CSS and a new server component query.
 
 ---
 
-### Feature 3: Supabase Storage Bucket Setup
+### Feature 4: Jobs System — State Machine + Portfolio
 
-**Buckets must be created manually in the Supabase dashboard or via SQL migration. RLS policies on `storage.objects` control access.**
+This requires new Supabase tables. No new npm packages.
 
-Source: Official Supabase Storage docs.
+#### New table: `job_posts`
 
-#### Bucket access models
+The current `posts` table with `category = 'jobs'` is text-only and has no state. The jobs system requires tracking hired contractor, job status, and eventually portfolio association.
 
-| Type | Behavior | When to Use |
-|------|----------|-------------|
-| Public | Anyone with URL can read. Upload/delete still requires RLS policy. | `avatars`, `post-images` — profile photos should be publicly viewable |
-| Private | All operations require RLS policy or service role key. | `application-docs` — credential documents should NOT be publicly accessible |
-
-#### Required RLS policies (SQL migration)
-
-The `application-docs` bucket is already created in migration 006. The `avatars` and `post-images` buckets may still need policies. Add to a new migration file:
+**Recommended schema:**
 
 ```sql
--- Ensure buckets exist (idempotent)
-INSERT INTO storage.buckets (id, name, public)
-VALUES
-  ('avatars', 'avatars', true),
-  ('post-images', 'post-images', true)
-ON CONFLICT (id) DO UPDATE SET public = EXCLUDED.public;
-
--- Public read for avatars (redundant when bucket is public, but explicit is better)
-CREATE POLICY "Public read on avatars"
-  ON storage.objects FOR SELECT
-  USING (bucket_id = 'avatars');
-
--- Authenticated users can upload their own avatar
-CREATE POLICY "Authenticated upload to avatars"
-  ON storage.objects FOR INSERT
-  TO authenticated
-  WITH CHECK (bucket_id = 'avatars');
-
--- Authenticated users can update (replace) their own avatar
-CREATE POLICY "Authenticated update avatars"
-  ON storage.objects FOR UPDATE
-  TO authenticated
-  USING (bucket_id = 'avatars');
-
--- Public read for post images
-CREATE POLICY "Public read on post-images"
-  ON storage.objects FOR SELECT
-  USING (bucket_id = 'post-images');
-
--- Authenticated users can upload post images
-CREATE POLICY "Authenticated upload to post-images"
-  ON storage.objects FOR INSERT
-  TO authenticated
-  WITH CHECK (bucket_id = 'post-images');
-
--- application-docs: NO public read policy (private bucket)
--- Only service role (supabase-admin.ts) can read application docs
--- Authenticated users can upload their own application docs
-CREATE POLICY "Authenticated upload to application-docs"
-  ON storage.objects FOR INSERT
-  TO authenticated
-  WITH CHECK (bucket_id = 'application-docs');
+create table job_posts (
+  id              uuid primary key default gen_random_uuid(),
+  gc_user_id      uuid references auth.users on delete cascade not null,
+  gc_contractor_id uuid references contractors(id),           -- GC's contractor profile (optional)
+  title           text not null,
+  description     text not null,
+  trade           text not null,
+  location_city   text,
+  location_state  text,
+  status          text not null default 'open'
+                  check (status in ('open', 'hired', 'completed', 'cancelled')),
+  hired_contractor_id uuid references contractors(id),        -- set when GC marks hired
+  hired_at        timestamptz,
+  completed_at    timestamptz,
+  created_at      timestamptz default timezone('utc', now())
+);
 ```
 
-**Key pitfall:** A public bucket still requires an INSERT policy for uploads. "Public" only affects reads. Without an INSERT policy, `supabase.storage.from('avatars').upload()` returns 403 even for authenticated users.
+**Status state machine (text check constraint, not Postgres enum):**
 
-**Upsert note:** Overwriting a file (upsert) requires both INSERT and UPDATE policies, not just INSERT.
+Use a `text` column with a `CHECK` constraint rather than a Postgres `CREATE TYPE enum`. Rationale: Postgres enums cannot safely remove values once created — if the status set ever needs adjustment, a text + check constraint is easier to migrate. The existing codebase uses this same pattern (`contractors.status`, `applications.status`). Consistency matters.
 
-**Verification:** Confirm `application-docs` bucket exists before running migration. Migration 006 may have created it via SQL — verify in Supabase dashboard before adding duplicate INSERT.
+| Transition | Who triggers it | Notes |
+|------------|-----------------|-------|
+| `open` → `hired` | GC user (UI action) | Sets `hired_contractor_id`, `hired_at` |
+| `hired` → `completed` | GC user (UI action) | Sets `completed_at`; unlocks rating |
+| `open` / `hired` → `cancelled` | GC user | Does not unlock rating |
+
+**State transition enforcement:** Enforce in the server action / API route, not at the DB layer (a DB trigger is overkill for MVP). The server action validates current status before allowing the transition.
+
+**Portfolio link:** Completed jobs appear on contractor profiles via a join:
+```sql
+select * from job_posts
+where hired_contractor_id = $contractor_id
+and   status = 'completed'
+order by completed_at desc;
+```
+
+No additional table needed for portfolio — the `job_posts` table IS the portfolio source.
+
+**RLS policies needed:**
+
+```sql
+alter table job_posts enable row level security;
+
+-- Anyone can view open jobs
+create policy "Public can view open jobs"
+  on job_posts for select
+  using (status = 'open');
+
+-- Approved contractors can view all non-cancelled jobs (for portfolio visibility)
+create policy "Approved contractors can view hired/completed jobs"
+  on job_posts for select
+  using (
+    status in ('hired', 'completed')
+    and is_approved_contractor()
+  );
+
+-- GC can insert their own job posts
+create policy "GC can post jobs"
+  on job_posts for insert
+  with check (auth.uid() = gc_user_id);
+
+-- GC can update their own jobs (to mark hired/completed)
+create policy "GC can update own jobs"
+  on job_posts for update
+  using (auth.uid() = gc_user_id);
+```
+
+**No npm package required.**
 
 ---
 
-### Feature 4: Resend Domain Verification
+### Feature 5: Ratings System — Mutual GC ↔ Sub
 
-**Add SPF, DKIM, and DMARC DNS records at your domain registrar. Resend provides the exact values in its dashboard.**
+Requires one new Supabase table. No new npm packages.
 
-Source: Resend official docs, dmarc.wiki/resend (MEDIUM confidence for exact record values — Resend generates unique DKIM keys per domain, so only the dashboard provides the actual values).
+#### New table: `job_ratings`
 
-#### Required DNS records
+```sql
+create table job_ratings (
+  id              uuid primary key default gen_random_uuid(),
+  job_id          uuid references job_posts(id) on delete cascade not null,
+  reviewer_id     uuid references contractors(id) on delete cascade not null,
+  reviewee_id     uuid references contractors(id) on delete cascade not null,
+  rating          integer not null check (rating between 1 and 5),
+  comment         text,
+  created_at      timestamptz default timezone('utc', now()),
 
-| Record | Type | Name/Host | Value | Required? |
-|--------|------|-----------|-------|-----------|
-| SPF | TXT | `send` (subdomain of your domain) | `v=spf1 include:_spf.resend.com ~all` | Yes |
-| DKIM | TXT | `resend._domainkey.yourdomain.com` | Provided by Resend dashboard (unique per domain) | Yes |
-| MX | MX | `send` (subdomain) | `feedback-smtp.us-east-1.amazonses.com` (priority 10) | Yes (for bounce processing) |
-| DMARC | TXT | `_dmarc.yourdomain.com` | `v=DMARC1; p=quarantine; rua=mailto:dmarc@yourdomain.com` | Strongly recommended |
+  -- One rating per reviewer per job per reviewee
+  unique (job_id, reviewer_id, reviewee_id),
 
-**Critical note:** The DKIM public key value is unique to your domain and generated by Resend. You cannot hardcode it — log into `resend.com/domains`, add your domain, and copy the exact values Resend provides. The records above are structural examples only.
-
-#### Verification process
-
-1. Log into Resend dashboard → Domains → Add Domain
-2. Enter your sending domain (e.g., `contractorsconnect.com`)
-3. Resend shows the exact TXT/MX records to add
-4. Add records at your DNS provider (Cloudflare, Route 53, Namecheap, etc.)
-5. Resend polls for verification — typically 5-30 minutes; up to 72 hours before `failed` status
-6. Domain shows `verified` status → emails send from your domain, not Resend's shared domain
-
-**Why this matters for deliverability:** Emails sent from Resend's shared domain (`send.resend.dev`) will reach inboxes but may score lower on spam filters than emails from a verified custom domain. For approval/rejection emails to tradespeople, custom domain verification is worth doing before onboarding the founding cohort.
-
-**DMARC policy recommendation:** Start with `p=none` (monitor mode) during initial setup to avoid accidentally blocking legitimate emails:
+  -- Reviewer and reviewee must be different contractors
+  check (reviewer_id != reviewee_id)
+);
 ```
-v=DMARC1; p=none; rua=mailto:dmarc@contractorsconnect.com
+
+**Key design decisions:**
+
+1. **Tie ratings to `job_id`** — not just to user pairs. This enables the "platform-verified job completion" requirement: a rating can only be left after `job_posts.status = 'completed'`. Enforce in server action, not DB trigger.
+
+2. **Unique constraint on `(job_id, reviewer_id, reviewee_id)`** — prevents duplicate ratings for the same job. One rating per direction per job (GC rates sub + sub rates GC = 2 rows, both valid).
+
+3. **Both parties can rate** — the GC and the hired contractor can each leave one rating for the other. The unique constraint allows up to 2 rows per job (one in each direction). Check `reviewer_id != reviewee_id` prevents self-rating.
+
+4. **`check (rating between 1 and 5)`** — DB-level validation. No need for application-layer clamping.
+
+5. **Ratings display on profiles** — aggregate with:
+```sql
+select
+  avg(rating)::numeric(3,2) as avg_rating,
+  count(*) as total_ratings
+from job_ratings
+where reviewee_id = $contractor_id;
 ```
-Escalate to `p=quarantine` after confirming legitimate emails pass. DMARC adoption grew 75% among top domains between 2023-2025 (MEDIUM confidence, WebSearch).
+
+**RLS policies needed:**
+
+```sql
+alter table job_ratings enable row level security;
+
+-- Public can view ratings (shown on contractor profiles)
+create policy "Public can view ratings"
+  on job_ratings for select
+  using (true);
+
+-- Approved contractors can insert ratings for completed jobs they participated in
+create policy "Contractors can rate after completed job"
+  on job_ratings for insert
+  with check (
+    is_approved_contractor()
+    and exists (
+      select 1 from contractors c
+      where c.user_id = auth.uid()
+      and c.id = reviewer_id
+    )
+  );
+```
+
+**No npm package required.**
 
 ---
 
-### Feature 5: Loading Skeletons
+## Installation
 
-**Use Next.js `loading.js` convention for route-level skeletons and Tailwind `animate-pulse` for skeleton UI. No library needed.**
-
-Source: Official Next.js docs on `loading.js` file convention.
-
-#### Route-level skeleton (loading.js)
-
-Create a `loading.tsx` file in the same directory as a `page.tsx`. Next.js automatically wraps it in a Suspense boundary.
-
-```typescript
-// app/contractors/loading.tsx
-export default function ContractorsLoading() {
-  return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="animate-pulse rounded-lg border border-slate-800 bg-slate-900 p-6">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-slate-700" />
-              <div className="flex-1 space-y-2">
-                <div className="h-4 w-3/4 rounded bg-slate-700" />
-                <div className="h-3 w-1/2 rounded bg-slate-700" />
-              </div>
-            </div>
-            <div className="mt-4 space-y-2">
-              <div className="h-3 rounded bg-slate-700" />
-              <div className="h-3 w-5/6 rounded bg-slate-700" />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
+```bash
+# No new packages required for this milestone.
+# All features use existing dependencies + new Supabase migrations.
 ```
-
-#### Component-level Suspense
-
-For finer-grained streaming (e.g., loading the directory grid while filters render immediately):
-
-```typescript
-// app/contractors/page.tsx
-import { Suspense } from 'react'
-import ContractorGrid from './ContractorGrid'
-import ContractorGridSkeleton from './ContractorGridSkeleton'
-
-export default function ContractorsPage() {
-  return (
-    <div>
-      <SearchFilters />  {/* renders immediately, no data fetching */}
-      <Suspense fallback={<ContractorGridSkeleton />}>
-        <ContractorGrid />  {/* server component that fetches data */}
-      </Suspense>
-    </div>
-  )
-}
-```
-
-**Tailwind utility:** `animate-pulse` creates the breathing skeleton effect. Use `bg-slate-700` on the placeholder shapes to match the existing dark theme (`bg-slate-900` background, `border-slate-800` borders).
-
----
-
-## Supporting Libraries
-
-| Library | Version | Install as | Purpose | Decision |
-|---------|---------|-----------|---------|----------|
-| `schema-dts` | 1.1.5 | devDependency | TypeScript types for JSON-LD Schema.org | ADD — type safety only, zero runtime |
-
-No other new dependencies are needed for this milestone. All other features use built-in Next.js APIs, Tailwind utilities, or existing packages.
 
 ---
 
@@ -409,10 +314,11 @@ No other new dependencies are needed for this milestone. All other features use 
 
 | Category | Recommended | Alternative | Why Not |
 |----------|-------------|-------------|---------|
-| JSON-LD rendering | Plain `<script>` tag (official Next.js pattern) | `react-schemaorg`, `next-seo` | `next-seo` doesn't support App Router metadata API; `react-schemaorg` adds runtime overhead; official pattern is simpler |
-| Metadata | Built-in `generateMetadata` | `next-seo` | `next-seo` predates the App Router metadata API; redundant in Next.js 13+ |
-| Skeletons | Tailwind `animate-pulse` + `loading.js` | `react-loading-skeleton` library | No library needed; Tailwind achieves same result with less bundle overhead |
-| Email auth records | Resend-provided values | Manual SPF configuration | Resend manages SPF/DKIM automatically once domain is added in dashboard; manual setup is error-prone |
+| Job status field | `text` + CHECK constraint | Postgres `CREATE TYPE` enum | Enums cannot safely remove values. Existing codebase uses text + check. Consistency over marginal performance gain at this scale. |
+| Ratings storage | Single `job_ratings` table tied to `job_posts.id` | Separate `reviews` table with free-form user references | Job-tied ratings enforce the "platform-verified completion" requirement. Free-form references allow gaming (rating without a job). |
+| Feed sidebar layout | Tailwind `lg:grid-cols-3` | External layout library (shadcn, etc.) | No library needed. Tailwind grid covers this trivially. Adding a component library mid-project is not justified for one layout change. |
+| Color scheme | `tailwind.config.ts` `theme.extend.colors` | Swap to Tailwind v4 + CSS `@theme` directive | Project is on Tailwind v3. Upgrading to v4 mid-milestone is a breaking change (config format changes, many utility class changes). Do NOT upgrade. |
+| Star rating UI | Plain number input or radio buttons | `react-stars`, `react-rating`, similar | A 5-star radio button group is 10 lines of Tailwind. No library justified. |
 
 ---
 
@@ -420,36 +326,54 @@ No other new dependencies are needed for this milestone. All other features use 
 
 | Avoid | Why | Use Instead |
 |-------|-----|-------------|
-| `next-seo` | Built for Pages Router, not App Router. Actively misleads with `NextSeo` component that conflicts with `generateMetadata` | Built-in `metadata` object and `generateMetadata` |
-| `react-schemaorg` | Adds runtime overhead; renders JSON-LD via React components unnecessarily | Plain `<script>` tag with `dangerouslySetInnerHTML` per official docs |
-| `react-loading-skeleton` | Adds bundle weight; Tailwind `animate-pulse` achieves identical visual result | Tailwind `animate-pulse` on `<div>` elements |
-| Exporting both `metadata` and `generateMetadata` from the same file | Build error — Next.js does not allow this | Use one or the other per route segment |
-| `'use client'` on pages with `generateMetadata` | Next.js metadata exports only work in Server Components | Keep metadata in Server Components; extract interactive parts to separate Client Components |
-| `themeColor` in metadata object | Deprecated since Next.js 14 — use `generateViewport` instead | `export const viewport: Viewport = { themeColor: '...' }` |
+| Tailwind v4 `@theme` CSS directive | Project is on Tailwind v3 — this directive does not exist in v3 | `tailwind.config.ts` `theme.extend.colors` |
+| Postgres `CREATE TYPE` enum for job status | Cannot remove enum values once created; text + check is already the project convention | `text NOT NULL CHECK (status IN (...))` |
+| DB triggers for state transition enforcement | Overkill for MVP; makes debugging harder | Server action validates status before update |
+| A star rating npm package | Adds dependency for a trivial UI element | 5 radio inputs styled with Tailwind |
+| Separate `portfolio` table | Adds complexity; completed `job_posts` already IS the portfolio | Query `job_posts WHERE status = 'completed' AND hired_contractor_id = $id` |
+| shadcn/ui or other component libraries | Not in the current stack; adding mid-milestone for one sidebar adds migration risk | Plain Tailwind components consistent with existing codebase |
 
 ---
 
-## Stack Patterns by Variant
+## Stack Patterns by Feature
 
-**For static pages (homepage, /apply, /auth):**
-- Use `export const metadata: Metadata = { ... }` (static object)
-- Place `metadataBase` in root `app/layout.tsx`
-- No data fetching needed in metadata
+**For jobs system (state transitions):**
+- New `job_posts` table with text + check constraint status column
+- Server actions in `app/jobs/actions.ts` enforce state transitions before DB update
+- RLS lets public see `open` jobs; approved contractors see `hired`/`completed` ones
+- Portfolio: query `job_posts` where `status = 'completed'` and `hired_contractor_id = $id`
 
-**For dynamic profile pages (/contractors/[id], /u/[username]):**
-- Use `export async function generateMetadata({ params })`
-- Fetch contractor data with `getSupabaseAdmin()`
-- Add JSON-LD `<script>` tag inside the page's return JSX
-- Keep data fetching DRY: extract to a shared server function if both page and metadata need the same query
+**For ratings system:**
+- New `job_ratings` table tied to `job_posts.id`
+- Server action validates `job_posts.status = 'completed'` before allowing INSERT
+- Unique constraint `(job_id, reviewer_id, reviewee_id)` prevents duplicates
+- Profile aggregate: `SELECT avg(rating), count(*) FROM job_ratings WHERE reviewee_id = $id`
 
-**For directory/list pages (/contractors, /explore, /jobs):**
-- Use `loading.tsx` for route-level skeleton
-- Static `metadata` export (page title doesn't depend on URL params)
-- Consider `Suspense` at component level if search filters should render before results
+**For feed redesign:**
+- Change `max-w-2xl` wrapper to `max-w-6xl lg:grid lg:grid-cols-3 lg:gap-8`
+- Feed takes `lg:col-span-2`, sidebar takes `lg:col-span-1`
+- `SuggestedConnections` server component: query `contractors` where `status = 'approved'`, limit 5
+- Mobile: sidebar is `hidden lg:block` — posts are always full-width on small screens
 
-**For Supabase Storage:**
-- Public buckets (`avatars`, `post-images`): mark `public: true` + add INSERT policy
-- Private buckets (`application-docs`): mark `public: false`, use service role key for admin reads
+**For rebrand:**
+- `tailwind.config.ts`: add `brand.blue`, `brand.yellow`, `brand.white` under `theme.extend.colors`
+- `app/globals.css`: update body base colors if background changes from dark to lighter
+- Vercel: add `hardhatsocial.net` in Domains, update `NEXT_PUBLIC_APP_URL` env var
+- Redeploy after env var changes
+- Grep for hardcoded old domain name in codebase and replace
+
+---
+
+## New Migrations Needed
+
+This milestone requires two new SQL migration files:
+
+| Migration | Contents |
+|-----------|----------|
+| `008_job_posts.sql` | `job_posts` table + status check constraint + RLS policies + indexes |
+| `009_job_ratings.sql` | `job_ratings` table + rating check constraint + unique constraint + RLS policies + indexes |
+
+The existing `is_approved_contractor()` helper function (from migration 001) is reusable in both new RLS policies — no changes to that function needed.
 
 ---
 
@@ -457,37 +381,21 @@ No other new dependencies are needed for this milestone. All other features use 
 
 | Package | Compatible With | Notes |
 |---------|----------------|-------|
-| `next@^14.2.18` | `schema-dts@1.1.5` | schema-dts is type-only, no runtime compatibility issues |
-| `next@^14.2.18` | Built-in `metadata` API | `generateMetadata` introduced in Next.js 13.2.0; streaming metadata added in 15.2.0 (not available in 14.x) |
-| `@supabase/supabase-js@^2.45.4` | Supabase Storage RLS policies | Policies are server-side SQL; client version is not relevant to policy behavior |
-
-**Note on streaming metadata:** The `generateMetadata` streaming feature (where metadata streams after initial HTML) was added in Next.js 15.2.0. Running Next.js 14.x means metadata resolution blocks the initial response for dynamic routes. This is acceptable behavior for this project's scale and does not require upgrading Next.js.
-
----
-
-## Installation
-
-```bash
-# Only new dependency needed for this milestone
-npm install -D schema-dts
-```
-
-No other packages are needed. All other features use built-in Next.js APIs or existing dependencies.
+| `next@^14.2.18` | No new packages this milestone | N/A |
+| `tailwindcss@^3.4.14` | `tailwind.config.ts` brand color extension | Use `theme.extend.colors`, NOT Tailwind v4 `@theme` directive |
+| `@supabase/supabase-js@^2.45.4` | New `job_posts`, `job_ratings` tables | Standard table queries; no new Supabase features needed |
 
 ---
 
 ## Sources
 
-- [Next.js generateMetadata API Reference](https://nextjs.org/docs/app/api-reference/functions/generate-metadata) — HIGH confidence. Official docs, updated 2026-02-27. All `generateMetadata`, `metadata` object, `openGraph`, `twitter`, `metadataBase`, and title template patterns verified here.
-- [Next.js JSON-LD Guide](https://nextjs.org/docs/app/guides/json-ld) — HIGH confidence. Official docs, updated 2026-02-27. `<script>` tag pattern, XSS sanitization, and `schema-dts` reference verified here.
-- [Next.js loading.js Convention](https://nextjs.org/docs/app/api-reference/file-conventions/loading) — HIGH confidence. Official docs. Route-level Suspense pattern confirmed.
-- [Supabase Storage Access Control](https://supabase.com/docs/guides/storage/security/access-control) — HIGH confidence. Official Supabase docs. RLS policy structure for INSERT and SELECT on `storage.objects` confirmed.
-- [Supabase Storage Bucket Fundamentals](https://supabase.com/docs/guides/storage/buckets/fundamentals) — HIGH confidence. Public vs private bucket behavior confirmed.
-- [Resend Domain Introduction](https://resend.com/docs/dashboard/domains/introduction) — HIGH confidence. SPF + DKIM requirement, verification status behavior confirmed.
-- [schema-dts GitHub Releases](https://github.com/google/schema-dts/releases) — MEDIUM confidence. Latest version v1.1.5 (2021). Type-only library, stable despite infrequent releases.
-- [Resend SPF/DKIM values via dmarc.wiki](https://dmarc.wiki/resend) — MEDIUM confidence. SPF record value `v=spf1 include:_spf.resend.com ~all` confirmed via multiple sources. DKIM values are dashboard-generated and cannot be documented externally.
+- [Supabase Postgres Enums Guide](https://supabase.com/docs/guides/database/postgres/enums) — HIGH confidence. Verified: text + CHECK preferred over enum for mutable status fields; enum values cannot be safely removed.
+- [Tailwind CSS v3 Customizing Colors](https://tailwindcss.com/docs/customizing-colors) — HIGH confidence. `theme.extend.colors` in `tailwind.config.js/ts` is the v3 pattern. Verified project is on Tailwind v3.4.14 from `package.json`.
+- [Vercel — Adding & Configuring a Custom Domain](https://vercel.com/docs/domains/working-with-domains/add-a-domain) — HIGH confidence. A record for apex, CNAME for www, Vercel auto-provisions SSL.
+- [PostgreSQL Constraints Documentation](https://www.postgresql.org/docs/current/ddl-constraints.html) — HIGH confidence. UNIQUE constraint on composite columns and CHECK constraints for ratings table design.
+- Existing codebase (`supabase/migrations/001_initial.sql`, `package.json`, `tailwind.config.ts`, `app/globals.css`) — HIGH confidence. Direct inspection of current stack, schema, and patterns.
 
 ---
 
-*Stack research for: Contractors Connect — Next.js 14 App Router SEO, Storage, Email milestone*
-*Researched: 2026-03-01*
+*Stack research for: Hard Hat Social v1.2 — Rebrand, Jobs System, Ratings, Feed Redesign*
+*Researched: 2026-03-04*

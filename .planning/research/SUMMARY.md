@@ -1,194 +1,203 @@
 # Project Research Summary
 
-**Project:** Contractors Connect — Verified Contractor Directory
-**Domain:** B2B verified contractor directory — homepage redesign, UX polish, SEO, production hardening, founding cohort onboarding
-**Researched:** 2026-03-01
-**Confidence:** HIGH (stack and architecture verified against official docs; features MEDIUM from marketplace research; pitfalls HIGH from direct code review)
+**Project:** Hard Hat Social (formerly Contractors Connect)
+**Domain:** Verified B2B contractor social platform — v1.2 milestone: rebrand, jobs lifecycle, mutual ratings, feed redesign
+**Researched:** 2026-03-04
+**Confidence:** HIGH
 
 ## Executive Summary
 
-Contractors Connect has a completed MVP — the core directory, application flow, admin review queue, and auth are all functional. The current milestone is about converting that working foundation into a production-ready product that can receive and onboard real users. This research covers five concrete areas: SEO metadata for discoverability, Supabase Storage bucket hardening, Resend domain verification for deliverability, loading skeletons for perceived performance, and homepage redesign for pre-cohort conversion. The existing tech stack (Next.js 14, Supabase, Tailwind, Resend, Vercel) is exactly right for all of these and requires no new dependencies beyond `schema-dts` as a dev-only type library.
+Hard Hat Social is a verified contractor directory and social platform built on a locked stack of Next.js 14, Supabase, Tailwind CSS v3, and Vercel. The MVP is complete. This v1.2 milestone adds four major capabilities: a domain rebrand to hardhatsocial.net with an updated color scheme, a two-column explore feed with a suggested-connections sidebar, a platform-tracked job lifecycle (open → hired → completed), and a mutual rating system that ties all ratings to verified job completions. Every feature is achievable within the existing dependency set — zero new npm packages are required. The two new capabilities that need schema changes (jobs and ratings) require new Supabase migrations using the text + CHECK constraint pattern already established in the codebase.
 
-The recommended approach is to execute this milestone in a clear dependency order: lock down production infrastructure first (env vars, DNS, database migrations, storage buckets), then add SEO hooks to existing pages, then redesign the homepage with honest teaser profiles, then polish the UX. This order matters because several features share upstream dependencies — `metadataBase` must be set in `app/layout.tsx` before any child page OpenGraph images resolve, DNS propagation for Resend takes up to 48 hours and must start before anything else, and placeholder profiles need a defined strategy before any component code is written to avoid trust damage.
+The recommended build order follows the dependency chain: database schema first (everything else depends on it), domain rebrand in parallel (no data dependencies), feed redesign next (no new schema needed), jobs UI after schema, and ratings UI last (depends on jobs). The existing server component + server action architecture must be strictly preserved — client components are leaf nodes only, all writes go through server actions with double-enforcement (application pre-check plus RLS), and the explore page sidebar must remain server-rendered to avoid degrading mobile performance for tradespeople on slow connections.
 
-The single highest-risk area for this milestone is not technical — it is trust damage from placeholder profiles that look like real verified contractors. The platform's entire value proposition is that every listed contractor is verified and real. A mock profile rendered with the same "Verified" badge as real profiles directly contradicts that promise to the founding cohort, who are personal contacts of the co-founder in a tight-knit trade community. The recommended mitigation is to either skip placeholders entirely (use an "applications under review" count instead) or use a visually distinct, honestly-labeled example section that is strictly homepage-only and never linkable as an individual profile.
+The primary risks are operational rather than technical. The domain rebrand touches four separate systems — Vercel env vars, Supabase Auth Site URL, Resend DNS, and application code — and missing any one of them silently breaks email delivery for the founding cohort. The ratings system requires blind submission (simultaneous reveal) from day one; retrofitting this after ratings are already visible to both parties causes irreparable trust damage that cannot be fixed with a schema migration. Both risks have clear, concrete prevention checklists and must be verified end-to-end before any real user interacts with the rebranded application.
 
 ## Key Findings
 
 ### Recommended Stack
 
-The existing stack requires no changes for this milestone. All five feature areas (SEO metadata, JSON-LD structured data, Storage RLS policies, Resend domain verification, and loading skeletons) are achievable with built-in Next.js APIs, existing Supabase functionality, Tailwind utilities, and the existing Resend integration. The only new package recommended is `schema-dts@1.1.5` installed as a dev dependency for TypeScript types on Schema.org JSON-LD — it is type-only with zero runtime cost.
+The existing stack handles every v1.2 feature without additions. Two new Supabase migrations are required: one for the `jobs` table (with a BEFORE UPDATE trigger enforcing state transitions) and one for the `ratings` table (with a unique constraint on `(job_id, rater_id)` and a blind-submission reveal gate). Status columns use `text NOT NULL CHECK (status IN (...))` rather than Postgres enums — consistent with the existing codebase and avoids the limitation that enum values cannot safely be removed once created. The Tailwind rebrand is handled via `theme.extend.colors` in `tailwind.config.ts`, adding `brand.blue`, `brand.yellow`, and `brand.white` tokens without disrupting existing utility classes.
 
 **Core technologies:**
-- Next.js 14 App Router: `generateMetadata` + `loading.tsx` convention — no library alternatives needed or recommended; `next-seo` and `react-schemaorg` are explicitly anti-patterns for App Router
-- Supabase JS v2.45.4: Storage RLS policies on `storage.objects` control access; bucket creation is a mix of migration SQL and manual dashboard steps that must be verified in production
-- Tailwind CSS: `animate-pulse` utility provides skeleton loading UI — no `react-loading-skeleton` library needed
-- Resend: Domain verification requires SPF + DKIM DNS records added at the registrar; DNS propagation takes up to 48 hours; this must be started before any other launch tasks
-- `schema-dts@1.1.5` (dev dep only): TypeScript types for Schema.org JSON-LD; type-only, zero runtime, officially referenced in Next.js docs
-
-**Version constraint:** Next.js 14.x does not have streaming metadata (added in 15.2.0). `generateMetadata` on dynamic routes blocks the initial response for bots and crawlers. This is acceptable at current scale and does not require a version upgrade.
+- Next.js 14 (App Router): framework — the server component + server action pattern is the correct model for all new features; no upgrade warranted
+- Supabase Postgres + RLS: database — two new migrations needed; the existing `is_approved_contractor()` helper function is reusable in new RLS policies
+- Tailwind CSS v3: styling — brand color extension via `theme.extend.colors`; do NOT upgrade to Tailwind v4 mid-milestone (breaking config format change)
+- Resend: email delivery — domain re-verification for `hardhatsocial.net` must start before any code changes due to 48-hour DNS propagation
+- Vercel: hosting — `NEXT_PUBLIC_APP_URL` env var must be updated and a new production deployment triggered; env vars baked at build time do not take effect until redeployment
 
 ### Expected Features
 
-The milestone centers on three user-facing outcomes: a homepage that converts visiting tradespeople into applicants before the founding cohort is onboarded, UX polish that reduces friction on mobile, and discoverability via SEO once real profiles exist.
+**Must have (v1.2 core — each must be complete enough to be usable, not just present):**
+- Full-width post cards with a right sidebar on the explore feed — industry standard since LinkedIn/Twitter normalized it; narrow single-column feels like an afterthought
+- Right sidebar with "Recently Verified" and "Suggested People (same trade)" widgets — 5-8 items max, no infinite scroll
+- Jobs state machine: GC can mark a sub as hired and mark the job complete; status visible to both parties on job cards
+- Rating prompt (5-star + optional 280-char text) for both GC and sub after job completion; simultaneous reveal (neither party sees the other's rating until both submit or 14 days expire)
+- Ratings displayed on contractor profiles — average score and count in "4.8 (12 ratings)" format
+- Completed jobs portfolio section on contractor profiles — system-written fields (job title, GC name, completion date, received rating) are not user-editable; this protects the verified claim
 
-**Must have (table stakes for this milestone):**
-- Clear homepage value prop with a single dominant CTA above the fold — visitors decide in 3-5 seconds; "Apply to Join" is the correct primary CTA at pre-cohort stage
-- Trust indicators near the CTA — "Manually verified credentials," cert badge icons, and an honest count framing ("X applications under review" beats "Join 50+ members" if the latter is fabricated)
-- Loading skeletons on `/contractors` and other data-fetching routes — empty or frozen screens read as broken, not loading; skeletons reduce abandonment on slow connections
-- Empty state with reset action on `/contractors` when filters return no results — a blank grid destroys confidence in the platform
-- Mobile-responsive nav with 44px minimum tap targets — tradespeople are on phones on job sites; current nav likely collapses poorly at 375px
+**Should have (add after v1.2 core ships):**
+- Rating sub-dimensions: Quality, Timeliness, Professionalism for subs; Payment, Communication, Safety for GCs
+- Trade-filtered feed defaulting to the logged-in contractor's primary trade with an "All Trades" toggle
+- Sub-added description and optional photo on portfolio entries (additive, does not override system-written fields)
+- Active open jobs sidebar widget (lower priority than the two people-discovery widgets)
+- GC profile rating scorecard — GCs being rated is a differentiator; build after ratings data exists to display
 
-**Should have (differentiators for this milestone):**
-- Teaser profiles on homepage showing trade, state, years experience, specialty with name/photo obscured — honest labeling is mandatory; specificity (trade + state + specialty) makes them feel real without being deceptive
-- SEO metadata via `generateMetadata` on contractor profile pages and public profile pages — unlocks discoverability once real profiles exist; static metadata on directory and homepage
-- JSON-LD structured data on contractor profile pages — `LocalBusiness` schema type for Google rich result eligibility
-- Application status transparency on post-apply confirmation screen — "under review — typically 3-5 business days" reduces anxious re-submissions
-
-**Defer (after founding cohort is onboarded):**
-- Dynamic member count on homepage — show once there is a real count worth showing
-- Trade-specific homepage sections with specialty callouts — needs 10+ approved contractors per trade
-- Credential-specific filter (filter by AWS cert, D1.1) — needs cert data density; cert table is currently unpopulated even after approval
-- Review/rating system — after the network has completed jobs
-- In-platform messaging, AI assistant, mobile app — post-MVP as defined in CLAUDE.md
-
-**Anti-features to avoid:**
-- Geolocation "near me" filtering — tradespeople travel; state filter is the right model
-- AI chatbot on homepage — built for B2C homeowner discovery, not B2B contractor-to-contractor search
-- Social feed on landing page — confuses the directory value prop; keep explore/feed in the logged-in area
-- Star ratings before network has jobs — creates 0-review profiles that undermine quality signal
-- Autoplay video or heavy animations — slow mobile connections, bright sunlight, tradespeople are task-oriented
+**Defer to v2+:**
+- AI-based sidebar recommendations — insufficient network signal at under 500 users; rule-based suggestions (same trade, same state, recently joined) are more reliable and faster to build
+- Admin dispute resolution flow for contested job completions — scope expansion; keep it human and manual for now
+- Self-reported past jobs section — directly undermines the verified portfolio moat; if any entry can be fabricated, none are credible
 
 ### Architecture Approach
 
-The architecture is a clear Server Component + Admin Client pattern throughout, with three leaf-level Client Components handling browser-only concerns (NavBar for auth state, SearchFilters for URL manipulation, ContactSection for authenticated API calls). This pattern is correctly implemented in the existing codebase and should be preserved exactly. The additions for this milestone slot cleanly into the existing structure: `loading.tsx` files go alongside existing `page.tsx` files, `generateMetadata` exports go into existing Server Component pages, a `components/skeletons/` directory holds new skeleton components, and `app/layout.tsx` gets `metadataBase` and a title template.
+New features slot cleanly into the existing architecture without changing its shape. Server components fetch all data using `supabase-admin.ts` with `Promise.all` for parallel queries. Client components remain leaf nodes: two new interactive mutation components (`JobStatusControl`, `RatingForm`) and one modal (`SubSelectorModal`) join the existing three client components. The explore page sidebar is a server-rendered component that fetches suggested contractor data in the same `Promise.all` as the main post feed — no extra round-trip, no client boundary at the page level. All writes go through server actions with explicit pre-checks that run before the Supabase insert, backed by RLS as a second enforcement layer.
 
-**Major components and additions:**
-1. `app/layout.tsx` — add `metadataBase` (blocks OG image resolution without it) and title template `'%s | Contractors Connect'`; must be done first as it unblocks all child `generateMetadata` exports
-2. `components/skeletons/` — new directory for `ContractorCardSkeleton`, `DirectoryGridSkeleton`, `ProfileSkeleton`; purely presentational, no data dependencies
-3. `app/contractors/loading.tsx` + `app/contractors/[id]/loading.tsx` + `app/explore/loading.tsx` + `app/u/[username]/loading.tsx` — route-level skeletons using the `loading.js` convention; automatically wrapped by Next.js in Suspense boundaries
-4. `app/contractors/[id]/page.tsx` — add `generateMetadata` + JSON-LD `<script>` tag; uses same admin client query, automatically deduplicated by Next.js
-5. `app/page.tsx` — homepage redesign; add server Supabase fetch for teaser profiles with `export const revalidate = 300` (not `force-dynamic` — teaser profiles change infrequently)
-6. Storage migration — new migration file adding `avatars` and `post-images` bucket creation + RLS policies; `application-docs` already created in migration 006 but needs policy verification
+**Major components:**
+1. `jobs` table (new) — GC-owned entity with status lifecycle; BEFORE UPDATE trigger rejects invalid transitions at the DB layer; RLS restricts status updates to the GC who posted the job
+2. `ratings` table (new) — tied to `job_id` FK; unique constraint on `(job_id, rater_id)`; reveal gate enforced at query/RLS level so unrevealed ratings are never returned to non-admin users
+3. `FeedSidebar` (new, server-compatible) — fetched in `Promise.all` from the explore page server component; receives data as props; no `'use client'` directive
+4. `JobStatusControl` + `SubSelectorModal` (new, client leaf nodes) — use `useTransition` for pending state; call server actions directly
+5. `RatingForm` (new, client leaf node) — only rendered when a server-side eligibility check confirms the viewer worked a completed job with this contractor and has not yet rated
+6. `CompletedJobsSection` + `RatingSummary` + `RatingList` (new, server-compatible display components) — added to contractor profile page via `Promise.all` alongside existing queries
 
-**Key architectural rule to preserve:** Never import `supabase-admin.ts` in a `'use client'` file. Add `import 'server-only'` to `lib/supabase-admin.ts` and `lib/email.ts` to enforce this at build time — currently enforced only by convention.
+**New server actions:**
+- `app/jobs/actions.ts` — `createJob`, `markHired`, `markCompleted`; all pre-check that the caller is the GC on this job before calling Supabase
+- `app/ratings/actions.ts` — `submitRating`; pre-checks `job.status === 'completed'` and that the ratee is a participant; RLS independently enforces the same rules
 
 ### Critical Pitfalls
 
-1. **NEXT_PUBLIC_ env vars are baked at build time, not runtime** — set all `NEXT_PUBLIC_*` vars in Vercel dashboard before triggering the first production build; changing them after requires a manual redeploy. Silent failure: browser calls hit wrong Supabase project with no error.
+1. **Domain rebrand misses Supabase Auth Site URL — every email link breaks** — approval and rejection emails sent to the founding cohort link to the old domain or localhost. Prevention: complete all four systems atomically in a single checklist (Vercel env var + redeploy, Supabase Site URL + redirect allowlist update, Resend domain DNS verification, `email.ts` fallback constant removal). Send a real test approval email to a personal Gmail account on production and confirm the link reads `hardhatsocial.net` before onboarding any real user.
 
-2. **Supabase Auth `Site URL` still pointing to `localhost:3000`** — every password reset and approval email link bounces to a dead URL on a real device. Fix: set Site URL to production domain in Supabase dashboard → Authentication → URL Configuration before sending any emails to the founding cohort.
+2. **Resend domain unverified — emails land in spam with no app error** — Resend returns `200 OK` even when the sender domain is unverified; the failure is silent at the inbox level. Prevention: start Resend DNS verification for `hardhatsocial.net` on day one of the milestone — before writing any code — because propagation takes up to 48 hours. Do not retire the old domain in Resend until the new one shows `Verified`.
 
-3. **Resend domain not verified — approval emails go to spam** — DNS propagation takes up to 48 hours; this must be started before any other production task. Founding cohort welders never see their approval email, onboarding stalls. Start DNS setup first.
+3. **Mutual ratings without verified job completion — rating system is gameable immediately** — in a small tight-knit trade community, one bad actor can tank a competitor's rating. Prevention: enforce at both the DB layer (RLS INSERT policy gates on `job.status = 'completed'` and participant membership) and the server action pre-check layer. Add `UNIQUE (job_id, rater_id)` constraint in the schema migration.
 
-4. **Placeholder profiles visually indistinguishable from real verified contractors** — using the same ContractorCard component with mock data produces a Verified-badge-bearing profile that directly contradicts the platform's core promise. Trust damage in small trade communities is severe. Use "applications under review" framing instead, or use visually distinct, clearly-labeled example cards that are never linkable.
+4. **Ratings revealed immediately (no blind submission) — signal becomes meaningless within weeks** — sequential reveal creates social pressure; Airbnb's research shows simultaneous reveal reduces retaliatory 1-star ratings by 31% and produces more honest negative text. Prevention: ratings are stored but not returned by any SELECT policy until both parties have submitted OR the 14-day window has expired. This cannot be retrofitted without schema migration and trust damage from early retaliatory ratings — implement blind submission from day one.
 
-5. **`supabase-admin.ts` has no `server-only` guard** — if accidentally imported in a client component, the service role key (which bypasses all RLS) appears in the browser bundle. Add `import 'server-only'` as the first line in `lib/supabase-admin.ts` and `lib/email.ts` before the first production deploy.
+5. **Job state machine has no DB enforcement — states can be skipped or regressed** — a text + CHECK constraint validates values but not transitions; any code path (admin dashboard SQL editor, future feature) can bypass application-layer rules. Prevention: add a BEFORE UPDATE Postgres trigger in the jobs migration that rejects `completed → any` and `hired → open` transitions. Server action pre-checks provide UX-friendly errors; the DB trigger is the actual security boundary.
 
-6. **Migrations applied out of order or skipped** — six sequential migrations must be applied in exact order (001-006) to the production Supabase project. Any skip causes schema inconsistencies that break the application flow. Use `supabase db push` or apply manually with explicit order verification.
-
-7. **`metadataBase` missing in `app/layout.tsx`** — without it, OpenGraph image URLs in child pages resolve to `localhost` and social previews are broken on every social platform. Must be set before any SEO metadata is deployed.
+6. **`'use client'` propagates to the explore feed page — mobile performance degrades** — the sidebar needs per-user data (current user's trade for filtering), which tempts developers to mark the feed page as `'use client'`. In Next.js App Router, the directive propagates through the import tree, pulling the entire feed into client territory. Prevention: read session server-side in `explore/page.tsx`; pass `userId` as a prop to the sidebar; keep any client interactivity in a narrow leaf component below the feed layout.
 
 ## Implications for Roadmap
 
-Based on the combined research, the correct phase structure for this milestone follows a strict dependency order. Infrastructure must be locked before user-facing features are built, and trust-sensitive decisions (placeholder strategy) must be resolved before any related components are written.
+The dependency chain is clear and the build order is well-defined. Jobs must exist before ratings. The database schema must exist before any jobs or ratings UI. The rebrand has no data dependencies and can proceed in parallel with schema work. Feed redesign has no new data dependencies and is the lowest-risk item to ship as soon as the rebrand is complete.
 
-### Phase 1: Production Infrastructure Hardening
-**Rationale:** Multiple features in later phases depend on correct infrastructure. DNS propagation for Resend takes 48 hours — this must start immediately. Env vars baked at build time mean a wrong first deploy is harder to undo than a missed feature. Storage buckets must exist before upload flows are tested. This phase has no code dependencies and unblocks everything else.
-**Delivers:** A production Vercel deployment with correct env vars, verified Resend domain with SPF/DKIM DNS records, all 6 migrations applied to production Supabase in order, all 3 storage buckets created with correct RLS policies, Supabase Site URL set to production domain, `server-only` guard added to `supabase-admin.ts` and `email.ts`.
-**Addresses:** Pitfalls 1 (env vars), 2 (auth redirect), 3 (Resend DNS), 5 (server-only guard), 6 (migrations), storage bucket pitfall
-**Must verify:** Password reset flow end-to-end on production before onboarding; test approval email to personal Gmail to confirm it does not land in spam
+### Phase 1: Bug Fixes and Rebrand
 
-### Phase 2: SEO Foundation
-**Rationale:** SEO additions are purely additive to existing pages and have one upstream dependency: `metadataBase` in `app/layout.tsx`. Once that is set, `generateMetadata` on dynamic routes and static metadata on static pages can be added in any order. JSON-LD structured data on contractor profiles is the highest-value SEO addition because it enables Google rich results. This phase does not require any new components or data changes.
-**Delivers:** `metadataBase` and title template in `app/layout.tsx`; `generateMetadata` on `/contractors/[id]` and `/u/[username]`; JSON-LD `LocalBusiness` script tag on contractor profile pages; static metadata exports on homepage, `/contractors`, `/apply`, `/auth`; `schema-dts` dev dependency installed.
-**Uses:** Built-in Next.js `generateMetadata` API, `schema-dts` types, existing `supabase-admin.ts` (query auto-deduplicated between metadata and page)
-**Avoids:** Missing `metadataBase` pitfall (OG images resolve to localhost without it); JSON-LD XSS pitfall (use `.replace(/</g, '\\u003c')` sanitization)
-**Research flag:** Standard patterns — well-documented in official Next.js docs. No deeper research needed during planning.
+**Rationale:** Existing bugs in the approval flow and email system must be resolved before any new user is onboarded. The domain rebrand must be complete before the founding cohort sees the platform. This phase has no new data dependencies — it is code fixes and configuration changes only. It is also the highest-operational-risk phase because it touches four separate systems that do not know about each other.
 
-### Phase 3: UX Polish — Loading States and Empty States
-**Rationale:** Loading skeletons and empty states have zero data dependencies and are purely presentational. They should be built before the homepage redesign so that the directory page (which the homepage CTA links to) feels complete when first visitors arrive. The skeleton components also establish the `components/skeletons/` directory pattern that future phases may use.
-**Delivers:** `components/skeletons/ContractorCardSkeleton`, `DirectoryGridSkeleton`, `ProfileSkeleton`; `app/contractors/loading.tsx`, `app/contractors/[id]/loading.tsx`, `app/explore/loading.tsx`, `app/u/[username]/loading.tsx`; empty state with reset action on `/contractors`; mobile nav improvement on `NavBar.tsx` (hamburger or bottom bar with 44px tap targets).
-**Implements:** Route-level Suspense via `loading.js` convention; Tailwind `animate-pulse` skeleton pattern; progressive disclosure on mobile nav
-**Avoids:** "Empty screen reads as broken" pitfall; mobile abandonment from tiny tap targets
-**Research flag:** Standard patterns — well-documented. No deeper research needed.
+**Delivers:** Fully operational approval flow (admin nav, contractor visibility post-approval, certs showing on profiles); approval and rejection emails that link to `hardhatsocial.net` and land in inboxes; Hard Hat Social branding (color tokens in `tailwind.config.ts`, NavBar update, metadata base URL); `NEXT_PUBLIC_APP_URL` pointing to production domain with redeployment triggered
 
-### Phase 4: Homepage Redesign
-**Rationale:** The homepage redesign depends on the placeholder strategy being decided first (Pitfall 5 — fake-looking profiles), relies on the `loading.tsx` and skeleton patterns from Phase 3, and benefits from having production infrastructure in place (Phase 1) so the teaser data can come from a real database. This is the most trust-sensitive phase and should not be rushed.
-**Delivers:** Homepage redesigned as a server component with `revalidate = 300`; clear value prop headline (under 8 words); single dominant CTA above the fold; trust indicators (cert badge icons, verification language, honest member/application count); 3-6 teaser profile cards using real schema (trade, state, years experience, specialty) with name/photo obscured and honest labeling — no Verified badge, never linkable as individual profiles; application status transparency on post-apply confirmation screen.
-**Addresses:** Chicken-and-egg cold-start problem; "Apply to Join" CTA conversion; mobile-first layout for tradespeople
-**Avoids:** Placeholder trust damage pitfall; fabricated member counts; stock photos in teaser profiles; autoplay video or animations
-**Research flag:** Placeholder strategy requires a design decision before any component code. Recommend confirming approach (teasers vs. "applications under review" count) at phase planning time.
+**Addresses:** Admin nav bug, email URL localhost bug, contractor visibility post-approval bug, certs not showing bug; brand color scheme; domain configuration across all four systems
 
-### Phase 5: Founding Cohort Onboarding
-**Rationale:** Once infrastructure is solid, SEO is in place, and the homepage converts, the founding cohort can be onboarded through the existing application flow. The gap in certification data (certifications table never populated after approval) must be resolved in this phase. Admin cert management already exists; this phase verifies it works and uses it on real profiles.
-**Delivers:** Founding cohort welders onboarded via the existing application + approval flow; certifications added via admin cert management for each approved contractor; real contractor profiles replacing teaser profiles on the homepage; test of the full onboarding experience end-to-end (apply, review, approve, email received, sign in, profile visible).
-**Addresses:** Certifications table gap (approveApplication never inserts certifications); "Verified badge requires populated certs" dependency from FEATURES.md
-**Avoids:** Empty certifications section on approved contractor profiles; approval emails landing in spam (resolved in Phase 1)
-**Research flag:** No additional research needed. The application and approval flow is complete; this phase is operational.
+**Avoids:** Domain rebrand checklist pitfall (verify all 4 systems, send real test email); Resend deliverability pitfall (start DNS day one before writing any code); approval flow regression pitfall (end-to-end test is the exit gate for this phase)
+
+### Phase 2: Database Schema — Jobs and Ratings Tables
+
+**Rationale:** Every subsequent phase depends on the `jobs` and `ratings` tables existing in Supabase with correct RLS and constraints. This is a blocking dependency. Migrations must be written and applied before any server actions or UI components referencing these tables can be built. TypeScript types must be added to `lib/types.ts` immediately after.
+
+**Delivers:** `jobs` table with text + CHECK status constraint, BEFORE UPDATE state transition trigger, RLS policies (public SELECT for open jobs, GC-only INSERT and UPDATE), and indexes; `ratings` table with `job_id` FK, unique constraint on `(job_id, rater_id)`, score CHECK, reveal gate, RLS policies, and indexes; `Job` and `Rating` TypeScript interfaces in `lib/types.ts`
+
+**Addresses:** Foundation for all jobs and ratings features; all trust and integrity constraints defined at schema level before UI is built on top
+
+**Avoids:** New tables without RLS pitfall (policies in same migration file as table creation); job state machine bypass pitfall (DB trigger in same migration, not deferred); rating gaming pitfall (UNIQUE constraint and job completion gate in schema, not just application code)
+
+### Phase 3: Feed Redesign
+
+**Rationale:** The feed layout change queries only the existing `contractors` table (for suggested connections) and the existing `posts` table (for feed content). It has zero dependencies on the new jobs/ratings schema. It is the lowest-risk feature in the milestone and can ship independently as soon as the rebrand is complete, providing user-visible progress while the heavier schema-dependent features are built.
+
+**Delivers:** Two-column explore page layout (full-width posts column + right sidebar); `FeedSidebar` server-compatible component with "Recently Verified" and "Suggested People (same trade)" widgets; `Promise.all` parallel data fetching in the explore server component; category tab filtering preserved at the top of the feed column; empty states per feed tab
+
+**Addresses:** Full-width post cards, right sidebar for discovery, suggested connections, recently verified members widget
+
+**Avoids:** `'use client'` propagation pitfall (sidebar stays server-compatible, `userId` passed as prop from page); sidebar performance pitfall (LIMIT 8, order by `created_at DESC` — simple query, no complex NOT IN)
+
+### Phase 4: Jobs Lifecycle UI
+
+**Rationale:** With the schema in place, the jobs UI can be built: migrating `app/jobs/page.tsx` from querying the `posts` table to the new `jobs` table, adding server actions, and creating the `JobCard`, `JobStatusControl`, and `SubSelectorModal` components. The existing `posts` table with `category='jobs'` is left intact — no hard cutover until the full jobs UI is built and verified locally.
+
+**Delivers:** GC can post a job, mark a sub as hired (via `SubSelectorModal` searching the approved contractor directory), and mark a job complete; job status lifecycle visible on cards with status pills (Posted, Hired, Completed); completed jobs available as a portfolio data source for the next phase; server actions `createJob`, `markHired`, `markCompleted` in `app/jobs/actions.ts`
+
+**Addresses:** Jobs state machine (open → hired → completed), GC-controlled status progression, sub selector from the verified directory, portfolio foundation
+
+**Avoids:** Sub self-advancing job status anti-pattern (RLS UPDATE policy + server action pre-check both restrict status changes to the GC); hard cutover from old posts table (keep `posts` table intact; migrate `jobs/page.tsx` only after new UI is fully verified)
+
+### Phase 5: Ratings System and Portfolio UI
+
+**Rationale:** Ratings require completed jobs, so this phase comes after Phase 4. The rating form, summary, and list components are built on top of the already-validated schema and server actions. The completed jobs portfolio section on contractor profiles is delivered in this same phase because it reads from the same completed `jobs` data and is tightly coupled to the rating display.
+
+**Delivers:** `RatingForm` client component (5-star + optional 280-char text); `submitRating` server action with double-enforcement (pre-check + RLS); blind reveal logic (ratings not returned until both parties submit or 14 days expire); `RatingSummary` and `RatingList` on contractor profile pages; `CompletedJobsSection` showing the verified portfolio (job title, GC name, completion date, received rating) on contractor profiles; server-side eligibility check gates `RatingForm` rendering
+
+**Addresses:** Mutual ratings (GC and sub can each rate the other), simultaneous reveal, ratings aggregate on profiles, past jobs portfolio
+
+**Avoids:** Immediate reveal pitfall (blind submission implemented from day one, not retrofitted); rating without job reference (enforced at schema and action layers — both must pass); ratings aggregate performance (query-time AVG is acceptable at current scale; denormalize to `contractors.rating_avg` column if profile load time grows)
 
 ### Phase Ordering Rationale
 
-- Phase 1 must come first because DNS propagation is a real-world constraint (48 hours), env vars baked at build time mean a wrong first deploy is sticky, and migrations must be verified before any user data is created.
-- Phase 2 (SEO) comes before the homepage redesign because `metadataBase` in `layout.tsx` is a prerequisite for all OpenGraph images to resolve correctly — doing this early means it is verified before the homepage goes live.
-- Phase 3 (UX polish) comes before Phase 4 (homepage) so the directory page is polished before the homepage CTA sends visitors there. Skeletons and empty states are pure frontend with no dependencies — they are fast to ship.
-- Phase 4 (homepage) is last among the code phases because it is the most design-sensitive, depends on the placeholder strategy decision, and benefits from infrastructure and UX being solid first.
-- Phase 5 (onboarding) is an operational phase that follows the code phases — it uses existing flows and verifies them under real conditions.
+- Phase 1 must come first because DNS propagation is a real-world 48-hour constraint, env vars baked at build time are sticky, and the founding cohort cannot be onboarded until email links work correctly on the production domain.
+- Phase 2 (schema) is a hard blocker for Phases 4 and 5. It can run in parallel with Phase 3 (feed) since the feed has no new schema dependencies, but it must complete before jobs or ratings UI begins.
+- Phase 3 (feed redesign) is the right item to ship early because it has no new data dependencies, demonstrates visible progress, and validates the two-column layout before the heavier trust features land on top of it.
+- Phase 4 (jobs UI) comes before Phase 5 (ratings) because completed jobs are the gate for ratings eligibility; you cannot demonstrate the rating flow without a completed job to trigger it.
+- Phase 5 (ratings + portfolio) is the most complex phase and depends on all prior phases being stable — it closes the trust loop that is the core value proposition of the milestone.
 
 ### Research Flags
 
-Phases needing deeper research during planning:
-- **Phase 4 (Homepage Redesign):** Placeholder profile strategy needs a design decision before component code is written. The research identifies the risk clearly but the exact implementation (teasers vs. count-only vs. "example" section) is a product decision that should be locked before planning begins.
+Phases likely needing deeper research during planning:
 
-Phases with standard patterns (can skip deeper research):
-- **Phase 1 (Production Hardening):** All steps are operational checklists with official documentation. No ambiguity.
-- **Phase 2 (SEO):** Official Next.js docs are definitive for `generateMetadata` and JSON-LD. No library research needed.
-- **Phase 3 (UX Polish):** Tailwind `animate-pulse` and `loading.js` convention are well-documented. No novel patterns.
-- **Phase 5 (Founding Cohort):** Uses existing flows — operational, not technical.
+- **Phase 5 (Ratings):** The blind reveal mechanism has two valid implementation approaches — a `revealed` boolean column flipped by a cron job or Edge Function, versus a query-time check that joins the ratings table to count how many directions have been submitted. The trade-offs (operational complexity of cron vs. query complexity at read time) should be evaluated during phase planning before schema is finalized.
+- **Phase 4 (Jobs):** The `SubSelectorModal` search-as-you-type against the contractor directory should use the existing GIN full-text search index from migration 005. Verify the exact query pattern before building the modal to avoid an inefficient `ILIKE` scan.
+
+Phases with standard patterns (skip deeper research):
+
+- **Phase 1 (Bug Fixes + Rebrand):** All fixes are code-level or configuration changes; research is complete. The rebrand checklist is fully specified in PITFALLS.md.
+- **Phase 2 (Schema):** The exact SQL for both tables, triggers, and RLS policies is drafted in STACK.md and ARCHITECTURE.md. No further research needed.
+- **Phase 3 (Feed Redesign):** Pure Tailwind grid layout change (`lg:grid-cols-3`) and a new server component query. The pattern is established and well-documented.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All patterns verified against official Next.js docs (updated 2026-02-27) and Supabase docs. One caveat: Supabase admin client query deduplication is documented for `fetch`-based requests; Supabase JS uses its own request layer, so deduplication behavior is MEDIUM confidence. |
-| Features | MEDIUM | Table stakes and anti-features are well-established in marketplace and B2B directory research. Tradespeople-specific UX findings are extrapolated from broader low-digital-literacy research — directionally correct but not trade-specific primary research. |
-| Architecture | HIGH | Based on direct codebase inspection combined with official Next.js docs. Component responsibilities and patterns reflect the actual codebase, not assumptions. |
-| Pitfalls | HIGH | Most pitfalls identified through direct code review of the actual codebase (`/lib/supabase-admin.ts`, `/app/admin/layout.tsx`, `/app/admin/actions.ts`, migration files). Infrastructure pitfalls verified against official Supabase and Resend docs. |
+| Stack | HIGH | Direct codebase inspection of `package.json`, `tailwind.config.ts`, existing migrations, and all component files. Tailwind v3 patterns verified against official v3 docs. Exact migration SQL is drafted and consistent with existing codebase conventions. |
+| Features | HIGH | Table stakes sourced from LinkedIn, Upwork, and Airbnb patterns. Simultaneous reveal backed by NBER academic research (Fradkin et al.) — 31% retaliation reduction is a primary-source finding. Portfolio read-only pattern is fundamental to every verified credential system. |
+| Architecture | HIGH | Based on direct codebase inspection of all server actions, route handlers, migrations, and page components. All new patterns are extensions of existing conventions — no novel architectural decisions required. |
+| Pitfalls | HIGH | Domain rebrand pitfalls are codebase-specific findings from reading `lib/email.ts` and `app/admin/actions.ts` directly. Ratings pitfalls backed by academic research and Airbnb's published policy rationale. DB trigger pattern sourced from official PostgreSQL documentation. |
 
 **Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **Supabase admin client query deduplication:** Next.js auto-deduplicates `fetch()` calls; Supabase JS uses its own HTTP layer. If the same query runs in both `generateMetadata` and the page component, it may execute twice. Resolution: extract shared data fetches into a React `cache()`-wrapped helper function in pages that need this optimization.
-- **Certifications table population:** `approveApplication()` in `actions.ts` creates a `contractors` row but never inserts into `certifications`. Admin cert management page exists but must be verified to be functional before founding cohort onboarding. If it is not functional, certifications will not appear on approved profiles — the "Verified badge with cert specificity" differentiator identified in FEATURES.md will be absent.
-- **Homepage teaser profile design decision:** The research identifies the risk of fake-looking placeholders but does not prescribe the exact visual design. This needs a product decision (teasers vs. count-only vs. "example" labeled section) before Phase 4 planning begins.
-- **`NEXT_PUBLIC_ADMIN_EMAILS` format validation:** The env var is a comma-separated string of admin emails. The admin layout checks against this string. If the production value has trailing spaces or wrong casing, admin access breaks silently. Verify the check logic is case-insensitive and trims whitespace.
+- **Blind reveal mechanism:** Research confirms simultaneous reveal is required and a 14-day window is the standard, but the exact implementation choice (revealed boolean + cron vs. query-time join check) should be locked during Phase 5 planning. The query-time approach avoids the operational complexity of a scheduled job but adds a join on every profile load. At current scale either is acceptable; document the decision in the migration file.
+
+- **Rating window notification:** PITFALLS research recommends showing the rating prompt 24-48 hours post-completion (via a Resend email reminder) rather than immediately, to give GCs time to assess payment timeliness before rating. Implementing this requires a delayed/scheduled email trigger not currently in the Resend integration. Evaluate whether to defer the delay to a later milestone (accepting the UX downside of immediate prompts) or to add it in Phase 5.
+
+- **Old `posts` table job entries:** The current `posts` table contains entries with `category='jobs'` from the existing informal jobs board. The plan leaves these untouched during Phase 4. A product decision is needed on how to communicate to GCs that informal posts do not support lifecycle tracking, and whether to eventually archive or migrate them.
+
+- **Ratings aggregate performance:** At current scale, computing `AVG(score)` on every profile load is acceptable. If the platform grows to 500+ contractors with significant rating data, a denormalized `rating_avg` and `rating_count` column on the `contractors` table (updated by trigger on each rating insert) will be needed. Flag this as a future optimization, not a blocker for Phase 5.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- Next.js generateMetadata API Reference (updated 2026-02-27) — `generateMetadata`, `metadata` object, `openGraph`, `twitter`, `metadataBase`, title template patterns
-- Next.js JSON-LD Guide (updated 2026-02-27) — `<script>` tag pattern, XSS sanitization with `\u003c`, `schema-dts` reference
-- Next.js loading.js Convention — route-level Suspense pattern, streaming behavior
-- Supabase Storage Access Control — RLS policy structure for INSERT and SELECT on `storage.objects`, public vs. private bucket behavior
-- Supabase Auth Redirect URLs — Site URL configuration, redirect allowlist, `redirectTo` parameter in `resetPasswordForEmail()`
-- Resend Domain Introduction — SPF + DKIM requirement, DNS verification process, 48-hour propagation timeline
-- Direct codebase inspection (`/lib/supabase-admin.ts`, `/app/admin/layout.tsx`, `/app/admin/actions.ts`, `/app/api/contact/[id]/route.ts`, `/supabase/migrations/*.sql`, `/lib/email.ts`, `/app/apply/page.tsx`)
+- Direct codebase inspection of `/Users/dylanvazquez/Desktop/contractors-connect/` (2026-03-04) — `lib/email.ts`, `lib/supabase-admin.ts`, `app/admin/actions.ts`, `supabase/migrations/*.sql`, `tailwind.config.ts`, `package.json`, all page and component files
+- [Supabase RLS documentation](https://supabase.com/docs/guides/database/postgres/row-level-security) — policy design for jobs and ratings tables
+- [Supabase Auth Redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls) — Site URL and allowlist configuration
+- [Tailwind CSS v3 Customizing Colors](https://tailwindcss.com/docs/customizing-colors) — `theme.extend.colors` pattern confirmed for v3
+- [Vercel custom domains](https://vercel.com/docs/domains/working-with-domains/add-a-domain) — DNS setup for hardhatsocial.net
+- [Next.js Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations) — `useTransition` with server actions, `revalidatePath` patterns
+- [PostgreSQL Constraints Documentation](https://www.postgresql.org/docs/current/ddl-constraints.html) — UNIQUE and CHECK constraint design
+- Airbnb simultaneous review reveal — Fradkin, Grewal, Holtz, Pearson (NBER); 31% reduction in retaliatory ratings with simultaneous reveal; Airbnb official policy rationale
+- [ResearchGate: Tit for Tat? Two-Sided Reputation Systems](https://www.researchgate.net/publication/346961659) — academic backing for blind submission
 
 ### Secondary (MEDIUM confidence)
-- Sharetribe marketplace glossary — chicken-and-egg problem framing and teaser profile tactics
-- LogRocket UX Design — skeleton loading screen design best practices
-- UX Bulletin — designing for low digital literacy users (mobile tap targets, label-over-icon patterns)
-- Jasmine Directory blog — verified badge consumer psychology
-- DesignStudio UX — mobile navigation UX 2026
-- schema-dts GitHub — v1.1.5 release date, type-only library status, weekly download count
-- dmarc.wiki/resend — SPF record value `v=spf1 include:_spf.resend.com ~all`
+- [GetStream: Social Media Feed Design Patterns](https://getstream.io/blog/social-media-feed/) — feed sidebar layout conventions
+- [Hootsuite: LinkedIn Algorithm 2025](https://blog.hootsuite.com/linkedin-algorithm/) — suggested connections sidebar patterns
+- [Upwork: Job Success Score](https://support.upwork.com/hc/en-us/articles/211068358-All-about-your-Job-Success-Score) — bidirectional rating system reference
+- [Resend domain management](https://resend.com/docs/dashboard/domains/introduction) — DNS verification process and propagation timeline
+- [Postgres state machine enforcement](https://blog.lawrencejones.dev/state-machines/) — BEFORE UPDATE trigger pattern
+- Platform growth wisdom: rule-based suggestions are reliable at under 500 users; algorithmic recommendations require data density
 
 ### Tertiary (LOW confidence)
-- Product Brain — designing LinkedIn for blue collar workers (PM interview format, single source)
-- WebRunner Media — high-converting contractor landing page elements (contractor marketing firm, potential bias)
-- Trade Hounds via CBInsights — competitive landscape reference only
+- [TaskTag: Contractor Portfolio Guide 2026](https://portal.tasktag.com/blog/contractor-portfolio) — contractor portfolio UX norms; single source in contractor marketing context, treat as directional only
 
 ---
-*Research completed: 2026-03-01*
+*Research completed: 2026-03-04*
 *Ready for roadmap: yes*

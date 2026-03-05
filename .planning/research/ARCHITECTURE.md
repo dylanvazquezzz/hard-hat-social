@@ -1,496 +1,760 @@
 # Architecture Research
 
-**Domain:** Verified contractor directory — Next.js 14 App Router
-**Researched:** 2026-03-01
-**Confidence:** HIGH (based on official Next.js docs verified 2026-02-27 + direct codebase inspection)
+**Domain:** Verified contractor social platform — v1.2 Feed Redesign, Jobs Lifecycle, Mutual Ratings, Domain Rebrand
+**Researched:** 2026-03-04
+**Confidence:** HIGH (based on direct codebase inspection + Next.js 14 / Supabase official docs)
 
 ---
 
-## Standard Architecture
+## Context: Existing Architecture (What We're Adding To)
 
-### System Overview
+This is a subsequent milestone. The existing architecture is well-established and must be preserved. Key constraints from the current codebase:
+
+- Server Components fetch all data using `supabase-admin.ts` (service role, bypasses RLS)
+- Client Components are leaf nodes only: `NavBar`, `SearchFilters`, `ContactSection`
+- `force-dynamic` on all data pages — no caching except homepage (revalidate: 300)
+- Supabase RLS protects data at the database layer; API route handler enforces contact gating at application layer
+- Server Actions (`app/admin/actions.ts`) handle all write mutations from the admin
+- No global state management — state lives in URL params, React `useState`, and Supabase session
+
+The four new feature areas for v1.2 slot into this architecture as follows:
+- **Feed redesign** — layout change only, no new data tables
+- **Suggested connections sidebar** — new query pattern, no new tables
+- **Jobs system** — new `jobs` table + new status lifecycle + new route + Server Actions
+- **Mutual ratings** — new `ratings` table + RLS enforcement + new UI sections
+- **Domain rebrand** — config/metadata changes only, no schema changes
+
+---
+
+## System Overview
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                    Browser / Client                              │
-│  ┌────────────┐  ┌──────────────┐  ┌──────────────────────────┐  │
-│  │  NavBar    │  │SearchFilters │  │    ContactSection        │  │
-│  │ 'use client'│  │ 'use client' │  │    'use client'          │  │
-│  │ auth state │  │ URL push     │  │ fetches /api/contact     │  │
-│  └────────────┘  └──────────────┘  └──────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────┘
-         │                │                      │
-         │ (hydration)    │ (searchParams)        │ (fetch with Bearer)
-         ▼                ▼                      ▼
-┌──────────────────────────────────────────────────────────────────┐
-│               Next.js App Router — Server Layer                  │
-│                                                                  │
-│  ┌──────────┐  ┌──────────────┐  ┌──────────┐  ┌─────────────┐  │
-│  │page.tsx  │  │[id]/page.tsx │  │explore/  │  │admin/       │  │
-│  │(SC)      │  │(SC)          │  │page.tsx  │  │page.tsx     │  │
-│  │Homepage  │  │Profile detail│  │(SC)      │  │(SC)         │  │
-│  └──────────┘  └──────────────┘  └──────────┘  └─────────────┘  │
-│                                                                  │
-│  ┌──────────────────────────────────────────────────────────┐    │
-│  │              Route Handlers (API)                        │    │
-│  │   /api/contact/[id]  — protected, approved-only          │    │
-│  └──────────────────────────────────────────────────────────┘    │
-│                                                                  │
-│  ┌──────────────────────────────────────────────────────────┐    │
-│  │              Layout Guards                               │    │
-│  │  contractors/layout.tsx — auth check (client)            │    │
-│  │  admin/layout.tsx      — admin email check (client)      │    │
-│  └──────────────────────────────────────────────────────────┘    │
-└──────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Browser / Client                             │
+│                                                                     │
+│  ┌────────────┐  ┌──────────────┐  ┌─────────────────────────────┐  │
+│  │  NavBar    │  │SearchFilters │  │    ContactSection            │  │
+│  │ 'use client'│  │ 'use client' │  │    'use client'              │  │
+│  └────────────┘  └──────────────┘  └─────────────────────────────┘  │
+│                                                                     │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │  NEW: RatingForm 'use client' — submit mutual rating         │   │
+│  │  NEW: JobStatusControl 'use client' — mark hired/completed   │   │
+│  └──────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────┘
          │
-         │ (supabase-admin / service role)
+         │ (hydration / Server Actions / fetch)
          ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                       Supabase                                   │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌───────────┐  │
-│  │contractors │  │certific-   │  │applications│  │ profiles  │  │
-│  │(RLS)       │  │ations (RLS)│  │(RLS)       │  │ (RLS)     │  │
-│  └────────────┘  └────────────┘  └────────────┘  └───────────┘  │
-│                                                                  │
-│  ┌────────────┐  ┌──────────────────────────────────────────┐   │
-│  │  posts     │  │  Storage: avatars / post-images /         │   │
-│  │  (RLS)     │  │           application-docs                │   │
-│  └────────────┘  └──────────────────────────────────────────┘   │
-│                                                                  │
-│  Auth (supabase.auth) — JWT tokens, sessions, email OTP          │
-└──────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│               Next.js App Router — Server Layer                     │
+│                                                                     │
+│  ┌──────────────┐  ┌───────────────────┐  ┌──────────────────────┐  │
+│  │ explore/     │  │ jobs/             │  │ contractors/[id]/    │  │
+│  │ page.tsx     │  │ page.tsx          │  │ page.tsx             │  │
+│  │ MODIFIED:    │  │ MODIFIED: lifecycle│  │ MODIFIED: completed  │  │
+│  │ 2-col layout │  │ status display    │  │ jobs + ratings       │  │
+│  └──────────────┘  └───────────────────┘  └──────────────────────┘  │
+│                                                                     │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │  NEW Server Actions                                           │  │
+│  │  app/jobs/actions.ts — createJob, markHired, markCompleted    │  │
+│  │  app/ratings/actions.ts — submitRating                        │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+│                                                                     │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │  Existing Route Handlers (unchanged)                          │  │
+│  │  /api/contact/[id] — protected contact info endpoint          │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+         │ (supabase-admin / service role for reads)
+         │ (supabase browser client for write actions via Server Actions)
+         ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                       Supabase                                      │
+│                                                                     │
+│  EXISTING TABLES                                                    │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌──────────────┐  │
+│  │contractors │  │certific-   │  │applications│  │ profiles     │  │
+│  │(RLS)       │  │ations (RLS)│  │(RLS)       │  │ (RLS)        │  │
+│  └────────────┘  └────────────┘  └────────────┘  └──────────────┘  │
+│  ┌────────────┐                                                     │
+│  │  posts     │                                                     │
+│  │  (RLS)     │                                                     │
+│  └────────────┘                                                     │
+│                                                                     │
+│  NEW TABLES (v1.2)                                                  │
+│  ┌────────────────────────────┐  ┌──────────────────────────────┐  │
+│  │  jobs                      │  │  ratings                     │  │
+│  │  id, gc_contractor_id,     │  │  id, job_id, rater_id,       │  │
+│  │  sub_contractor_id,        │  │  ratee_id, score, review,    │  │
+│  │  title, description,       │  │  created_at                  │  │
+│  │  trade, location_state,    │  │  CONSTRAINT: unique per      │  │
+│  │  status, posted_at,        │  │  (job_id, rater_id)          │  │
+│  │  hired_at, completed_at    │  │  GATED: job must be completed│  │
+│  │  (RLS)                     │  │  (RLS)                       │  │
+│  └────────────────────────────┘  └──────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
 ```
-
-### Component Responsibilities
-
-| Component | Type | Responsibility | Communicates With |
-|-----------|------|---------------|-------------------|
-| `app/layout.tsx` | Server | Root shell, global metadata title template, NavBar | All pages |
-| `app/page.tsx` | Server (static) | Homepage hero, trade links, how-it-works, CTA | None (no data fetch currently) |
-| `app/contractors/layout.tsx` | Client | Auth guard — redirects unauthenticated to /auth | supabase.ts (browser client) |
-| `app/contractors/page.tsx` | Server (force-dynamic) | Directory grid + jobs feed, reads searchParams | supabase-admin.ts |
-| `app/contractors/[id]/page.tsx` | Server (force-dynamic) | Contractor profile, certifications, contact gating | supabase-admin.ts, ContactSection |
-| `app/admin/layout.tsx` | Client | Admin email guard — checks NEXT_PUBLIC_ADMIN_EMAILS | supabase.ts |
-| `app/admin/page.tsx` | Server | Application review queue | supabase-admin.ts |
-| `app/admin/actions.ts` | Server Action | approveApplication, rejectApplication | supabase-admin.ts, email.ts |
-| `app/explore/page.tsx` | Server (force-dynamic) | Social + Q&A feed with example posts fallback | supabase-admin.ts |
-| `app/u/[username]/page.tsx` | Server (force-dynamic) | Public profile — profile + contractor + posts + certs | supabase-admin.ts |
-| `app/api/contact/[id]/route.ts` | Route Handler | Protected endpoint — verifies JWT, checks approved status, returns phone/email | supabase-admin.ts |
-| `components/NavBar.tsx` | Client | Auth-aware nav, username dropdown, sign out | supabase.ts (auth state) |
-| `components/SearchFilters.tsx` | Client | Filter UI — pushes URL params to trigger server re-fetch | useRouter, useSearchParams |
-| `components/ContactSection.tsx` | Client | Fetches contact info via /api/contact/[id] with Bearer token | /api/contact/[id] |
-| `components/ContractorCard.tsx` | Server-compatible | Card display in directory grid | Props only |
-| `components/ProfileHeader.tsx` | Server-compatible | Profile photo, name, trade, location | Props only |
-| `components/CertificationBadge.tsx` | Server-compatible | Cert display with verified/expired status | Props only |
-| `components/PostCard.tsx` | Server-compatible | Social post card | Props only |
-| `lib/supabase.ts` | Browser client | Client-side Supabase access — respects RLS | Used by 'use client' components |
-| `lib/supabase-admin.ts` | Server-only | Service role client — bypasses RLS for server fetches | Used only in Server Components and Route Handlers |
-| `lib/email.ts` | Server-only | Resend — approval/rejection emails | admin/actions.ts |
-| `lib/types.ts` | Shared | TypeScript interfaces: Contractor, Certification, Application, Profile, Post | All files |
 
 ---
 
-## Recommended Project Structure
+## New Database Schema
 
-The existing structure is correct and complete. The additions for this milestone slot in cleanly:
+### `jobs` table
+
+```sql
+CREATE TABLE jobs (
+  id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  gc_contractor_id uuid REFERENCES contractors(id) ON DELETE CASCADE NOT NULL,
+  sub_contractor_id uuid REFERENCES contractors(id) ON DELETE SET NULL,
+  -- sub is nullable: job is "open" until GC marks it hired
+  title            text NOT NULL,
+  description      text,
+  trade            text NOT NULL,
+  location_state   text NOT NULL,
+  status           text NOT NULL DEFAULT 'posted'
+                   CHECK (status IN ('posted', 'hired', 'completed')),
+  posted_at        timestamptz DEFAULT now(),
+  hired_at         timestamptz,
+  completed_at     timestamptz,
+  created_at       timestamptz DEFAULT now()
+);
+```
+
+**Status lifecycle:**
+```
+posted → hired → completed
+```
+- `posted`: GC posted a job, seeking a sub. `sub_contractor_id` is NULL.
+- `hired`: GC marked a sub as hired. `sub_contractor_id` is set. `hired_at` is set.
+- `completed`: GC marked job complete. `completed_at` is set. Ratings unlock.
+
+**Note on `sub_contractor_id`:** The GC selects a sub from the platform directory when marking hired. This creates a verified relationship between two approved contractors — the foundation for ratings integrity.
+
+**RLS policies:**
+
+```sql
+-- Anyone can view posted jobs
+CREATE POLICY "Jobs are publicly viewable"
+  ON jobs FOR SELECT USING (true);
+
+-- Only the GC contractor (owner) can insert
+CREATE POLICY "GC can post jobs"
+  ON jobs FOR INSERT
+  WITH CHECK (
+    gc_contractor_id IN (
+      SELECT id FROM contractors WHERE user_id = auth.uid() AND status = 'approved'
+    )
+  );
+
+-- Only the GC contractor can update status
+CREATE POLICY "GC can update job status"
+  ON jobs FOR UPDATE
+  USING (
+    gc_contractor_id IN (
+      SELECT id FROM contractors WHERE user_id = auth.uid() AND status = 'approved'
+    )
+  );
+```
+
+**Why GC-only updates:** The GC is the job owner and controls progression. The sub cannot self-report completion or hiring. This prevents fraudulent completed-job claims that would unlock ratings.
+
+---
+
+### `ratings` table
+
+```sql
+CREATE TABLE ratings (
+  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  job_id      uuid REFERENCES jobs(id) ON DELETE CASCADE NOT NULL,
+  rater_id    uuid REFERENCES contractors(id) ON DELETE CASCADE NOT NULL,
+  ratee_id    uuid REFERENCES contractors(id) ON DELETE CASCADE NOT NULL,
+  score       integer NOT NULL CHECK (score BETWEEN 1 AND 5),
+  review      text,
+  created_at  timestamptz DEFAULT now(),
+
+  -- Each contractor can only rate the other once per job
+  UNIQUE (job_id, rater_id)
+);
+```
+
+**RLS policies:**
+
+```sql
+-- Ratings are publicly viewable
+CREATE POLICY "Ratings are publicly viewable"
+  ON ratings FOR SELECT USING (true);
+
+-- Only the GC or sub on a completed job can submit a rating
+CREATE POLICY "Participants can rate after completion"
+  ON ratings FOR INSERT
+  WITH CHECK (
+    -- Rater must be a participant in this job
+    rater_id IN (
+      SELECT id FROM contractors WHERE user_id = auth.uid()
+    )
+    AND
+    -- The job must be completed
+    job_id IN (
+      SELECT id FROM jobs WHERE status = 'completed'
+    )
+    AND
+    -- Rater must be GC or sub on this specific job
+    job_id IN (
+      SELECT id FROM jobs
+      WHERE gc_contractor_id = rater_id OR sub_contractor_id = rater_id
+    )
+  );
+```
+
+**Critical integrity rule:** Ratings are locked to `status = 'completed'` jobs. This is enforced at both the RLS layer (INSERT policy) and the Server Action layer (pre-check before insert). Double enforcement prevents any bypass — even if a user calls the Server Action directly, Supabase rejects the insert if the job is not completed.
+
+---
+
+## Component Map: New vs. Modified
+
+### New Components
+
+| Component | Type | File | Responsibility |
+|-----------|------|------|---------------|
+| `JobCard` | Server-compatible | `components/JobCard.tsx` | Display a job listing with status badge (posted/hired/completed) |
+| `JobStatusControl` | Client | `components/JobStatusControl.tsx` | Buttons for GC to mark hired / mark completed — calls Server Actions |
+| `SubSelectorModal` | Client | `components/SubSelectorModal.tsx` | Search-as-you-type to pick a sub from the directory when marking hired |
+| `RatingForm` | Client | `components/RatingForm.tsx` | 1-5 star score + optional text review form — calls Server Actions |
+| `RatingSummary` | Server-compatible | `components/RatingSummary.tsx` | Aggregate average score + count for a contractor profile |
+| `RatingList` | Server-compatible | `components/RatingList.tsx` | Individual rating cards on a contractor profile |
+| `FeedSidebar` | Server-compatible | `components/FeedSidebar.tsx` | Suggested connections sidebar — list of approved contractors the user is not yet connected to |
+| `CompletedJobsSection` | Server-compatible | `components/CompletedJobsSection.tsx` | Portfolio of completed jobs on a contractor profile |
+
+### Modified Components
+
+| Component | Current State | What Changes |
+|-----------|---------------|-------------|
+| `app/explore/page.tsx` | Single-column, max-w-2xl | Change to two-column layout: main feed (posts) + right sidebar (FeedSidebar with suggested connections) |
+| `app/jobs/page.tsx` | Lists job posts from `posts` table (category='jobs') | Replace with query against new `jobs` table; show status lifecycle; include JobStatusControl for GC owners |
+| `app/contractors/[id]/page.tsx` | Shows bio, specialties, certifications, contact | Add: CompletedJobsSection, RatingSummary, RatingList |
+| `app/u/[username]/page.tsx` | Shows bio, posts, certifications | Add: RatingSummary if user is an approved contractor |
+| `app/layout.tsx` | Brand: "Contractors Connect", dark navy | Rebrand: "Hard Hat Social", lighter blue + yellow + white color tokens |
+| `components/NavBar.tsx` | "Contractors Connect" logo text, amber accent | Update brand name, update color scheme |
+| `lib/types.ts` | Contractor, Certification, Application, Profile, Post | Add: Job, Rating TypeScript interfaces |
+
+### New Server Actions
+
+**`app/jobs/actions.ts`** — all protected by `is_approved_contractor()` check
+
+```typescript
+'use server'
+// createJob(formData) — GC posts a new job
+// markHired(jobId, subContractorId) — GC marks a sub hired; sets hired_at
+// markCompleted(jobId) — GC marks job done; sets completed_at, status='completed'
+```
+
+**`app/ratings/actions.ts`** — protected by job completion check
+
+```typescript
+'use server'
+// submitRating(jobId, rateeId, score, review) — GC or sub submits a rating
+//   Pre-check: verify job.status === 'completed'
+//   Pre-check: verify caller is gc_contractor_id or sub_contractor_id on this job
+//   Then: insert into ratings table (RLS also enforces as second layer)
+```
+
+**Why Server Actions for writes (not API routes):** The existing pattern uses Server Actions for admin mutations and the API route only for the contact-info protected endpoint. Server Actions fit naturally for form submissions (rating form, job posting form) without needing a separate fetch call from the client.
+
+---
+
+## Data Flow: New Patterns
+
+### Jobs Lifecycle Flow
+
+```
+GC visits /jobs page (Server Component)
+    ↓
+Queries jobs WHERE gc_contractor_id matches session user
+    + all jobs with status='posted' (public feed)
+    ↓
+JobCard renders — if viewer is the GC and status='posted':
+    → JobStatusControl renders (Client Component)
+    → "Mark Hired" button → opens SubSelectorModal
+        → sub selector fetches /contractors?approved (directory)
+        → GC picks sub → calls markHired(jobId, subId) Server Action
+            → UPDATE jobs SET status='hired', sub_contractor_id=X, hired_at=now()
+    → "Mark Completed" button (visible when status='hired')
+        → calls markCompleted(jobId) Server Action
+            → UPDATE jobs SET status='completed', completed_at=now()
+            → ratings unlock for both GC and sub
+```
+
+### Mutual Ratings Flow
+
+```
+GC or sub views /contractors/[id] of the other party
+    ↓
+Server Component queries:
+    - ratings WHERE ratee_id = contractor.id (their received ratings)
+    - jobs WHERE (gc_contractor_id=viewer OR sub_contractor_id=viewer)
+               AND (gc_contractor_id=contractor.id OR sub_contractor_id=contractor.id)
+               AND status='completed'
+    → If a completed shared job exists AND viewer has not yet rated: show RatingForm
+    ↓
+RatingForm (Client Component) renders — 1-5 stars + text
+    → user submits → calls submitRating(jobId, rateeId, score, review) Server Action
+        → Server Action pre-checks: job.status === 'completed'
+        → Server Action pre-checks: caller is participant
+        → Supabase INSERT — RLS also validates (double layer)
+        → revalidatePath('/contractors/[id]') — profile re-renders with new rating
+```
+
+### Feed Redesign: Explore Page Layout
+
+```
+Current: single column, max-w-2xl, posts only
+
+New layout (2-column):
+┌────────────────────────────────────────────────────────┐
+│  [Explore] header + category tabs                      │
+├───────────────────────────────┬────────────────────────┤
+│  Main feed (posts)            │  Right sidebar         │
+│  flex-1, space-y-3            │  w-72, shrink-0        │
+│  PostCard[]                   │  FeedSidebar           │
+│                               │  "Suggested"           │
+│                               │  List of 5-8 approved  │
+│                               │  contractors not in    │
+│                               │  viewer's connections  │
+│                               │  (or random sample     │
+│                               │  if not logged in)     │
+└───────────────────────────────┴────────────────────────┘
+
+Mobile: sidebar stacks below feed (flex-col on mobile, flex-row on lg)
+```
+
+**Suggested connections query (Server Component):**
+```typescript
+// If authenticated: query approved contractors whose user_id is not the viewer
+//   ORDER BY created_at DESC LIMIT 8
+// If not authenticated: same query, no exclusion
+// No "connections" table exists yet — "suggested" = recently approved contractors
+// This is the correct scope for v1.2; a connections table comes later
+```
+
+The sidebar does not require a new table. "Suggested connections" for v1.2 means recently approved contractors the viewer might not know. This is honest (they are all real verified contractors) and requires zero new schema.
+
+---
+
+## Project Structure Changes
 
 ```
 contractors-connect/
 ├── app/
-│   ├── layout.tsx                    # Add title template: '%s | Contractors Connect'
-│   │                                 # Add metadataBase for OG image URLs
-│   ├── page.tsx                      # Homepage redesign — add server Supabase fetch for teaser profiles
-│   │                                 # Add static metadata export
-│   ├── contractors/
-│   │   ├── layout.tsx                # Existing auth guard (unchanged)
-│   │   ├── loading.tsx               # NEW — skeleton for directory grid (loading.js convention)
-│   │   └── [id]/
-│   │       ├── page.tsx              # Add generateMetadata() for contractor name/trade/location
-│   │       │                         # Add JSON-LD script tag (LocalBusiness or Person schema)
-│   │       └── loading.tsx           # NEW — skeleton for profile page
+│   ├── layout.tsx                    # MODIFIED: rebrand colors, title template
 │   ├── explore/
-│   │   └── loading.tsx               # NEW — skeleton for feed
+│   │   └── page.tsx                  # MODIFIED: 2-col layout + FeedSidebar
+│   ├── jobs/
+│   │   ├── page.tsx                  # MODIFIED: query jobs table, status display
+│   │   └── actions.ts                # NEW: createJob, markHired, markCompleted
+│   ├── contractors/
+│   │   └── [id]/
+│   │       └── page.tsx              # MODIFIED: CompletedJobsSection + RatingSummary + RatingForm
 │   ├── u/
 │   │   └── [username]/
-│   │       ├── page.tsx              # Add generateMetadata() for username
-│   │       └── loading.tsx           # NEW — skeleton for public profile
-│   ├── admin/
-│   │   └── contractors/
-│   │       └── [id]/page.tsx         # Existing cert management page
-│   └── api/
-│       └── contact/[id]/route.ts     # Unchanged
+│   │       └── page.tsx              # MODIFIED: RatingSummary if contractor
+│   └── ratings/
+│       └── actions.ts                # NEW: submitRating Server Action
 ├── components/
-│   ├── NavBar.tsx                    # Mobile nav improvement — hamburger / bottom bar
-│   ├── skeletons/                    # NEW directory for skeleton components
-│   │   ├── ContractorCardSkeleton.tsx
-│   │   ├── DirectoryGridSkeleton.tsx
-│   │   └── ProfileSkeleton.tsx
-│   └── [existing components unchanged]
-└── lib/
-    └── [existing files unchanged]
+│   ├── NavBar.tsx                    # MODIFIED: rebrand name + colors
+│   ├── JobCard.tsx                   # NEW
+│   ├── JobStatusControl.tsx          # NEW (client)
+│   ├── SubSelectorModal.tsx          # NEW (client)
+│   ├── RatingForm.tsx                # NEW (client)
+│   ├── RatingSummary.tsx             # NEW (server-compatible)
+│   ├── RatingList.tsx                # NEW (server-compatible)
+│   ├── FeedSidebar.tsx               # NEW (server-compatible)
+│   └── CompletedJobsSection.tsx      # NEW (server-compatible)
+├── lib/
+│   └── types.ts                      # MODIFIED: add Job, Rating interfaces
+└── supabase/
+    └── migrations/
+        └── 007_jobs_ratings.sql      # NEW: jobs + ratings tables, RLS, indexes
 ```
-
-### Structure Rationale
-
-- **loading.tsx files:** Next.js App Router's `loading.js` convention automatically wraps `page.js` in a `<Suspense>` boundary. Place `loading.tsx` at the route segment level (same folder as `page.tsx`) — no manual Suspense wrappers needed for full-page loading states.
-- **skeletons/ directory:** Isolate skeleton components from real components. Skeletons are purely presentational and have no data dependencies. Keep them adjacent to components/ not inside app/.
-- **generateMetadata in page.tsx only:** The function can only export from Server Components. It cannot coexist with `export const metadata` in the same file. For dynamic routes like `/contractors/[id]`, use `generateMetadata` and fetch contractor data — Next.js automatically memoizes the same fetch call shared between `generateMetadata` and the default export.
-- **JSON-LD in page.tsx return:** Not a metadata field. Render as `<script type="application/ld+json">` directly in the page JSX. For contractor profiles, use `Person` or `LocalBusiness` schema.org type.
 
 ---
 
 ## Architectural Patterns
 
-### Pattern 1: Server Component with Admin Client (force-dynamic)
+### Pattern 1: GC-Owned Entity with Status Lifecycle
 
-The dominant data fetching pattern in this codebase. All pages that read from Supabase use the admin client (service role) from a Server Component. The `force-dynamic` directive prevents Next.js from caching the response, which is correct for search results and authenticated feeds.
+The `jobs` table introduces a status lifecycle. The GC is the owner (inserter) and the only party who can advance status. This is enforced at three layers:
 
-**When to use:** Any page that reads from Supabase and should always show fresh data.
+1. **RLS INSERT policy** — `gc_contractor_id` must match `auth.uid()`
+2. **RLS UPDATE policy** — same check on updates
+3. **Server Action pre-check** — verify the caller is the GC before calling Supabase
+
+The triple-layer approach is deliberate. The Server Action pre-check provides a clear error message to the UI. The RLS policies are the actual security boundary.
+
+**When to use:** Any entity where one party (GC) controls lifecycle and the other (sub) has read-only visibility.
 
 ```typescript
-// app/contractors/page.tsx — existing pattern, correct
+// app/jobs/actions.ts
+'use server'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
+import { revalidatePath } from 'next/cache'
 
-export const dynamic = 'force-dynamic'
-
-export default async function ContractorsPage({ searchParams }: PageProps) {
+export async function markCompleted(jobId: string, gcUserId: string) {
   const admin = getSupabaseAdmin()
-  const { data } = await admin
-    .from('contractors')
-    .select('...')
-    .eq('status', 'approved')
 
-  return <div>...</div>
+  // Pre-check: verify caller is GC on this job
+  const { data: job } = await admin
+    .from('jobs')
+    .select('gc_contractor_id, status, contractors!gc_contractor_id(user_id)')
+    .eq('id', jobId)
+    .single()
+
+  if (!job || job.status !== 'hired') {
+    return { error: 'Job must be in hired state to mark complete' }
+  }
+
+  // Supabase UPDATE — RLS also enforces GC ownership
+  await admin
+    .from('jobs')
+    .update({ status: 'completed', completed_at: new Date().toISOString() })
+    .eq('id', jobId)
+
+  revalidatePath('/jobs')
+  revalidatePath(`/contractors/${job.gc_contractor_id}`)
 }
 ```
 
-**Trade-offs:** Zero caching means every page load hits Supabase. Acceptable at current scale (< 500 contractors). For the homepage teaser, consider caching with `revalidate: 300` since teaser profiles don't change often.
+### Pattern 2: Double-Enforced Rating Gate
 
-### Pattern 2: generateMetadata with Shared Data Fetch
+Ratings are only valid for completed jobs. This is enforced at both layers (Server Action pre-check + RLS INSERT policy) because the integrity of ratings is the core trust signal of the platform. A single bypass point would corrupt the entire ratings system.
 
-For dynamic contractor profile pages, `generateMetadata` needs the same contractor data as the page component. Next.js automatically deduplicates the fetch — call `getSupabaseAdmin()` in both and make the same query; it will only run once.
-
-**When to use:** Any dynamic route (`[id]`, `[username]`) needing SEO metadata.
+**When to use:** Any write where the validity condition is derived from another table's state (here: job status).
 
 ```typescript
-// app/contractors/[id]/page.tsx
-import type { Metadata } from 'next'
+// app/ratings/actions.ts
+'use server'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
+import { revalidatePath } from 'next/cache'
 
-export async function generateMetadata(
-  { params }: { params: { id: string } }
-): Promise<Metadata> {
+export async function submitRating(
+  jobId: string,
+  rateeId: string,
+  score: number,
+  review: string | null
+) {
   const admin = getSupabaseAdmin()
-  const { data: contractor } = await admin
-    .from('contractors')
-    .select('full_name, trade, location_city, location_state')
-    .eq('id', params.id)
-    .eq('status', 'approved')
+
+  // Pre-check 1: job must be completed
+  const { data: job } = await admin
+    .from('jobs')
+    .select('status, gc_contractor_id, sub_contractor_id')
+    .eq('id', jobId)
     .single()
 
-  if (!contractor) return { title: 'Contractor Not Found' }
-
-  return {
-    title: `${contractor.full_name} — ${contractor.trade}`,
-    description: `Verified ${contractor.trade} contractor in ${contractor.location_city}, ${contractor.location_state}.`,
-    openGraph: {
-      title: `${contractor.full_name} | Contractors Connect`,
-      description: `Verified ${contractor.trade} contractor in ${contractor.location_city}, ${contractor.location_state}.`,
-      type: 'profile',
-    },
+  if (!job || job.status !== 'completed') {
+    return { error: 'Ratings are only allowed after job completion' }
   }
+
+  // Pre-check 2: ratee must be a participant
+  const validRatees = [job.gc_contractor_id, job.sub_contractor_id]
+  if (!validRatees.includes(rateeId)) {
+    return { error: 'Can only rate a participant in this job' }
+  }
+
+  // RLS policy enforces the same checks as a second layer
+  const { error } = await admin
+    .from('ratings')
+    .insert({ job_id: jobId, ratee_id: rateeId, score, review })
+
+  if (error) return { error: error.message }
+
+  revalidatePath(`/contractors/${rateeId}`)
+  return { success: true }
 }
+```
 
-export default async function ContractorProfilePage({ params }: { params: { id: string } }) {
-  // Same query — Next.js deduplicates the fetch automatically
+**Note on using admin client in Server Actions:** The existing `actions.ts` pattern uses `supabase-admin` for all writes. This is consistent with the existing codebase. The admin client bypasses RLS — which means the Server Action's pre-checks ARE the security layer. Preserve the double-check pattern exactly.
+
+### Pattern 3: Server Component Sidebar (No Extra Round-Trip)
+
+The `FeedSidebar` (suggested connections) fetches data in the same Server Component render as the main feed. No separate API call needed — both queries run in parallel with `Promise.all`.
+
+**When to use:** Any sidebar/secondary content that is adjacent to the main page content, has no user interaction, and can be fetched on the server.
+
+```typescript
+// app/explore/page.tsx
+export default async function ExplorePage({ searchParams }: PageProps) {
   const admin = getSupabaseAdmin()
-  const { data: contractor } = await admin
-    .from('contractors')
-    .select('...')
-    .eq('id', params.id)
-    .eq('status', 'approved')
-    .single()
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Person',
-    name: contractor.full_name,
-    jobTitle: contractor.trade,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: contractor.location_city,
-      addressRegion: contractor.location_state,
-    },
-  }
+  const [{ data: postsData }, { data: suggestedData }] = await Promise.all([
+    admin.from('posts').select('...').eq('category', category).limit(20),
+    admin.from('contractors').select('id, full_name, trade, location_state, profile_photo_url')
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false })
+      .limit(8),
+  ])
 
   return (
-    <div>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
-        }}
-      />
-      {/* rest of page */}
+    <div className="flex flex-col gap-8 lg:flex-row">
+      <div className="flex-1">
+        {/* posts feed */}
+      </div>
+      <aside className="w-full shrink-0 lg:w-72">
+        <FeedSidebar contractors={suggestedData ?? []} />
+      </aside>
     </div>
   )
 }
 ```
 
-### Pattern 3: loading.tsx — Route-Level Skeleton
+The sidebar is server-rendered, passes data as props to `FeedSidebar`, which is a pure display component (no `'use client'` directive needed). No hydration cost.
 
-`loading.tsx` placed in the same directory as `page.tsx` is automatically wrapped by Next.js in a `<Suspense>` boundary. It shows immediately on navigation before the async Server Component resolves.
+### Pattern 4: Client Component for Interactive Mutation (Slim Boundary)
 
-**When to use:** Any route with a slow Supabase fetch (directory, profile, explore, public profile).
+`JobStatusControl` and `RatingForm` are `'use client'` components because they have interactive state (button loading states, form inputs, modal open/close). They call Server Actions directly — no fetch to an API route needed.
 
 ```typescript
-// app/contractors/loading.tsx
-import { DirectoryGridSkeleton } from '@/components/skeletons/DirectoryGridSkeleton'
+// components/RatingForm.tsx
+'use client'
+import { useState, useTransition } from 'react'
+import { submitRating } from '@/app/ratings/actions'
 
-export default function Loading() {
-  return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <div className="h-8 w-48 animate-pulse rounded bg-slate-800" />
-        <div className="mt-2 h-4 w-32 animate-pulse rounded bg-slate-800" />
-      </div>
-      <div className="flex flex-col gap-8 lg:flex-row">
-        <aside className="w-full shrink-0 lg:w-56">
-          <div className="h-64 animate-pulse rounded-lg bg-slate-900" />
-        </aside>
-        <DirectoryGridSkeleton />
-      </div>
-    </div>
-  )
+export default function RatingForm({ jobId, rateeId }: Props) {
+  const [score, setScore] = useState(0)
+  const [review, setReview] = useState('')
+  const [isPending, startTransition] = useTransition()
+
+  function handleSubmit() {
+    startTransition(async () => {
+      await submitRating(jobId, rateeId, score, review || null)
+    })
+  }
+  // ...
 }
 ```
 
-### Pattern 4: Client Component for Browser-Only Interactions
-
-Three client components handle browser-specific concerns. They sit at the leaf of the component tree (not wrapping large subtrees), minimizing the client bundle.
-
-**When to use:** Auth state subscription (NavBar), URL manipulation (SearchFilters), authenticated API calls with JWT (ContactSection).
-
-```typescript
-// The existing pattern is correct:
-// - 'use client' at top of file
-// - Import from lib/supabase.ts (browser client, not admin)
-// - Minimal logic: auth state, router.push, fetch with Bearer token
-```
+`useTransition` is the correct pattern here — it marks the Server Action call as a non-urgent transition so the UI stays responsive during the round-trip.
 
 ---
 
-## Data Flow
+## Domain Rebrand: Integration Points
 
-### Request Flow: Directory Page
+The rebrand (Hard Hat Social / hardhatsocial.net) touches configuration and visual layer only. No schema changes.
 
-```
-User navigates to /contractors?trade=Welding&state=TX
-    ↓
-contractors/layout.tsx (Client) — checks Supabase auth session
-    ↓ (if authenticated)
-contractors/loading.tsx — renders skeleton immediately (streaming)
-    ↓ (async, concurrent)
-contractors/page.tsx (Server Component)
-    → getSupabaseAdmin() — service role client
-    → .from('contractors').eq('status', 'approved').eq('trade', 'Welding')...
-    → Supabase Postgres (RLS bypassed by admin client)
-    ← contractors[] + posts[]
-    → renders ContractorCard[] + SearchFilters
-    ↓
-Browser receives streamed HTML — skeleton swaps to real content
-    ↓
-SearchFilters hydrates as Client Component
-    → user changes state filter
-    → router.push('/contractors?trade=Welding&state=TX')
-    → triggers new server render (force-dynamic, no cache)
-```
+### Files to Update
 
-### Request Flow: Contact Info (Security Critical)
+| File | Change |
+|------|--------|
+| `app/layout.tsx` | Update `metadataBase`, title template, `og:site_name` |
+| `components/NavBar.tsx` | Update logo text: "Hard Hat Social" |
+| `app/contractors/[id]/page.tsx` | Update JSON-LD `url` field domain |
+| `app/u/[username]/page.tsx` | Update JSON-LD `url` field domain |
+| `tailwind.config.ts` | Add/update brand colors: lighter blue, yellow, white |
+| All pages with static `metadata` export | Update `openGraph.siteName` |
 
-```
-User views /contractors/[id] (Server Component renders page)
-    ↓
-ContactSection renders (Client Component, 'use client')
-    ↓
-supabase.auth.getSession() — gets JWT from browser
-    ↓
-fetch('/api/contact/[id]', { Authorization: 'Bearer <jwt>' })
-    ↓
-app/api/contact/[id]/route.ts (Route Handler, server)
-    → admin.auth.getUser(token) — verifies JWT with Supabase
-    → admin.from('contractors').eq('user_id', user.id).eq('status', 'approved')
-    → if not approved → 403 Forbidden
-    → if approved → returns { phone, email }
-    ↓
-ContactSection displays contact info or auth prompt
+### Color Token Changes
+
+Current palette: dark navy (`slate-900`), amber (`amber-500`), slate grays.
+
+New palette (lighter blue + yellow + white):
+- Primary background: shift from `slate-950` / `slate-900` to `blue-950` / `blue-900` tones
+- Accent: keep yellow/amber family (`yellow-400` / `amber-400`) — consistent with construction industry
+- Text: `white` and `slate-200` on dark backgrounds
+
+**Recommendation:** Define color aliases in `tailwind.config.ts` so a single token change propagates everywhere, rather than find-and-replace hex values across 15+ files.
+
+```javascript
+// tailwind.config.ts
+theme: {
+  extend: {
+    colors: {
+      brand: {
+        bg: '#0a1628',       // dark blue (replaces slate-950)
+        surface: '#0f2040',  // lighter dark blue (replaces slate-900)
+        accent: '#fbbf24',   // yellow-400 (same amber family)
+        text: '#f1f5f9',     // slate-100
+      }
+    }
+  }
+}
 ```
 
-**Why this pattern is correct:** RLS alone cannot stop a logged-in non-approved user from seeing contact info if the query runs on the server. The API route enforces the approved-only check at the application layer with an explicit status check before returning data.
+**Caution:** The codebase uses Tailwind class names directly (`bg-slate-900`, `text-amber-500`) in every component — not CSS variables or aliases. Updating colors requires a systematic find-and-replace across all component and page files. This is tedious but not risky if done in a single focused pass. Do not mix old and new color tokens partway through — the visual inconsistency would look worse than either palette alone.
 
-### Request Flow: SEO Metadata (New Addition)
+---
+
+## Data Flow: Completed Jobs on Contractor Profile
 
 ```
-Google/social crawler hits /contractors/[id]
+User visits /contractors/[id] (Server Component)
     ↓
-Next.js runs generateMetadata() — fetches contractor from Supabase
+Promise.all([
+  fetch contractor,
+  fetch certifications,
+  fetch completed jobs WHERE (gc_contractor_id=id OR sub_contractor_id=id) AND status='completed',
+  fetch ratings WHERE ratee_id=id,
+  fetch viewer's contractor_id (to determine if viewer can leave a rating)
+])
     ↓
-For HTML-limited bots (Twitterbot, Facebookbot):
-    → metadata blocks page render; goes into <head> of initial HTML
-For JavaScript-capable bots (Googlebot):
-    → metadata streams in after initial UI (streaming metadata, Next.js 15.2+)
-    ↓
-JSON-LD <script> is included in server-rendered page HTML
-    → Googlebot reads structured data for rich results (name, trade, location)
+Server renders:
+  - ProfileHeader (existing)
+  - Bio, specialties, certifications (existing)
+  - CompletedJobsSection — list of completed jobs (NEW)
+  - RatingSummary — avg score + count (NEW)
+  - RatingList — individual reviews (NEW)
+  - RatingForm — only if: viewer is approved contractor AND viewer was a participant
+               in a completed job with this contractor AND has not yet rated (NEW, client)
 ```
 
-### State Management
+**Rating eligibility check (server-side):**
+```typescript
+// In /contractors/[id]/page.tsx
+const viewerEligibleToRate = completedSharedJobs.some(job =>
+  !existingRatingsByViewer.find(r => r.job_id === job.id)
+)
+```
 
-There is no global state management library. State lives in:
-
-1. **URL search params** — filter state for the directory (trade, state, q). SearchFilters reads and writes these. Server Component re-renders on navigation.
-2. **React useState in Client Components** — NavBar (session, username, dropdown), SearchFilters (input text), ContactSection (status, contact data).
-3. **Supabase session** — managed by Supabase Auth client. NavBar subscribes via `onAuthStateChange`. Layout guards check via `getSession()`.
-
-No shared state store needed at current scope.
+This check runs on the server — the `RatingForm` only renders if `viewerEligibleToRate` is true. No client-side gate needed.
 
 ---
 
 ## Integration Points
 
-### External Services
-
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| Supabase Postgres | `supabase-admin.ts` in Server Components, `supabase.ts` in Client Components | Never mix clients — admin client bypasses RLS |
-| Supabase Auth | Browser client `supabase.auth.*` in 'use client' components | JWT verified server-side in route handlers via `admin.auth.getUser(token)` |
-| Supabase Storage | Browser client for uploads (avatars, post-images) from profile page; Admin client for application-docs | Bucket policies: avatars and post-images public read, authenticated write |
-| Resend | `lib/email.ts` called from `app/admin/actions.ts` (Server Action) | Server-only; never called from client |
-| Vercel | Hosting — env vars set via Vercel dashboard, not committed to repo | `NEXT_PUBLIC_*` vars available client-side; `SUPABASE_SERVICE_ROLE_KEY` and `RESEND_API_KEY` server-only |
-
-### Internal Boundaries
+### New Internal Boundaries
 
 | Boundary | Communication | Rule |
 |----------|---------------|------|
-| Server Components ↔ Client Components | Props only (data passed down, no callbacks up) | Do not pass non-serializable objects (functions, class instances) as props from server to client |
-| Client Components ↔ Supabase | lib/supabase.ts only | Never import supabase-admin.ts in a 'use client' file — it leaks the service role key |
-| Server Components ↔ Supabase | lib/supabase-admin.ts for data reads; lib/supabase.ts only when reading auth from headers/cookies | Prefer admin client for all server-side reads (consistent, bypasses RLS safely for approved-only queries) |
-| Admin actions ↔ Email | lib/email.ts | Server Action calls Resend — never from client, never expose Resend API key |
-| ContactSection ↔ Contact Data | HTTP via /api/contact/[id] | Never fetch contact info directly from client — always through the route handler that enforces approved status |
+| `JobStatusControl` (client) ↔ `markHired`/`markCompleted` (server) | Server Actions (direct call, no fetch) | Use `useTransition` for pending state; revalidate `/jobs` and `/contractors/[id]` after mutation |
+| `SubSelectorModal` (client) ↔ contractors directory | Query via `supabase.ts` browser client (RLS-safe read of approved contractors) | Only approved contractors visible — RLS `status='approved'` policy already enforces this |
+| `RatingForm` (client) ↔ `submitRating` (server) | Server Action | Double-check job completion status in action before insert |
+| `FeedSidebar` (server) ↔ contractors table | Direct Supabase query in `explore/page.tsx` via `Promise.all` | No new client boundary — sidebar is a pure display component |
+| `jobs` table ↔ `ratings` table | `job_id` FK in ratings + `status='completed'` gate | Ratings without a completed job are impossible at the DB layer (RLS) |
+
+### External Services (unchanged)
+
+| Service | Status | Notes |
+|---------|--------|-------|
+| Supabase Postgres | Unchanged | Two new tables: jobs, ratings |
+| Supabase Auth | Unchanged | Same JWT pattern for all Server Actions |
+| Resend | Unchanged | No new email triggers for v1.2 |
+| Vercel | Config change | Update `NEXT_PUBLIC_APP_URL` to hardhatsocial.net after DNS is live |
 
 ---
 
-## Build Order for This Milestone
+## Build Order for v1.2 Milestone
 
-Dependencies between the items in scope determine the correct implementation order:
+Dependencies determine the order. The jobs table must exist before any jobs UI is built. Ratings require jobs. Feed redesign has no dependencies and can go first.
 
-### Phase 1: Foundation (no dependencies, unblock everything else)
+### Step 1: Database Migration (prerequisite for jobs + ratings features)
 
-1. **`app/layout.tsx`** — Add `metadataBase` and title template `'%s | Contractors Connect'`
-   - Unblocks: All `generateMetadata` on child pages (OG image URLs resolve correctly only after `metadataBase` is set)
-   - No data dependency, purely config
+Write and apply `supabase/migrations/007_jobs_ratings.sql`:
+- `jobs` table + status check constraint + indexes
+- `ratings` table + unique constraint + score check + indexes
+- RLS policies for both tables
+- Nothing else can be built until this migration is applied
 
-2. **Skeleton components** (`components/skeletons/`)
-   - Create `ContractorCardSkeleton`, `DirectoryGridSkeleton`, `ProfileSkeleton`
-   - No data dependency, purely presentational
-   - Unblocks: All `loading.tsx` files
+### Step 2: TypeScript Types
 
-### Phase 2: Data Layer Changes (depends on Phase 1)
+Add `Job` and `Rating` interfaces to `lib/types.ts`.
+- Prerequisite for all component and action files
 
-3. **`app/page.tsx` homepage redesign**
-   - Change from static to server component with Supabase fetch for teaser profiles
-   - Add static `metadata` export (title, description, OG)
-   - Add `export const revalidate = 300` (not `force-dynamic` — teaser profiles change infrequently)
-   - This is the chicken-and-egg solution: show placeholder profiles until real ones exist
+### Step 3: Domain Rebrand (no data dependency — can do in parallel with Step 1)
 
-### Phase 3: SEO on Existing Pages (depends on Phase 1)
+- Update `tailwind.config.ts` color tokens
+- Update `NavBar.tsx` brand text
+- Update `app/layout.tsx` metadataBase + title
+- Update JSON-LD URLs in contractor profile pages
+- Systematic color class replacement across all files
+- Test locally that no visual regressions appear
 
-4. **`app/contractors/[id]/page.tsx`** — Add `generateMetadata` + JSON-LD
-   - Reads same data as the existing page (auto-deduplicated)
-   - Add `Person` schema.org JSON-LD script tag in return JSX
+### Step 4: Server Actions
 
-5. **`app/u/[username]/page.tsx`** — Add `generateMetadata`
-   - Reads same profile data as existing page
-   - No JSON-LD needed (social posts don't benefit from structured data)
+Write `app/jobs/actions.ts` and `app/ratings/actions.ts`.
+- Depends on: Step 1 (table exists), Step 2 (types)
+- These are server-only — can be verified with unit tests before building UI
 
-6. **`app/contractors/page.tsx`** — Add static `metadata` export
-   - `title: 'Contractor Directory'` (inherits template from layout)
-   - No `generateMetadata` needed (page is not unique per contractor)
+### Step 5: Feed Redesign (no new data dependency)
 
-### Phase 4: UX Polish (depends on Phase 1 skeletons)
+Modify `app/explore/page.tsx`:
+- Change layout to 2-column (main + sidebar)
+- Add `Promise.all` to fetch suggested contractors
+- Create `components/FeedSidebar.tsx` (server-compatible, display only)
+- No new table needed
 
-7. **`app/contractors/loading.tsx`** — Directory skeleton
-8. **`app/contractors/[id]/loading.tsx`** — Profile skeleton
-9. **`app/explore/loading.tsx`** — Feed skeleton
-10. **`app/u/[username]/loading.tsx`** — Public profile skeleton
-11. **Empty states** — already partially implemented in contractors/page.tsx; verify all pages have them
-12. **Mobile nav** — modify `components/NavBar.tsx` to add hamburger menu or mobile-optimized layout
+### Step 6: Jobs UI
 
-### Phase 5: Production Hardening (no code changes, operational)
+Create `components/JobCard.tsx` (server-compatible).
+Create `components/JobStatusControl.tsx` (client).
+Create `components/SubSelectorModal.tsx` (client).
+Modify `app/jobs/page.tsx` to query `jobs` table instead of `posts` table.
+- Depends on: Steps 1, 2, 4
 
-13. **Vercel env vars** — verify all 6 vars set in production project
-14. **Supabase Storage buckets** — verify `avatars`, `post-images`, `application-docs` exist with correct policies
-15. **Resend domain DNS** — add SPF/DKIM records so emails don't land in spam
+### Step 7: Ratings UI
+
+Create `components/RatingSummary.tsx` (server-compatible).
+Create `components/RatingList.tsx` (server-compatible).
+Create `components/RatingForm.tsx` (client).
+Create `components/CompletedJobsSection.tsx` (server-compatible).
+Modify `app/contractors/[id]/page.tsx` to add all rating sections.
+Modify `app/u/[username]/page.tsx` to add `RatingSummary`.
+- Depends on: Steps 1, 2, 4
 
 ---
 
 ## Anti-Patterns
 
-### Anti-Pattern 1: Importing supabase-admin in Client Components
+### Anti-Pattern 1: Allowing Sub to Advance Job Status
 
-**What people do:** Import `getSupabaseAdmin()` from a 'use client' file, or export it without a server-only guard.
-**Why it's wrong:** Next.js bundles 'use client' files into the browser bundle. The service role key (which bypasses all RLS) would be exposed to any user who inspects the bundle.
-**Do this instead:** Only import `supabase-admin.ts` in files that are guaranteed server-only: Server Components, Route Handlers, Server Actions. The current codebase does this correctly — preserve this pattern.
+**What people do:** Add a "Mark as Complete" button visible to the sub on a job they worked.
+**Why it's wrong:** The sub self-reporting completion means unverified jobs unlock ratings. A sub could fabricate a completed relationship with any GC by advancing a job they were never hired on.
+**Do this instead:** Only the GC can advance status (`posted → hired → completed`). The sub's only action is submitting a rating after the GC has marked the job complete.
 
-### Anti-Pattern 2: Client-Side Auth Guard as Security Layer
+### Anti-Pattern 2: Rating Without Job Reference
 
-**What people do:** Rely on `contractors/layout.tsx` (client component auth check) as the security enforcement for contact info.
-**Why it's wrong:** Client-side guards prevent navigation but do not prevent direct API calls. A user can bypass the guard by hitting `/api/contact/[id]` directly with any JWT.
-**Do this instead:** The current codebase already has the correct pattern — the Route Handler (`/api/contact/[id]`) independently verifies JWT and checks approved status. The client layout guard is UX only (prevents useless page loads). This two-layer approach is correct and must be preserved.
+**What people do:** Create a ratings table without a `job_id` FK — allow any approved contractor to rate any other approved contractor.
+**Why it's wrong:** Open ratings are easily gamed. Competitors submit negative ratings. Allies submit fake positives. The entire trust signal collapses within weeks.
+**Do this instead:** Every rating must reference a specific completed job. The unique constraint `(job_id, rater_id)` ensures one rating per participant per job. No job reference = no rating. This is enforced at schema level (FK + constraint) and cannot be bypassed by any application-layer code.
 
-### Anti-Pattern 3: Fetching All Data in Root Layout
+### Anti-Pattern 3: Putting SubSelectorModal Data in Server Action
 
-**What people do:** Move data fetching into `app/layout.tsx` to share data across pages (avoid repeat fetches).
-**Why it's wrong:** Layout data is cached per-request, but it also prevents incremental streaming. More importantly, layout.tsx cannot use `searchParams` (which filters directory results). Each page must fetch its own data.
-**Do this instead:** Use `generateMetadata` deduplication for metadata + page data. Use React cache() for helper functions if the same fetch is needed in multiple Server Components in the same render tree.
+**What people do:** Fetch the list of available subs inside the `markHired` Server Action so the modal doesn't need its own query.
+**Why it's wrong:** The sub selection modal needs a live, searchable list of approved contractors. This is a UI interaction that requires client-side state (search input). The Server Action runs only when the GC submits — not during browsing.
+**Do this instead:** `SubSelectorModal` is a Client Component that queries the `contractors` table directly via the browser Supabase client (`supabase.ts`). RLS already enforces `status='approved'` so the browser client can query safely. The Server Action receives only `jobId` and `subContractorId` when the GC confirms selection.
 
-### Anti-Pattern 4: Using force-dynamic on the Homepage
+### Anti-Pattern 4: Replacing the `posts` Jobs Category with the New `jobs` Table Immediately
 
-**What people do:** Add `export const dynamic = 'force-dynamic'` to the homepage because "it has data."
-**Why it's wrong:** The homepage teaser profiles change at most once per approval cycle (hours or days). Forcing dynamic rendering means every visitor waits for a Supabase round-trip before seeing any content.
-**Do this instead:** Use `export const revalidate = 300` (5 minutes). The homepage re-validates its data every 5 minutes via ISR, not on every request. If no approved contractors exist yet, the hardcoded placeholder/teaser section shows immediately.
+**What people do:** Remove the `category='jobs'` posts in a single migration and rebuild everything at once.
+**Why it's wrong:** The existing `jobs/page.tsx` queries `posts` with `category='jobs'`. A hard cutover breaks the jobs page until all new UI is deployed simultaneously. Any migration mishap means zero jobs are visible.
+**Do this instead:** Keep the `posts` table and `category='jobs'` untouched. Build the new `jobs` table in parallel. Migrate `app/jobs/page.tsx` to query the new `jobs` table only after the full jobs UI is built and verified locally. Old job posts (from the `posts` table) can be archived or left as-is — they are a different entity (informal posts vs. formal job lifecycle).
 
-### Anti-Pattern 5: One Suspense Boundary Around the Entire Page
+### Anti-Pattern 5: Using force-dynamic on the Ratings/Jobs Queries
 
-**What people do:** Wrap `<main>` in a single `<Suspense>` so the whole page shows a spinner.
-**Why it's wrong:** Users see nothing useful until all data resolves. The directory page fetches both contractor cards AND job posts — if one is slow, both are blocked.
-**Do this instead:** Use `loading.tsx` (full page skeleton that streams immediately), and for pages with independent sections (directory + jobs), consider wrapping each section in its own `<Suspense>` with a component-level data fetch so they stream independently.
+**What people do:** Add `export const dynamic = 'force-dynamic'` to every page that now has extra queries.
+**Why it's wrong:** The contractor profile page already has `force-dynamic` — adding more queries doesn't change this. But for pages that do not need `force-dynamic`, adding it unnecessarily kills ISR benefits.
+**Do this instead:** Only pages that read from user session state or volatile data need `force-dynamic`. The contractor profile needs it (contact gating). The explore feed needs it (fresh posts). The ratings display on a profile does not need a fresh hit on every request — it can tolerate 60s stale data. Use `revalidatePath` in Server Actions to invalidate cached profiles after a new rating is submitted.
 
 ---
 
 ## Scaling Considerations
 
-| Scale | Architecture Adjustments |
-|-------|--------------------------|
-| 0-500 contractors | Current approach is fine. `force-dynamic` + admin client. No caching layer needed. |
-| 500-5K contractors | Add pagination (cursor-based, not offset) to directory page. Supabase full-text search index (already in migration 005) handles keyword search. Add `revalidate` to explore/jobs feed instead of force-dynamic. |
-| 5K-50K contractors | Add Supabase connection pooling (PgBouncer). Consider ISR for contractor profile pages (profiles change rarely after approval). Evaluate Supabase Edge Functions for contact info endpoint to reduce cold start latency. |
-| 50K+ contractors | Re-evaluate directory search — Supabase full-text search may need supplement (Algolia, Typesense). Split admin into separate Next.js app or dedicated service. |
-
-### Scaling Priorities
-
-1. **First bottleneck:** Directory page performance as contractor count grows. Supabase query without pagination will be slow past 1K rows. Fix with cursor-based pagination before launch.
-2. **Second bottleneck:** Supabase connection limits. Default free tier allows 60 connections. PgBouncer (transaction pooling) multiplies effective connections. Switch when connection errors appear in Vercel logs.
+| Scale | Jobs + Ratings Impact |
+|-------|----------------------|
+| 0-500 contractors | Current approach fine. Jobs and ratings are low-volume. No indexes beyond FK indexes needed initially. |
+| 500-5K contractors | Add `CREATE INDEX jobs_status_idx ON jobs(status)` and `CREATE INDEX ratings_ratee_id_idx ON ratings(ratee_id)`. Profile pages load rating aggregates — consider a `rating_summary` materialized view if query time grows. |
+| 5K-50K contractors | Ratings aggregate (AVG score per contractor) becomes expensive on every profile load. Pre-compute with a Postgres trigger that updates a `contractors.rating_avg` column on each new rating insert. |
+| 50K+ contractors | Sub selector modal (searching all approved contractors) requires full-text search — the existing `contractors_search_idx` GIN index (migration 005) already handles this. |
 
 ---
 
 ## Sources
 
-- Next.js generateMetadata official docs: https://nextjs.org/docs/app/api-reference/functions/generate-metadata (verified 2026-02-27)
-- Next.js JSON-LD guide: https://nextjs.org/docs/app/guides/json-ld (verified 2026-02-27)
-- Next.js loading.js convention: https://nextjs.org/docs/app/api-reference/file-conventions/loading (verified 2026-02-27)
-- Codebase inspection: `/Users/dylanvazquez/Desktop/contractors-connect/` (direct read, 2026-03-01)
+- Direct codebase inspection of `/Users/dylanvazquez/Desktop/contractors-connect/` (2026-03-04): all server actions, route handlers, migrations, components, and page files
+- Next.js Server Actions documentation: https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations
+- Next.js useTransition with Server Actions: https://react.dev/reference/react/useTransition
+- Supabase Row Level Security: https://supabase.com/docs/guides/database/postgres/row-level-security
+- Supabase Postgres CHECK constraints and UNIQUE constraints (standard SQL, HIGH confidence)
+- Project context from `.planning/PROJECT.md` (2026-03-04)
 
 ---
-*Architecture research for: Contractors Connect — Next.js 14 App Router verified contractor directory*
-*Researched: 2026-03-01*
+*Architecture research for: Hard Hat Social v1.2 — Feed Redesign, Jobs Lifecycle, Mutual Ratings, Domain Rebrand*
+*Researched: 2026-03-04*
