@@ -71,12 +71,12 @@ Plans:
   3. A newly approved contractor appears in the /contractors directory immediately after admin approval — no manual refresh or cache clearing needed
   4. A contractor profile page shows the certifications submitted during their application
   5. Every page in the app displays "Hard Hat Social" branding with the lighter blue, yellow, and white color tokens
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: Bug fixes — admin nav link, email URL, contractor visibility post-approval, cert display, homepage count
-- [ ] 06-02: Brand tokens and UI rebrand — tailwind.config.ts colors, NavBar, metadata, email templates
-- [ ] 06-03: Domain and infrastructure rebrand — DNS, Vercel, Supabase Auth Site URL, Resend, GitHub/project renames
+- [ ] 06-01-PLAN.md — Bug fixes: admin nav link, revalidatePath coverage, email domain fallbacks, brand text in emails
+- [ ] 06-02-PLAN.md — Brand tokens and UI rebrand: tailwind.config.ts colors, NavBar, layout metadata, JSON-LD URL
+- [ ] 06-03-PLAN.md — Domain and infrastructure rebrand: GoDaddy DNS, Vercel domain, Supabase Auth URL, Resend domain, project renames
 
 ### Phase 7: Feed Redesign
 **Goal**: The Explore feed displays posts at full content column width with a right sidebar showing recently verified contractors and suggested connections in the same trade — no new database schema required
