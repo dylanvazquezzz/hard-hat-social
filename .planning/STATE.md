@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: executing
-stopped_at: Phase 03 complete — ready to plan Phase 4 (Homepage Redesign)
-last_updated: "2026-03-04T17:30:00.000Z"
-last_activity: "2026-03-04 — Phase 03 UX Polish complete: loading skeletons, empty state, hamburger mobile nav"
+status: planning
+stopped_at: "04-01 Tasks 1+2 complete — awaiting checkpoint:human-verify before plan close"
+last_updated: "2026-03-05T00:02:50.277Z"
+last_activity: 2026-03-04 — Phase 03 UX Polish complete (2/2 plans, all requirements verified)
 progress:
   total_phases: 5
-  completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  completed_phases: 4
+  total_plans: 9
+  completed_plans: 9
   percent: 60
 ---
 
@@ -66,6 +66,9 @@ Progress: [██████░░░░] 60%
 - 03-02: Inline SVG for hamburger/X icons — no icon package per CLAUDE.md rule
 - 03-02: p-3 padding on h-5 w-5 icon = 44px tap target (WCAG 2.5.5)
 - 03-02: handleClickOutside extended with second if-block — both dropdowns share one event listener
+- [Phase 04-01]: Tasks 1 and 2 combined in single file write — hero overhaul and How it Works copy updated atomically in one commit to app/page.tsx
+- [Phase 04-01]: py-16 sm:py-24 on hero reduces mobile padding so stats row stays above fold on 375px iPhone SE
+- [Phase 04-01]: distinctTrades computed via JavaScript Set from select('trade') query — avoids raw SQL DISTINCT
 
 ### Pending Todos
 
@@ -78,7 +81,7 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-04
-Stopped at: Phase 03 complete — 3 of 5 phases done
+Last session: 2026-03-05T00:02:46.103Z
+Stopped at: 04-01 Tasks 1+2 complete — awaiting checkpoint:human-verify before plan close
 Next action: `/gsd:plan-phase 4` to plan Homepage Redesign
 Resume file: None

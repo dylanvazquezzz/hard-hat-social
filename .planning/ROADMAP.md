@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: SEO and Cert Automation** - Add metadata and JSON-LD to existing pages; auto-create cert records on approval
  (completed 2026-03-04)
 - [x] **Phase 3: UX Polish** - Loading skeletons, empty states, and mobile nav so the directory feels complete before the homepage sends visitors there (completed 2026-03-04)
-- [ ] **Phase 4: Homepage Redesign** - Clear value prop, honest social proof, and a single dominant CTA that converts visiting tradespeople into applicants
+- [x] **Phase 4: Homepage Redesign** - Clear value prop, honest social proof, and a single dominant CTA that converts visiting tradespeople into applicants (completed 2026-03-05)
 - [ ] **Phase 5: Founding Cohort Onboarding** - Run the first 20-50 welders through the existing application and approval flow end-to-end
 
 ## Phase Details
@@ -101,5 +101,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Production Hardening | 3/3 | Complete | 2026-03-03 |
 | 2. SEO and Cert Automation | 3/3 | Complete   | 2026-03-04 |
 | 3. UX Polish | 2/2 | Complete   | 2026-03-04 |
-| 4. Homepage Redesign | 0/TBD | Not started | - |
+| 4. Homepage Redesign | 1/1 | Complete   | 2026-03-05 |
 | 5. Founding Cohort Onboarding | 0/TBD | Not started | - |

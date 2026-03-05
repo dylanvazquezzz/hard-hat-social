@@ -24,9 +24,9 @@ Requirements for this milestone (polish, production hardening, founding cohort r
 
 ### Homepage
 
-- [ ] **HOME-01**: Homepage hero prominently frames "verified only" value prop with a single clear CTA (apply or browse)
-- [ ] **HOME-02**: Homepage displays social proof via real stats/numbers (e.g. trades represented, applications reviewed) — no fake placeholder profiles
-- [ ] **HOME-03**: Homepage layout is mobile-responsive with tap-friendly buttons for tradespeople viewing on phones
+- [x] **HOME-01**: Homepage hero prominently frames "verified only" value prop with a single clear CTA (apply or browse)
+- [x] **HOME-02**: Homepage displays social proof via real stats/numbers (e.g. trades represented, applications reviewed) — no fake placeholder profiles
+- [x] **HOME-03**: Homepage layout is mobile-responsive with tap-friendly buttons for tradespeople viewing on phones
 
 ### SEO
 
