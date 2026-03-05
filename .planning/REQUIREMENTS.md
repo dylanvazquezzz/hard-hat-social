@@ -1,106 +1,97 @@
-# Requirements: Contractors Connect — v1.1 Polish & Launch
+# Requirements: Hard Hat Social — v1.2 Rebrand & Growth
 
-**Defined:** 2026-03-01
+**Defined:** 2026-03-05
 **Core Value:** A contractor can find and contact a verified sub in their trade within 5 minutes — zero unverified people, no spam, no guesswork.
 
-## v1 Requirements
+## v1.2 Requirements
 
-Requirements for this milestone (polish, production hardening, founding cohort readiness).
+Requirements for this milestone: bug fixes, full rebrand to Hard Hat Social, feed redesign, and jobs lifecycle.
 
-### Production Infrastructure
+### Bug Fixes
 
-- [x] **PROD-01**: Resend domain is verified (SPF + DKIM DNS records set) so approval/rejection emails land in inbox, not spam
-- [x] **PROD-02**: Supabase Auth Site URL is updated to production URL so password reset and approval email links work correctly
-- [x] **PROD-03**: Supabase storage bucket write policies are verified — authenticated users can upload to `avatars` and `post-images`; `application-docs` upload is restricted to the applicant's own folder
-- [x] **PROD-04**: `lib/supabase-admin.ts` is protected with `server-only` to prevent service role key from leaking into client bundles
+- [ ] **BUG-01**: Admin users see an "Admin" link in the nav dropdown without typing the URL manually
+- [ ] **BUG-02**: All auth emails (approval, rejection, verification, password reset) link to the production domain, not localhost
+- [ ] **BUG-03**: A newly approved contractor appears in the `/contractors` directory immediately after admin approves them
+- [ ] **BUG-04**: The homepage approved contractor count reflects the actual current count from the database
+- [ ] **BUG-05**: Certifications submitted during the application are visible on the contractor's profile page after approval
 
-### Access Control
+### Rebrand
 
-- [x] **AUTH-01**: Logged-in users with a pending application see a restricted experience — Social and Q&A explore are accessible, but Jobs feed, Profile dashboard, and contractor directory are locked with a "pending review" message until their application is approved or rejected
+- [ ] **BRAND-01**: Product name is "Hard Hat Social" throughout the UI — nav, page titles, metadata, emails
+- [ ] **BRAND-02**: Color scheme uses lighter blue, yellow, and white brand tokens defined in `tailwind.config.ts`
+- [ ] **BRAND-03**: GoDaddy DNS for hardhatsocial.net is configured (A record + CNAME) to point to Vercel
+- [ ] **BRAND-04**: Vercel project connected to hardhatsocial.net as the production domain; `NEXT_PUBLIC_APP_URL` updated and redeployed
+- [ ] **BRAND-05**: Supabase Auth Site URL and redirect allowlist updated to hardhatsocial.net
+- [ ] **BRAND-06**: Resend sender domain updated to hardhatsocial.net with DNS verified (SPF + DKIM)
+- [ ] **BRAND-07**: GitHub repo renamed to `hard-hat-social`; Supabase project and Vercel project renamed to match
 
-### Certifications
+### Feed Redesign
 
-- [x] **CERT-01**: `approveApplication()` in `admin/actions.ts` automatically creates a basic certification record in the `certifications` table from the application data when a contractor is approved
+- [ ] **FEED-01**: Explore page posts fill the full content column width — no excessive side margins
+- [ ] **FEED-02**: Explore page has a right sidebar with "Recently Verified" and "Suggested People (same trade)" widgets
 
-### Homepage
+### Jobs Lifecycle
 
-- [x] **HOME-01**: Homepage hero prominently frames "verified only" value prop with a single clear CTA (apply or browse)
-- [x] **HOME-02**: Homepage displays social proof via real stats/numbers (e.g. trades represented, applications reviewed) — no fake placeholder profiles
-- [x] **HOME-03**: Homepage layout is mobile-responsive with tap-friendly buttons for tradespeople viewing on phones
+- [ ] **JOBS-01**: A GC can create a job posting on the Jobs board
+- [ ] **JOBS-02**: A GC can mark a job as "hired" by selecting which approved contractor was hired
+- [ ] **JOBS-03**: A GC can mark a hired job as "completed"
+- [ ] **JOBS-04**: Completed jobs appear as a verified portfolio section on the hired contractor's profile
 
-### SEO
+## v1.3 Requirements
 
-- [x] **SEO-01**: `metadataBase` is set in root `app/layout.tsx` so all relative OpenGraph image URLs resolve correctly
-- [x] **SEO-02**: `/contractors/[id]` has `generateMetadata` with unique title, description, and OpenGraph tags per contractor
-- [x] **SEO-03**: `/u/[username]` has `generateMetadata` with unique title, description, and OpenGraph tags per user
-- [x] **SEO-04**: `/contractors/[id]` includes JSON-LD structured data (LocalBusiness or Person schema) for Google rich results
+Deferred — ships after the v1.2 jobs foundation is live and validated.
 
-### UX Polish
+### Ratings
 
-- [x] **UX-01**: `/contractors` directory shows card-shaped loading skeletons while data is fetching (instead of blank or spinner)
-- [x] **UX-02**: `/contractors` shows a clear empty state with a "reset filters" action when no contractors match the active search/filters
-- [x] **UX-03**: Mobile navigation is usable at 375px viewport — larger tap targets, collapsed menu accessible without tiny icons
+- **RATE-01**: Both GC and sub receive a rating prompt after a job is marked completed
+- **RATE-02**: Ratings use blind submission — neither party sees the other's rating until both submit or 14 days expire
+- **RATE-03**: Ratings (5-star + optional 280-char text) and aggregate score are visible on contractor profiles
 
-## v2 Requirements
+### Feed
 
-Deferred — worthwhile but not blocking the founding cohort.
-
-### Analytics & Visibility
-
-- **ANLX-01**: Contractor profile view counts visible to the contractor (who viewed my profile)
-- **ANLX-02**: Search impression tracking (how often a contractor appeared in results)
-
-### Notifications
-
-- **NOTF-01**: Contractor receives email when someone views their contact info
-- **NOTF-02**: Admin receives daily digest of new applications
-
-### Advanced Search
-
-- **SRCH-01**: Filter by certification type (not just trade)
-- **SRCH-02**: Filter by years of experience range
-- **SRCH-03**: Search by specialty tags (not just top-level trade)
+- **FEED-03**: User's posts are visible on their public profile page (/u/[username])
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| In-platform messaging | Post-network; contractors exchange contact info off-platform for now |
-| AI assistant (OpenClaw) | After real users exist and patterns emerge |
-| Contract generation + e-sign | Future milestone |
-| Review/rating system | Needs verified completed jobs — future |
+| Self-reported past jobs | Undermines the verified portfolio moat — any fabricated entry destroys credibility |
+| AI-powered sidebar recommendations | Insufficient network signal at current scale; rule-based suggestions (same trade, same state) are more reliable |
+| Admin dispute resolution for jobs | Keep it human and manual; build after patterns emerge |
+| In-platform messaging | Post-network feature |
 | Mobile app | Web-first until validated |
 | Premium tier | After network has active users |
-| Fake/stock-photo placeholder profiles | Tradespeople know each other — destroys trust |
 
 ## Traceability
 
 Which phases cover which requirements. Updated during roadmap creation.
 
-| Requirement | Phase | Phase Name | Status |
-|-------------|-------|------------|--------|
-| PROD-01 | Phase 1 | Production Hardening | Pending |
-| PROD-02 | Phase 1 | Production Hardening | Pending |
-| PROD-03 | Phase 1 | Production Hardening | Pending |
-| PROD-04 | Phase 1 | Production Hardening | Pending |
-| AUTH-01 | Phase 2 | SEO and Cert Automation | Pending |
-| CERT-01 | Phase 2 | SEO and Cert Automation | Pending |
-| SEO-01 | Phase 2 | SEO and Cert Automation | Pending |
-| SEO-02 | Phase 2 | SEO and Cert Automation | Pending |
-| SEO-03 | Phase 2 | SEO and Cert Automation | Pending |
-| SEO-04 | Phase 2 | SEO and Cert Automation | Pending |
-| UX-01 | Phase 3 | UX Polish | Pending |
-| UX-02 | Phase 3 | UX Polish | Pending |
-| UX-03 | Phase 3 | UX Polish | Pending |
-| HOME-01 | Phase 4 | Homepage Redesign | Pending |
-| HOME-02 | Phase 4 | Homepage Redesign | Pending |
-| HOME-03 | Phase 4 | Homepage Redesign | Pending |
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| BUG-01 | — | Pending |
+| BUG-02 | — | Pending |
+| BUG-03 | — | Pending |
+| BUG-04 | — | Pending |
+| BUG-05 | — | Pending |
+| BRAND-01 | — | Pending |
+| BRAND-02 | — | Pending |
+| BRAND-03 | — | Pending |
+| BRAND-04 | — | Pending |
+| BRAND-05 | — | Pending |
+| BRAND-06 | — | Pending |
+| BRAND-07 | — | Pending |
+| FEED-01 | — | Pending |
+| FEED-02 | — | Pending |
+| JOBS-01 | — | Pending |
+| JOBS-02 | — | Pending |
+| JOBS-03 | — | Pending |
+| JOBS-04 | — | Pending |
 
 **Coverage:**
-- v1 requirements: 16 total
-- Mapped to phases: 16
-- Unmapped: 0
+- v1.2 requirements: 18 total
+- Mapped to phases: 0 (roadmap pending)
+- Unmapped: 18
 
 ---
-*Requirements defined: 2026-03-01*
-*Last updated: 2026-03-01 after roadmap creation — phase assignments finalized*
+*Requirements defined: 2026-03-05*
+*Last updated: 2026-03-05 after initial definition*
