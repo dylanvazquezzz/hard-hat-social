@@ -28,11 +28,11 @@ A contractor can find and contact a verified sub in their trade within 5 minutes
 
 ### Active
 
-- [ ] Homepage redesign — show directory value, teaser/placeholder profiles, clear value prop
-- [ ] Production hardening — verify Vercel env vars, storage buckets, Resend domain all working
-- [ ] Founding cohort onboarding — smooth application → approval flow for first 20-50 welders
-- [ ] UX polish — loading skeletons, empty states, mobile nav improvements
-- [ ] SEO/metadata — OpenGraph, structured data, unique titles per page
+- [ ] Bug fixes — admin nav link, email URL pointing to localhost, contractor not appearing post-approval, certs not showing on profiles
+- [ ] Rebranding — rename to Hard Hat Social, connect hardhatsocial.net domain, update color scheme (lighter blue, yellow, white)
+- [ ] Feed redesign — full-width posts on explore, right sidebar with suggested connections, show posts on public profiles
+- [ ] Jobs system — GC marks job hired/completed, completed jobs appear as portfolio on contractor profiles
+- [ ] Ratings system — mutual ratings between GC and sub after job completion, visible on profiles
 
 ### Out of Scope
 
@@ -68,5 +68,16 @@ A contractor can find and contact a verified sub in their trade within 5 minutes
 | B2B before B2C | Build trusted contractor network first, homeowners second | — Pending |
 | Placeholder profiles on homepage | Solve chicken-and-egg; show value before real cohort is onboarded | — Pending |
 
+## Current Milestone: v1.2 Rebrand & Growth
+
+**Goal:** Rebrand to Hard Hat Social, fix critical bugs blocking the founding cohort, redesign the feed for engagement, and introduce a jobs-completion + ratings system to build contractor trust signals.
+
+**Target features:**
+- Bug fixes (admin nav, email URLs, contractor visibility, cert display)
+- Full rebrand: Hard Hat Social / hardhatsocial.net / lighter blue + yellow + white
+- Feed redesign: full-width posts, right sidebar with suggested connections
+- Jobs system: mark hired → complete, portfolio on contractor profiles
+- Ratings: mutual GC ↔ sub ratings after platform-verified job completion
+
 ---
-*Last updated: 2026-03-01 after initialization*
+*Last updated: 2026-03-04 after v1.2 milestone start*
