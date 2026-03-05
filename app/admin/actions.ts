@@ -81,6 +81,8 @@ export async function approveApplication(applicationId: string) {
   )
 
   revalidatePath('/admin')
+  revalidatePath('/contractors')
+  revalidatePath('/')
 }
 
 export async function rejectApplication(applicationId: string) {
@@ -101,4 +103,6 @@ export async function rejectApplication(applicationId: string) {
   }
 
   revalidatePath('/admin')
+  revalidatePath('/contractors')
+  revalidatePath('/')
 }
