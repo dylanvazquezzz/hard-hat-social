@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: planning
-stopped_at: Phase 5 context gathered
-last_updated: "2026-03-05T01:23:30.760Z"
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-03-05T01:50:07.144Z"
 last_activity: 2026-03-04 — Phase 03 UX Polish complete (2/2 plans, all requirements verified)
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 13
+  completed_plans: 10
   percent: 60
 ---
 
@@ -45,6 +45,7 @@ Progress: [██████░░░░] 60%
 | 02-seo-and-cert-automation | 3 | ~5 min |
 | 03-ux-polish | 2 | ~5 min |
 | Phase 04-homepage-redesign P01 | 15 | 3 tasks | 1 files |
+| Phase 05-founding-cohort-onboarding P02 | 3 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,8 @@ Progress: [██████░░░░] 60%
 - [Phase 04-01]: py-16 sm:py-24 on hero reduces mobile padding so stats row stays above fold on 375px iPhone SE
 - [Phase 04-01]: distinctTrades computed via JavaScript Set from select('trade') query — avoids raw SQL DISTINCT
 - [Phase 04-01]: Hero h1 changed from 'serious tradespeople' to 'all tradespeople' after user approved mobile layout — more inclusive and cleaner at small viewports
+- [Phase 05-02]: Banner condition contractor && !profile?.avatar_url leverages existing loadContractor filter so pending users never see the banner
+- [Phase 05-02]: No dismiss button — avatar upload IS the dismiss action via React state update on profile.avatar_url
 
 ### Pending Todos
 
@@ -83,7 +86,7 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-05T01:23:30.758Z
-Stopped at: Phase 5 context gathered
+Last session: 2026-03-05T01:50:07.142Z
+Stopped at: Completed 05-02-PLAN.md
 Next action: `/gsd:plan-phase 4` to plan Homepage Redesign
-Resume file: .planning/phases/05-founding-cohort-onboarding/05-CONTEXT.md
+Resume file: None
