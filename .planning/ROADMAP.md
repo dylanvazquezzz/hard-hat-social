@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
  (completed 2026-03-04)
 - [x] **Phase 3: UX Polish** - Loading skeletons, empty states, and mobile nav so the directory feels complete before the homepage sends visitors there (completed 2026-03-04)
 - [x] **Phase 4: Homepage Redesign** - Clear value prop, honest social proof, and a single dominant CTA that converts visiting tradespeople into applicants (completed 2026-03-05)
-- [ ] **Phase 5: Founding Cohort Onboarding** - Run the first 20-50 welders through the existing application and approval flow end-to-end
+- [x] **Phase 5: Founding Cohort Onboarding** - Run the first 20-50 welders through the existing application and approval flow end-to-end (completed 2026-03-05)
 
 ## Phase Details
 
@@ -108,4 +108,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. SEO and Cert Automation | 3/3 | Complete   | 2026-03-04 |
 | 3. UX Polish | 2/2 | Complete   | 2026-03-04 |
 | 4. Homepage Redesign | 1/1 | Complete    | 2026-03-05 |
-| 5. Founding Cohort Onboarding | 1/4 | In Progress|  |
+| 5. Founding Cohort Onboarding | 4/4 | Complete   | 2026-03-05 |

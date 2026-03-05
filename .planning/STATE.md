@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
 status: planning
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-03-05T01:50:07.144Z"
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-03-05T04:18:23.331Z"
 last_activity: 2026-03-04 — Phase 03 UX Polish complete (2/2 plans, all requirements verified)
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 13
-  completed_plans: 10
+  completed_plans: 13
   percent: 60
 ---
 
@@ -46,6 +46,9 @@ Progress: [██████░░░░] 60%
 | 03-ux-polish | 2 | ~5 min |
 | Phase 04-homepage-redesign P01 | 15 | 3 tasks | 1 files |
 | Phase 05-founding-cohort-onboarding P02 | 3 | 1 tasks | 1 files |
+| Phase 05-founding-cohort-onboarding P01 | 2 | 2 tasks | 3 files |
+| Phase 05-founding-cohort-onboarding P03 | 8 | 2 tasks | 3 files |
+| Phase 05-founding-cohort-onboarding P04 | 1 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -74,6 +77,13 @@ Progress: [██████░░░░] 60%
 - [Phase 04-01]: Hero h1 changed from 'serious tradespeople' to 'all tradespeople' after user approved mobile layout — more inclusive and cleaner at small viewports
 - [Phase 05-02]: Banner condition contractor && !profile?.avatar_url leverages existing loadContractor filter so pending users never see the banner
 - [Phase 05-02]: No dismiss button — avatar upload IS the dismiss action via React state update on profile.avatar_url
+- [Phase 05-01]: Rename AuthPage to AuthPageInner, wrap in Suspense shell as default export — satisfies Next.js 14 useSearchParams requirement
+- [Phase 05-01]: Both sign-in links in approval email updated to ?redirect=/profile for consistency between list item and CTA button
+- [Phase 05-01]: /apply invite-only banner guarded by process.env.NEXT_PUBLIC_CONTACT_EMAIL truthy check — no visible output if env var absent at build time
+- [Phase 05-03]: CertRow is a client component — only cert rows opt into client, page.tsx stays server
+- [Phase 05-03]: Cancel handler resets local state to original cert prop values — no extra fetch needed
+- [Phase 05-04]: NEXT_PUBLIC_APP_URL set in Vercel as Step 1 before NEXT_PUBLIC_CONTACT_EMAIL — email links read from APP_URL at send time; localhost bug already hit one real signup
+- [Phase 05-04]: 8-step E2E smoke test required before outreach — primary failure mode is approval email linking to localhost
 
 ### Pending Todos
 
@@ -86,7 +96,7 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-05T01:50:07.142Z
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-03-05T01:50:53.487Z
+Stopped at: Completed 05-03-PLAN.md
 Next action: `/gsd:plan-phase 4` to plan Homepage Redesign
 Resume file: None
