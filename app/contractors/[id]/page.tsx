@@ -22,13 +22,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     .single()
 
   if (!data) {
-    return { title: 'Contractor Not Found | Contractors Connect' }
+    return { title: 'Contractor Not Found | Hard Hat Social' }
   }
 
-  const title = `${data.full_name} — ${data.trade} | Contractors Connect`
+  const title = `${data.full_name} — ${data.trade} | Hard Hat Social`
   const description = data.bio
     ? data.bio.slice(0, 155)
-    : `${data.trade} contractor in ${data.location_city}, ${data.location_state}. Verified member of Contractors Connect.`
+    : `${data.trade} contractor in ${data.location_city}, ${data.location_state}. Verified member of Hard Hat Social.`
   const image = data.profile_photo_url ?? '/og-default.png'
 
   return {
@@ -78,7 +78,7 @@ export default async function ContractorProfilePage({ params }: PageProps) {
       addressRegion: contractor.location_state,
       addressCountry: 'US',
     },
-    url: `https://contractors-connect.vercel.app/contractors/${contractor.id}`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://hardhatsocial.net'}/contractors/${contractor.id}`,
   }
 
   return (

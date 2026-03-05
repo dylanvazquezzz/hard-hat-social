@@ -81,12 +81,12 @@ export default function NavBar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <a href="/" className="flex items-center gap-1">
-            <span className="text-xl font-bold text-amber-500">Contractors</span>
-            <span className="text-xl font-bold text-slate-100">Connect</span>
+            <span className="text-xl font-bold text-brand-blue">Hard Hat</span>
+            <span className="text-xl font-bold text-brand-yellow">&nbsp;Social</span>
           </a>
 
           <div className="flex items-center gap-2">
-            {/* Desktop nav — hidden below md breakpoint */}
+            {/* Desktop nav -- hidden below md breakpoint */}
             <div className="hidden md:flex items-center gap-6">
               <a
                 href="/contractors"
@@ -146,7 +146,7 @@ export default function NavBar() {
                         <a
                           href="/admin"
                           onClick={() => setDropdownOpen(false)}
-                          className="block px-4 py-2 text-sm text-amber-400 hover:bg-slate-700 transition-colors"
+                          className="block px-4 py-2 text-sm text-brand-yellow hover:bg-slate-700 transition-colors"
                         >
                           Admin
                         </a>
@@ -163,14 +163,14 @@ export default function NavBar() {
               ) : (
                 <a
                   href="/auth"
-                  className="rounded-md bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-400 transition-colors"
+                  className="rounded-md bg-brand-yellow px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-brand-yellow-dark transition-colors"
                 >
                   Sign In
                 </a>
               )}
             </div>
 
-            {/* Hamburger — visible below md breakpoint only */}
+            {/* Hamburger -- visible below md breakpoint only */}
             <div className="relative md:hidden" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen((o) => !o)}
@@ -234,7 +234,7 @@ export default function NavBar() {
                         <a
                           href="/admin"
                           onClick={() => setMenuOpen(false)}
-                          className="block px-4 py-3 text-sm text-amber-400 hover:bg-slate-700 transition-colors"
+                          className="block px-4 py-3 text-sm text-brand-yellow hover:bg-slate-700 transition-colors"
                         >
                           Admin
                         </a>
@@ -250,7 +250,7 @@ export default function NavBar() {
                     <a
                       href="/auth"
                       onClick={() => setMenuOpen(false)}
-                      className="block px-4 py-3 text-sm font-semibold text-amber-400 hover:bg-slate-700 transition-colors rounded-b-md"
+                      className="block px-4 py-3 text-sm font-semibold text-brand-yellow hover:bg-slate-700 transition-colors rounded-b-md"
                     >
                       Sign In
                     </a>

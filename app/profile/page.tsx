@@ -269,7 +269,7 @@ export default function ProfilePage() {
       {/* Welcome banner — shown to approved contractors who haven't uploaded a photo yet */}
       {contractor && !profile?.avatar_url && (
         <div className="mb-6 rounded-lg border border-amber-500/40 bg-amber-500/10 px-5 py-4">
-          <p className="text-sm font-semibold text-amber-400">Welcome to Contractors Connect</p>
+          <p className="text-sm font-semibold text-amber-400">Welcome to Hard Hat Social</p>
           <p className="mt-1 text-sm text-slate-300">
             Complete your profile to appear in the directory — upload a photo to get started.
           </p>

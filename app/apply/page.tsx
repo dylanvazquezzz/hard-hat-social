@@ -243,7 +243,7 @@ export default function ApplyPage() {
       {process.env.NEXT_PUBLIC_CONTACT_EMAIL && (
         <div className="mb-8 rounded-lg border border-slate-700 bg-slate-800/60 px-5 py-4 text-sm text-slate-300">
           <strong className="text-slate-100">Invite-only onboarding:</strong>{' '}
-          Contractors Connect is currently onboarding by invitation. If you were referred by someone,
+          Hard Hat Social is currently onboarding by invitation. If you were referred by someone,
           fill out the form below. To request an invite, email{' '}
           <a
             href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`}

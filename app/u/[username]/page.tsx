@@ -21,11 +21,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     .single()
 
   if (!profile) {
-    return { title: 'Profile Not Found | Contractors Connect' }
+    return { title: 'Profile Not Found | Hard Hat Social' }
   }
 
-  const title = `@${profile.username} | Contractors Connect`
-  const description = `View @${profile.username}'s verified contractor profile on Contractors Connect.`
+  const title = `@${profile.username} | Hard Hat Social`
+  const description = `View @${profile.username}'s verified contractor profile on Hard Hat Social.`
   const image = profile.avatar_url ?? '/og-default.png'
 
   return {
@@ -87,7 +87,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: `@${profile.username}`,
-    url: `https://contractors-connect.vercel.app/u/${profile.username}`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://hardhatsocial.net'}/u/${profile.username}`,
   }
   if (contractor) {
     jsonLd.jobTitle = contractor.trade
