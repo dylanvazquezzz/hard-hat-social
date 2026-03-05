@@ -19,11 +19,11 @@ Requirements for this milestone: bug fixes, full rebrand to Hard Hat Social, fee
 
 - [ ] **BRAND-01**: Product name is "Hard Hat Social" throughout the UI — nav, page titles, metadata, emails
 - [ ] **BRAND-02**: Color scheme uses lighter blue, yellow, and white brand tokens defined in `tailwind.config.ts`
-- [ ] **BRAND-03**: GoDaddy DNS for hardhatsocial.net is configured (A record + CNAME) to point to Vercel
-- [ ] **BRAND-04**: Vercel project connected to hardhatsocial.net as the production domain; `NEXT_PUBLIC_APP_URL` updated and redeployed
-- [ ] **BRAND-05**: Supabase Auth Site URL and redirect allowlist updated to hardhatsocial.net
-- [ ] **BRAND-06**: Resend sender domain updated to hardhatsocial.net with DNS verified (SPF + DKIM)
-- [ ] **BRAND-07**: GitHub repo renamed to `hard-hat-social`; Supabase project and Vercel project renamed to match
+- [x] **BRAND-03**: GoDaddy DNS for hardhatsocial.net is configured (A record + CNAME) to point to Vercel
+- [x] **BRAND-04**: Vercel project connected to hardhatsocial.net as the production domain; `NEXT_PUBLIC_APP_URL` updated and redeployed
+- [x] **BRAND-05**: Supabase Auth Site URL and redirect allowlist updated to hardhatsocial.net
+- [x] **BRAND-06**: Resend sender domain updated to hardhatsocial.net with DNS verified (SPF + DKIM)
+- [x] **BRAND-07**: GitHub repo renamed to `hard-hat-social`; Supabase project and Vercel project renamed to match
 
 ### Feed Redesign
 
@@ -75,11 +75,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BUG-05 | Phase 6 | Pending |
 | BRAND-01 | Phase 6 | Pending |
 | BRAND-02 | Phase 6 | Pending |
-| BRAND-03 | Phase 6 | Pending |
-| BRAND-04 | Phase 6 | Pending |
-| BRAND-05 | Phase 6 | Pending |
-| BRAND-06 | Phase 6 | Pending |
-| BRAND-07 | Phase 6 | Pending |
+| BRAND-03 | Phase 6 | Complete |
+| BRAND-04 | Phase 6 | Complete |
+| BRAND-05 | Phase 6 | Complete |
+| BRAND-06 | Phase 6 | Complete |
+| BRAND-07 | Phase 6 | Complete |
 | FEED-01 | Phase 7 | Pending |
 | FEED-02 | Phase 7 | Pending |
 | JOBS-01 | Phase 9 | Pending |

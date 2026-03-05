@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Rebrand & Growth
-status: ready_to_plan
-stopped_at: Roadmap created — Phase 6 ready to plan
-last_updated: "2026-03-05T00:00:00.000Z"
-last_activity: 2026-03-05 — v1.2 roadmap created (phases 6-9)
+status: in_progress
+stopped_at: "06-03 infrastructure checkpoint — awaiting DNS propagation and human dashboard actions"
+last_updated: "2026-03-05T23:56:52Z"
+last_activity: 2026-03-05 — 06-03 plan documented; awaiting DNS propagation and human infrastructure actions
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 8
-  completed_plans: 0
-  percent: 0
+  completed_plans: 3
+  percent: 38
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ## Current Position
 
 Phase: 6 of 9 (Bug Fixes & Rebrand)
-Plan: 0 of 3 in current phase
-Status: Ready to plan
-Last activity: 2026-03-05 — v1.2 roadmap created
+Plan: 3 of 3 in current phase (all plans documented — awaiting infrastructure actions)
+Status: In progress — awaiting DNS propagation (24-48hr) and human dashboard actions
+Last activity: 2026-03-05 — 06-03 SUMMARY created; infrastructure cutover checklist ready
 
-Progress: [░░░░░░░░░░] 0% (v1.2 phases)
+Progress: [████░░░░░░] 38% (v1.2 phases — 3/8 plans complete)
 
 ## Accumulated Context
 
@@ -49,17 +49,26 @@ Progress: [░░░░░░░░░░] 0% (v1.2 phases)
 - Send a real test approval email to personal Gmail BEFORE onboarding any real user
 - BUG-02 and BRAND-04/05/06 share the same env var root cause — fix together, verify together
 
+### Phase 6 Decisions (from execution)
+
+- DNS records must be added to GoDaddy before Vercel can verify domain — 24-48 hour propagation window; project renames can be done immediately in parallel
+- Resend domain hardhatsocial.net must be verified (SPF + DKIM) before approval emails land in inbox
+- Keep old Supabase Auth redirect URLs in allowlist until hardhatsocial.net auth is confirmed working
+- Supabase project rename is cosmetic only — project ref, URL, and API keys remain unchanged
+- NEXT_PUBLIC_APP_URL = https://hardhatsocial.net must be set in Vercel before redeploying
+
 ### Pending Todos
 
-None.
+- Complete infrastructure cutover: GoDaddy DNS, Vercel domain verify, NEXT_PUBLIC_APP_URL update, Supabase Auth URL update, Resend domain verify
+- Test approval email from hardhatsocial.net to personal Gmail before onboarding any real user
 
 ### Blockers/Concerns
 
-None.
+- DNS propagation: 24-48 hours after GoDaddy records are added before Vercel can verify hardhatsocial.net
 
 ## Session Continuity
 
 Last session: 2026-03-05
-Stopped at: Roadmap created — ready to plan Phase 6
-Next action: `/gsd:plan-phase 6`
+Stopped at: 06-03 infrastructure checkpoint — all plans documented, awaiting DNS propagation and human dashboard actions
+Next action: After all 4 infrastructure tasks complete, mark Phase 6 done and proceed to Phase 7
 Resume file: None
