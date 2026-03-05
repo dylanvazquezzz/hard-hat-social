@@ -101,5 +101,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Production Hardening | 3/3 | Complete | 2026-03-03 |
 | 2. SEO and Cert Automation | 3/3 | Complete   | 2026-03-04 |
 | 3. UX Polish | 2/2 | Complete   | 2026-03-04 |
-| 4. Homepage Redesign | 1/1 | Complete   | 2026-03-05 |
+| 4. Homepage Redesign | 1/1 | Complete    | 2026-03-05 |
 | 5. Founding Cohort Onboarding | 0/TBD | Not started | - |
