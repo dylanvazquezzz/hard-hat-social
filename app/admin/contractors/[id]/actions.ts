@@ -35,3 +35,20 @@ export async function deleteCertification(certId: string, contractorId: string) 
   revalidatePath(`/admin/contractors/${contractorId}`)
   revalidatePath(`/contractors/${contractorId}`)
 }
+
+export async function updateCertification(
+  certId: string,
+  fields: {
+    name: string
+    issuing_body: string
+    cert_number: string | null
+    expiry_date: string | null
+    verified: boolean
+  },
+  contractorId: string
+) {
+  const admin = getSupabaseAdmin()
+  await admin.from('certifications').update(fields).eq('id', certId)
+  revalidatePath(`/admin/contractors/${contractorId}`)
+  revalidatePath(`/contractors/${contractorId}`)
+}
