@@ -1,6 +1,7 @@
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import { notFound } from 'next/navigation'
-import { addCertification, deleteCertification } from './actions'
+import { addCertification } from './actions'
+import { CertRow } from './CertRow'
 import type { Certification } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -40,35 +41,7 @@ export default async function ManageCertsPage({ params }: { params: { id: string
         ) : (
           <div className="space-y-2">
             {certs.map((cert) => (
-              <div
-                key={cert.id}
-                className="flex items-start justify-between rounded-lg border border-slate-800 bg-slate-900 px-4 py-3"
-              >
-                <div>
-                  <p className="font-medium text-slate-100">{cert.name}</p>
-                  <p className="text-sm text-slate-400">{cert.issuing_body}</p>
-                  <div className="mt-1 flex flex-wrap gap-3 text-xs text-slate-500">
-                    {cert.cert_number && <span>#{cert.cert_number}</span>}
-                    {cert.expiry_date && <span>Expires {cert.expiry_date}</span>}
-                    <span className={cert.verified ? 'text-emerald-500' : 'text-slate-500'}>
-                      {cert.verified ? 'Verified' : 'Unverified'}
-                    </span>
-                  </div>
-                </div>
-                <form
-                  action={async () => {
-                    'use server'
-                    await deleteCertification(cert.id, params.id)
-                  }}
-                >
-                  <button
-                    type="submit"
-                    className="ml-4 shrink-0 text-xs text-red-500 hover:text-red-400"
-                  >
-                    Remove
-                  </button>
-                </form>
-              </div>
+              <CertRow key={cert.id} cert={cert} contractorId={params.id} />
             ))}
           </div>
         )}
