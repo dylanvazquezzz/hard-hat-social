@@ -264,30 +264,15 @@ export default function ProfilePage() {
 
   const initials = profile?.username?.charAt(0).toUpperCase() ?? user?.email?.charAt(0).toUpperCase() ?? '?'
 
-  // Onboarding checklist for newly approved contractors
-  const onboardingItems: string[] = []
-  if (contractor) {
-    if (!profile) onboardingItems.push('Set your @username')
-    else if (!profile.avatar_url) onboardingItems.push('Upload a profile photo')
-  }
-
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
-      {/* Onboarding banner — shown to approved contractors with incomplete profiles */}
-      {onboardingItems.length > 0 && (
+      {/* Welcome banner — shown to approved contractors who haven't uploaded a photo yet */}
+      {contractor && !profile?.avatar_url && (
         <div className="mb-6 rounded-lg border border-amber-500/40 bg-amber-500/10 px-5 py-4">
-          <p className="text-sm font-semibold text-amber-400">Complete your profile</p>
-          <p className="mt-0.5 text-xs text-slate-400">
-            Your account is approved. Finish setting up so other contractors can find and contact you.
+          <p className="text-sm font-semibold text-amber-400">Welcome to Contractors Connect</p>
+          <p className="mt-1 text-sm text-slate-300">
+            Complete your profile to appear in the directory — upload a photo to get started.
           </p>
-          <ul className="mt-3 space-y-1">
-            {onboardingItems.map((item) => (
-              <li key={item} className="flex items-center gap-2 text-sm text-slate-300">
-                <span className="flex h-4 w-4 items-center justify-center rounded-full border border-amber-500/60 text-amber-500 text-xs">!</span>
-                {item}
-              </li>
-            ))}
-          </ul>
         </div>
       )}
 
