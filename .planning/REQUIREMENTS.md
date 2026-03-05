@@ -68,30 +68,32 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | — | Pending |
-| BUG-02 | — | Pending |
-| BUG-03 | — | Pending |
-| BUG-04 | — | Pending |
-| BUG-05 | — | Pending |
-| BRAND-01 | — | Pending |
-| BRAND-02 | — | Pending |
-| BRAND-03 | — | Pending |
-| BRAND-04 | — | Pending |
-| BRAND-05 | — | Pending |
-| BRAND-06 | — | Pending |
-| BRAND-07 | — | Pending |
-| FEED-01 | — | Pending |
-| FEED-02 | — | Pending |
-| JOBS-01 | — | Pending |
-| JOBS-02 | — | Pending |
-| JOBS-03 | — | Pending |
-| JOBS-04 | — | Pending |
+| BUG-01 | Phase 6 | Pending |
+| BUG-02 | Phase 6 | Pending |
+| BUG-03 | Phase 6 | Pending |
+| BUG-04 | Phase 6 | Pending |
+| BUG-05 | Phase 6 | Pending |
+| BRAND-01 | Phase 6 | Pending |
+| BRAND-02 | Phase 6 | Pending |
+| BRAND-03 | Phase 6 | Pending |
+| BRAND-04 | Phase 6 | Pending |
+| BRAND-05 | Phase 6 | Pending |
+| BRAND-06 | Phase 6 | Pending |
+| BRAND-07 | Phase 6 | Pending |
+| FEED-01 | Phase 7 | Pending |
+| FEED-02 | Phase 7 | Pending |
+| JOBS-01 | Phase 9 | Pending |
+| JOBS-02 | Phase 9 | Pending |
+| JOBS-03 | Phase 9 | Pending |
+| JOBS-04 | Phase 9 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 18 total
-- Mapped to phases: 0 (roadmap pending)
-- Unmapped: 18
+- Mapped to phases: 18
+- Unmapped: 0
+
+**Phase 8 note:** Phase 8 (Jobs Schema) is an infrastructure prerequisite with no user-facing requirements of its own. It is the technical foundation that makes JOBS-01 through JOBS-04 (Phase 9) possible. Its success criteria are observable at the database and build level.
 
 ---
 *Requirements defined: 2026-03-05*
-*Last updated: 2026-03-05 after initial definition*
+*Last updated: 2026-03-05 after roadmap creation*

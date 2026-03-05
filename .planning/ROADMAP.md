@@ -1,111 +1,139 @@
-# Roadmap: Contractors Connect — v1.1 Polish & Launch
+# Roadmap: Hard Hat Social
 
-## Overview
+## Milestones
 
-Contractors Connect has a working MVP. This milestone converts that foundation into a production-ready product that can receive and onboard the founding cohort of verified welders. The work follows a strict dependency order: lock down infrastructure first (DNS propagation is a real-world 48-hour constraint), then add SEO and cert automation, then polish the directory UX, then redesign the homepage, then onboard the first contractors. Each phase delivers a coherent, verifiable capability before the next begins.
+- ✅ **v1.1 Polish & Launch** - Phases 1-5 (shipped 2026-03-05)
+- 🚧 **v1.2 Rebrand & Growth** - Phases 6-9 (in progress)
 
 ## Phases
 
-**Phase Numbering:**
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
-
-Decimal phases appear between their surrounding integers in numeric order.
-
-- [x] **Phase 1: Production Hardening** - Lock down env vars, DNS, migrations, storage, and server-only guards before any user data is created
-- [x] **Phase 2: SEO and Cert Automation** - Add metadata and JSON-LD to existing pages; auto-create cert records on approval
- (completed 2026-03-04)
-- [x] **Phase 3: UX Polish** - Loading skeletons, empty states, and mobile nav so the directory feels complete before the homepage sends visitors there (completed 2026-03-04)
-- [x] **Phase 4: Homepage Redesign** - Clear value prop, honest social proof, and a single dominant CTA that converts visiting tradespeople into applicants (completed 2026-03-05)
-- [x] **Phase 5: Founding Cohort Onboarding** - Run the first 20-50 welders through the existing application and approval flow end-to-end (completed 2026-03-05)
-
-## Phase Details
+<details>
+<summary>✅ v1.1 Polish & Launch (Phases 1-5) - SHIPPED 2026-03-05</summary>
 
 ### Phase 1: Production Hardening
 **Goal**: The production deployment is correctly configured so that emails land in inboxes, auth links work, storage uploads succeed, and the service role key cannot leak into client bundles
-**Depends on**: Nothing (first phase)
-**Requirements**: PROD-01, PROD-02, PROD-03, PROD-04
-**Success Criteria** (what must be TRUE):
-  1. A test approval email sent to a personal Gmail account lands in the inbox, not spam
-  2. Clicking the link in a password reset email on a real device opens the correct update-password page (not localhost)
-  3. An authenticated user can upload a file to `avatars` and `post-images` buckets; the `application-docs` bucket enforces that upload paths are restricted to the applicant's own folder
-  4. Running `npm run build` with `server-only` added to `lib/supabase-admin.ts` and `lib/email.ts` fails with a build error if either file is imported in a client component
 **Plans**: 3 plans
 
 Plans:
-- [x] 01-01-PLAN.md — Install server-only package and add import guards to lib/supabase-admin.ts and lib/email.ts (PROD-04)
-- [x] 01-02-PLAN.md — Create migration 007_storage_policies.sql and fix apply/page.tsx upload path (PROD-03)
-- [x] 01-03-PLAN.md — Create deployment checklist for Resend domain verification and Supabase Auth URL configuration (PROD-01, PROD-02)
+- [x] 01-01-PLAN.md — Install server-only package and add import guards to lib/supabase-admin.ts and lib/email.ts
+- [x] 01-02-PLAN.md — Create migration 007_storage_policies.sql and fix apply/page.tsx upload path
+- [x] 01-03-PLAN.md — Create deployment checklist for Resend domain verification and Supabase Auth URL configuration
 
 ### Phase 2: SEO and Cert Automation
-**Goal**: Contractor profile pages are discoverable by search engines with accurate metadata, approving an application automatically creates a certification record, and pending applicants see a restricted experience instead of full access
-**Depends on**: Phase 1
-**Requirements**: AUTH-01, SEO-01, SEO-02, SEO-03, SEO-04, CERT-01
-**Success Criteria** (what must be TRUE):
-  1. A logged-in user with a pending application can view Social and Q&A explore pages but sees a "pending review" message when attempting to access Jobs, Profile, or the contractor directory
-  2. Pasting a contractor profile URL (`/contractors/[id]`) into a social media link preview tool shows the contractor's name, trade, location, and a valid image
-  3. Pasting a public profile URL (`/u/[username]`) into a social media link preview tool shows the user's name and a valid image
-  4. Viewing the page source of `/contractors/[id]` shows a valid JSON-LD `<script>` block with `LocalBusiness` or `Person` schema type
-  5. After an admin approves an application, the contractor's profile page shows at least one certification entry without the admin manually adding it
+**Goal**: Contractor profile pages are discoverable by search engines with accurate metadata, approving an application automatically creates a certification record, and pending applicants see a restricted experience
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Add metadataBase, generateMetadata, and JSON-LD to app/layout.tsx, /contractors/[id], and /u/[username] (SEO-01, SEO-02, SEO-03, SEO-04)
-- [ ] 02-02-PLAN.md — Extend contractors layout and add jobs layout with pending-user access guard; add pending check to profile page (AUTH-01)
-- [ ] 02-03-PLAN.md — Modify approveApplication() to auto-insert certification records from application document_urls (CERT-01)
+- [x] 02-01-PLAN.md — Add metadataBase, generateMetadata, and JSON-LD to app/layout.tsx, /contractors/[id], and /u/[username]
+- [x] 02-02-PLAN.md — Extend contractors layout and add jobs layout with pending-user access guard
+- [x] 02-03-PLAN.md — Modify approveApplication() to auto-insert certification records from application document_urls
 
 ### Phase 3: UX Polish
 **Goal**: The contractor directory feels complete and usable on mobile — data loads with visible feedback, empty filter states are actionable, and navigation is usable at 375px viewport
-**Depends on**: Phase 2
-**Requirements**: UX-01, UX-02, UX-03
-**Success Criteria** (what must be TRUE):
-  1. Loading the `/contractors` directory on a throttled connection shows card-shaped skeleton placeholders in the grid instead of a blank screen or spinner
-  2. Applying filters that match no contractors shows a clear message and a "reset filters" button that returns the directory to its unfiltered state
-  3. A user on a 375px-wide screen can open and use the navigation menu by tapping elements that are at least 44px in height
 **Plans**: 2 plans
 
 Plans:
-- [x] 03-01-PLAN.md — Loading skeletons and upgraded empty state for /contractors directory (UX-01, UX-02)
-- [x] 03-02-PLAN.md — Hamburger mobile navigation in NavBar.tsx (UX-03)
+- [x] 03-01-PLAN.md — Loading skeletons and upgraded empty state for /contractors directory
+- [x] 03-02-PLAN.md — Hamburger mobile navigation in NavBar.tsx
 
 ### Phase 4: Homepage Redesign
 **Goal**: The homepage communicates the verified-only value proposition in under 5 seconds, shows honest social proof, and has a single primary CTA above the fold that drives applications
-**Depends on**: Phase 3
-**Requirements**: HOME-01, HOME-02, HOME-03
-**Success Criteria** (what must be TRUE):
-  1. A first-time visitor landing on the homepage can identify what Contractors Connect is and what makes it different from Angi or Thumbtack without scrolling
-  2. The homepage displays a real, accurate count of at least one trust indicator (applications reviewed, trades represented, or contractors approved) — no fabricated numbers or placeholder profiles using the Verified badge
-  3. A user on a 375px-wide phone can tap the primary CTA button without zooming and is taken to the correct destination page
 **Plans**: 1 plan
 
 Plans:
-- [ ] 04-01-PLAN.md — Rewrite app/page.tsx: contractor-first hero, live DB stats, Apply CTA primary, updated How it Works copy (HOME-01, HOME-02, HOME-03)
+- [x] 04-01-PLAN.md — Rewrite app/page.tsx: contractor-first hero, live DB stats, Apply CTA primary, updated How it Works copy
 
 ### Phase 5: Founding Cohort Onboarding
 **Goal**: The first 20-50 welders are successfully onboarded through the existing application and approval flow with working emails, populated certification records, and visible profiles in the directory
-**Depends on**: Phase 4
-**Requirements**: (Operational — no new v1 requirements; validates phases 1-4 under real conditions)
-**Success Criteria** (what must be TRUE):
-  1. A founding cohort welder completes the application form, receives an approval email in their inbox (not spam), signs in, and sees their profile in the `/contractors` directory — all within one session
-  2. Each approved contractor profile shows at least one certification entry (auto-created from the application or manually added via admin cert management)
-  3. An approved contractor can search the directory by trade and find at least one other approved contractor's contact info (phone or email) displayed on the profile page
 **Plans**: 4 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — Fix approval email CTA URL bug and add auth redirect + /apply invite banner (email fix, auth redirect, apply banner)
-- [ ] 05-02-PLAN.md — Replace profile onboarding checklist with welcome banner for approved contractors (profile welcome banner)
-- [ ] 05-03-PLAN.md — Add inline cert editing to admin cert management page (CertRow client component, updateCertification server action)
-- [ ] 05-04-PLAN.md — Write founding cohort operational runbook (setup checklist, end-to-end test, outreach templates)
+- [x] 05-01-PLAN.md — Fix approval email CTA URL bug and add auth redirect + /apply invite banner
+- [x] 05-02-PLAN.md — Replace profile onboarding checklist with welcome banner for approved contractors
+- [x] 05-03-PLAN.md — Add inline cert editing to admin cert management page
+- [x] 05-04-PLAN.md — Write founding cohort operational runbook
+
+</details>
+
+### 🚧 v1.2 Rebrand & Growth (In Progress)
+
+**Milestone Goal:** Rebrand to Hard Hat Social, fix critical bugs blocking the founding cohort, redesign the feed for engagement, and introduce a jobs-completion system to build contractor trust signals.
+
+## Phase Details
+
+### Phase 6: Bug Fixes & Rebrand
+**Goal**: Hard Hat Social is live on hardhatsocial.net with all critical bugs fixed so the founding cohort can be onboarded without friction — admin nav works, emails link to the production domain, approved contractors appear in the directory, and the new brand identity is applied throughout the UI
+**Depends on**: Phase 5
+**Requirements**: BUG-01, BUG-02, BUG-03, BUG-04, BUG-05, BRAND-01, BRAND-02, BRAND-03, BRAND-04, BRAND-05, BRAND-06, BRAND-07
+**Success Criteria** (what must be TRUE):
+  1. An admin user sees an "Admin" link in the nav dropdown without typing the URL manually
+  2. A test approval email sent to a personal Gmail account links to hardhatsocial.net (not localhost) and lands in the inbox, not spam
+  3. A newly approved contractor appears in the /contractors directory immediately after admin approval — no manual refresh or cache clearing needed
+  4. A contractor profile page shows the certifications submitted during their application
+  5. Every page in the app displays "Hard Hat Social" branding with the lighter blue, yellow, and white color tokens
+**Plans**: TBD
+
+Plans:
+- [ ] 06-01: Bug fixes — admin nav link, email URL, contractor visibility post-approval, cert display, homepage count
+- [ ] 06-02: Brand tokens and UI rebrand — tailwind.config.ts colors, NavBar, metadata, email templates
+- [ ] 06-03: Domain and infrastructure rebrand — DNS, Vercel, Supabase Auth Site URL, Resend, GitHub/project renames
+
+### Phase 7: Feed Redesign
+**Goal**: The Explore feed displays posts at full content column width with a right sidebar showing recently verified contractors and suggested connections in the same trade — no new database schema required
+**Depends on**: Phase 6
+**Requirements**: FEED-01, FEED-02
+**Success Criteria** (what must be TRUE):
+  1. Post cards on the Explore page fill the full content column with no excessive side margins
+  2. A right sidebar shows "Recently Verified" (up to 8 contractors, ordered by approval date) and "Suggested People" (up to 8 contractors in the viewer's trade) without a client-side data fetch
+  3. The Explore page loads the feed and sidebar in a single server render — no hydration flash or layout shift when the sidebar appears
+**Plans**: TBD
+
+Plans:
+- [ ] 07-01: Two-column explore layout and FeedSidebar server component with Recently Verified and Suggested People widgets
+
+### Phase 8: Jobs Schema
+**Goal**: The `jobs` table exists in Supabase with correct RLS policies, a state-transition trigger preventing invalid status progressions, and TypeScript interfaces in lib/types.ts — providing the database foundation that Phase 9 builds on
+**Depends on**: Phase 6
+**Requirements**: (Infrastructure prerequisite — enables JOBS-01 through JOBS-04 in Phase 9)
+**Success Criteria** (what must be TRUE):
+  1. A Supabase migration creates the `jobs` table with a text + CHECK status constraint (open, hired, completed), a BEFORE UPDATE trigger that rejects invalid transitions (hired → open, completed → any), and RLS policies (public SELECT for open jobs, GC-only INSERT and status UPDATE)
+  2. The `Job` TypeScript interface is defined in lib/types.ts with all fields and status union type — no TypeScript errors on import
+  3. Running `npm run build` after the migration types are added completes without errors
+**Plans**: TBD
+
+Plans:
+- [ ] 08-01: Write and apply jobs table migration with trigger, RLS policies, and TypeScript types
+
+### Phase 9: Jobs UI
+**Goal**: A GC can post a job, mark a contractor as hired, and mark the job complete — and completed jobs appear as a verified portfolio section on the hired contractor's profile page
+**Depends on**: Phase 8
+**Requirements**: JOBS-01, JOBS-02, JOBS-03, JOBS-04
+**Success Criteria** (what must be TRUE):
+  1. A logged-in approved contractor can create a job posting on the Jobs board and see it appear immediately with "Open" status
+  2. The GC who posted a job can select an approved contractor from the directory and mark them as hired — the job card updates to "Hired" status and shows the hired contractor's name
+  3. The GC can mark a hired job as "Completed" — the job card updates to "Completed" status
+  4. A completed job appears as a verified portfolio entry on the hired contractor's profile page, showing job title, GC name, and completion date
+**Plans**: TBD
+
+Plans:
+- [ ] 09-01: Jobs board page using jobs table — JobCard component, createJob server action, job listing with status pills
+- [ ] 09-02: Hired flow — SubSelectorModal, markHired server action, hired status display
+- [ ] 09-03: Completion flow and portfolio — markCompleted server action, CompletedJobsSection on contractor profiles
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
+Phases execute in numeric order: 6 → 7 → 8 → 9
+(Phase 8 can start in parallel with Phase 7 since they share only a Phase 6 dependency)
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Production Hardening | 3/3 | Complete | 2026-03-03 |
-| 2. SEO and Cert Automation | 3/3 | Complete   | 2026-03-04 |
-| 3. UX Polish | 2/2 | Complete   | 2026-03-04 |
-| 4. Homepage Redesign | 1/1 | Complete    | 2026-03-05 |
-| 5. Founding Cohort Onboarding | 4/4 | Complete   | 2026-03-05 |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Production Hardening | v1.1 | 3/3 | Complete | 2026-03-03 |
+| 2. SEO and Cert Automation | v1.1 | 3/3 | Complete | 2026-03-04 |
+| 3. UX Polish | v1.1 | 2/2 | Complete | 2026-03-04 |
+| 4. Homepage Redesign | v1.1 | 1/1 | Complete | 2026-03-05 |
+| 5. Founding Cohort Onboarding | v1.1 | 4/4 | Complete | 2026-03-05 |
+| 6. Bug Fixes & Rebrand | v1.2 | 0/3 | Not started | - |
+| 7. Feed Redesign | v1.2 | 0/1 | Not started | - |
+| 8. Jobs Schema | v1.2 | 0/1 | Not started | - |
+| 9. Jobs UI | v1.2 | 0/3 | Not started | - |
