@@ -1,7 +1,7 @@
-# Contractors Connect — Project Bible
+# Hard Hat Social — Project Bible
 
 ## What We're Building
-A verified contractor directory and social platform called **Contractors Connect**. The core idea is a high-trust, curated network where only verified, credentialed contractors are allowed in. This is the main differentiator from existing platforms like Angi or Thumbtack — quality over quantity, no spam, no unqualified people.
+A verified contractor directory and social platform called **Hard Hat Social**. The core idea is a high-trust, curated network where only verified, credentialed contractors are allowed in. This is the main differentiator from existing platforms like Angi or Thumbtack — quality over quantity, no spam, no unqualified people.
 
 The platform serves two user types:
 - **Contractors** connecting with other sub contractors (subcontracting, referrals, trade communities)

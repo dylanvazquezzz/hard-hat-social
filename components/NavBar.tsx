@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import type { Session } from '@supabase/supabase-js'
 
 export default function NavBar() {
   const router = useRouter()
+  const pathname = usePathname()
   const [session, setSession] = useState<Session | null>(null)
   const [username, setUsername] = useState<string | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
@@ -80,9 +81,9 @@ export default function NavBar() {
     <nav className="border-b border-slate-800 bg-slate-900">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <a href="/" className="flex items-center gap-1">
-            <span className="text-xl font-bold text-brand-blue">Hard Hat</span>
-            <span className="text-xl font-bold text-brand-yellow">&nbsp;Social</span>
+          <a href="/" className="flex items-center">
+            <span className="text-2xl font-bold text-brand-yellow">Hard Hat</span>
+            <span className="text-2xl font-bold text-white">&nbsp;Social</span>
           </a>
 
           <div className="flex items-center gap-2">
@@ -142,7 +143,7 @@ export default function NavBar() {
                       >
                         Profile
                       </a>
-                      {isAdmin && (
+                      {isAdmin && !pathname.startsWith('/admin') && (
                         <a
                           href="/admin"
                           onClick={() => setDropdownOpen(false)}
@@ -230,7 +231,7 @@ export default function NavBar() {
                       >
                         {username ? `@${username}` : 'Profile'}
                       </a>
-                      {isAdmin && (
+                      {isAdmin && !pathname.startsWith('/admin') && (
                         <a
                           href="/admin"
                           onClick={() => setMenuOpen(false)}
