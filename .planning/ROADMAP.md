@@ -133,7 +133,7 @@ Phases execute in numeric order: 6 → 7 → 8 → 9
 | 3. UX Polish | v1.1 | 2/2 | Complete | 2026-03-04 |
 | 4. Homepage Redesign | v1.1 | 1/1 | Complete | 2026-03-05 |
 | 5. Founding Cohort Onboarding | v1.1 | 4/4 | Complete | 2026-03-05 |
-| 6. Bug Fixes & Rebrand | 1/3 | In Progress|  | - |
+| 6. Bug Fixes & Rebrand | 2/3 | In Progress|  | - |
 | 7. Feed Redesign | v1.2 | 0/1 | Not started | - |
 | 8. Jobs Schema | v1.2 | 0/1 | Not started | - |
 | 9. Jobs UI | v1.2 | 0/3 | Not started | - |

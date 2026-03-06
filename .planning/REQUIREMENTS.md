@@ -9,11 +9,11 @@ Requirements for this milestone: bug fixes, full rebrand to Hard Hat Social, fee
 
 ### Bug Fixes
 
-- [ ] **BUG-01**: Admin users see an "Admin" link in the nav dropdown without typing the URL manually
-- [ ] **BUG-02**: All auth emails (approval, rejection, verification, password reset) link to the production domain, not localhost
-- [ ] **BUG-03**: A newly approved contractor appears in the `/contractors` directory immediately after admin approves them
-- [ ] **BUG-04**: The homepage approved contractor count reflects the actual current count from the database
-- [ ] **BUG-05**: Certifications submitted during the application are visible on the contractor's profile page after approval
+- [x] **BUG-01**: Admin users see an "Admin" link in the nav dropdown without typing the URL manually
+- [x] **BUG-02**: All auth emails (approval, rejection, verification, password reset) link to the production domain, not localhost
+- [x] **BUG-03**: A newly approved contractor appears in the `/contractors` directory immediately after admin approves them
+- [x] **BUG-04**: The homepage approved contractor count reflects the actual current count from the database
+- [x] **BUG-05**: Certifications submitted during the application are visible on the contractor's profile page after approval
 
 ### Rebrand
 
@@ -68,11 +68,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | Phase 6 | Pending |
-| BUG-02 | Phase 6 | Pending |
-| BUG-03 | Phase 6 | Pending |
-| BUG-04 | Phase 6 | Pending |
-| BUG-05 | Phase 6 | Pending |
+| BUG-01 | Phase 6 | Complete |
+| BUG-02 | Phase 6 | Complete |
+| BUG-03 | Phase 6 | Complete |
+| BUG-04 | Phase 6 | Complete |
+| BUG-05 | Phase 6 | Complete |
 | BRAND-01 | Phase 6 | Pending |
 | BRAND-02 | Phase 6 | Pending |
 | BRAND-03 | Phase 6 | Complete |
