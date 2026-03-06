@@ -17,8 +17,8 @@ Requirements for this milestone: bug fixes, full rebrand to Hard Hat Social, fee
 
 ### Rebrand
 
-- [ ] **BRAND-01**: Product name is "Hard Hat Social" throughout the UI — nav, page titles, metadata, emails
-- [ ] **BRAND-02**: Color scheme uses lighter blue, yellow, and white brand tokens defined in `tailwind.config.ts`
+- [x] **BRAND-01**: Product name is "Hard Hat Social" throughout the UI — nav, page titles, metadata, emails
+- [x] **BRAND-02**: Color scheme uses lighter blue, yellow, and white brand tokens defined in `tailwind.config.ts`
 - [x] **BRAND-03**: GoDaddy DNS for hardhatsocial.net is configured (A record + CNAME) to point to Vercel
 - [x] **BRAND-04**: Vercel project connected to hardhatsocial.net as the production domain; `NEXT_PUBLIC_APP_URL` updated and redeployed
 - [x] **BRAND-05**: Supabase Auth Site URL and redirect allowlist updated to hardhatsocial.net
@@ -73,8 +73,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BUG-03 | Phase 6 | Complete |
 | BUG-04 | Phase 6 | Complete |
 | BUG-05 | Phase 6 | Complete |
-| BRAND-01 | Phase 6 | Pending |
-| BRAND-02 | Phase 6 | Pending |
+| BRAND-01 | Phase 6 | Complete |
+| BRAND-02 | Phase 6 | Complete |
 | BRAND-03 | Phase 6 | Complete |
 | BRAND-04 | Phase 6 | Complete |
 | BRAND-05 | Phase 6 | Complete |
