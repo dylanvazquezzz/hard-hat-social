@@ -86,10 +86,10 @@ Plans:
   1. Post cards on the Explore page fill the full content column with no excessive side margins
   2. A right sidebar shows "Recently Verified" (up to 8 contractors, ordered by approval date) and "Suggested People" (up to 8 contractors in the viewer's trade) without a client-side data fetch
   3. The Explore page loads the feed and sidebar in a single server render — no hydration flash or layout shift when the sidebar appears
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 07-01: Two-column explore layout and FeedSidebar server component with Recently Verified and Suggested People widgets
+- [ ] 07-01-PLAN.md — Two-column explore layout and FeedSidebar server component with Recently Verified and Suggested People widgets
 
 ### Phase 8: Jobs Schema
 **Goal**: The `jobs` table exists in Supabase with correct RLS policies, a state-transition trigger preventing invalid status progressions, and TypeScript interfaces in lib/types.ts — providing the database foundation that Phase 9 builds on
