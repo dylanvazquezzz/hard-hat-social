@@ -1,5 +1,7 @@
+import { cookies } from 'next/headers'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import PostCard from '@/components/PostCard'
+import FeedSidebar from '@/components/FeedSidebar'
 import type { Post } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -88,8 +90,76 @@ export default async function ExplorePage({ searchParams }: PageProps) {
   const postsWithProfiles = posts.map((p) => ({ ...p, profiles: profileMap[p.user_id] ?? null }))
   const examples = EXAMPLE_POSTS[category]
 
+  // Sidebar: Recently Verified — 5 most recently approved contractors
+  const { data: recentlyVerifiedData } = await admin
+    .from('contractors')
+    .select('id, full_name, trade, profile_photo_url')
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false })
+    .limit(5)
+  const recentlyVerified = recentlyVerifiedData ?? []
+
+  // Sidebar: Suggested People — same-trade contractors for logged-in approved users
+  const cookieStore = cookies()
+  const allCookies = cookieStore.getAll()
+  const authCookie = allCookies.find((c) => c.name.includes('-auth-token'))
+  const token = authCookie
+    ? (() => {
+        try {
+          return JSON.parse(authCookie.value)?.[0]
+        } catch {
+          return null
+        }
+      })()
+    : null
+  const {
+    data: { user },
+  } = await admin.auth.getUser(token ?? '')
+
+  let suggestedPeople = recentlyVerified // default fallback
+
+  if (user) {
+    const { data: viewerContractor } = await admin
+      .from('contractors')
+      .select('id, trade')
+      .eq('user_id', user.id)
+      .eq('status', 'approved')
+      .maybeSingle()
+
+    const viewerTrade = viewerContractor?.trade ?? null
+    const viewerContractorId = viewerContractor?.id ?? null
+
+    if (viewerTrade) {
+      const { data: sameTrade } = await admin
+        .from('contractors')
+        .select('id, full_name, trade, profile_photo_url')
+        .eq('status', 'approved')
+        .eq('trade', viewerTrade)
+        .neq('id', viewerContractorId ?? '')
+        .order('created_at', { ascending: false })
+        .limit(5)
+
+      const sameTradeResults = sameTrade ?? []
+
+      if (sameTradeResults.length >= 5) {
+        suggestedPeople = sameTradeResults
+      } else {
+        // Pad with recently verified from any trade, excluding already shown + self
+        const excludeIds = new Set([
+          ...sameTradeResults.map((c) => c.id),
+          viewerContractorId ?? '',
+        ])
+        const pad = recentlyVerified
+          .filter((c) => !excludeIds.has(c.id))
+          .slice(0, 5 - sameTradeResults.length)
+        suggestedPeople = [...sameTradeResults, ...pad]
+      }
+    }
+    // If viewerTrade is null → suggestedPeople stays as recentlyVerified (fallback)
+  }
+
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-100">Explore</h1>
@@ -103,78 +173,89 @@ export default async function ExplorePage({ searchParams }: PageProps) {
         </a>
       </div>
 
-      {/* Tabs */}
-      <div className="mb-6 flex gap-1 border-b border-slate-800">
-        {tabs.map((t) => (
-          <a
-            key={t.key}
-            href={`/explore?category=${t.key}`}
-            className={`flex flex-col px-4 py-2 text-sm font-medium transition-colors ${
-              category === t.key
-                ? 'border-b-2 border-amber-500 text-amber-500'
-                : 'text-slate-400 hover:text-slate-100'
-            }`}
-          >
-            {t.label}
-            <span className="text-xs font-normal text-slate-500">{t.description}</span>
-          </a>
-        ))}
-      </div>
-
-      {postsWithProfiles.length === 0 ? (
-        <div className="space-y-3">
-          <div className="rounded-lg border border-slate-800 bg-slate-900/50 px-5 py-4 text-center">
-            <p className="text-sm text-slate-400">
-              No posts yet.{' '}
-              <a href="/profile" className="text-amber-400 hover:underline">
-                Be the first to post.
+      <div className="flex gap-6 items-start">
+        <main className="flex-1 min-w-0">
+          {/* Tabs */}
+          <div className="mb-6 flex gap-1 border-b border-slate-800">
+            {tabs.map((t) => (
+              <a
+                key={t.key}
+                href={`/explore?category=${t.key}`}
+                className={`flex flex-col px-4 py-2 text-sm font-medium transition-colors ${
+                  category === t.key
+                    ? 'border-b-2 border-amber-500 text-amber-500'
+                    : 'text-slate-400 hover:text-slate-100'
+                }`}
+              >
+                {t.label}
+                <span className="text-xs font-normal text-slate-500">{t.description}</span>
               </a>
-            </p>
+            ))}
           </div>
 
-          <p className="pt-2 text-xs font-medium uppercase tracking-wider text-slate-600">
-            Example posts
-          </p>
-          {examples.map((ex, i) => (
-            <div
-              key={i}
-              className="relative rounded-lg border border-slate-800/60 bg-slate-900/40 p-4 opacity-60"
-            >
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-700 text-sm font-bold text-amber-500">
-                    {ex.username.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-100">@{ex.username}</p>
-                    <p className="text-xs text-slate-400">
-                      {ex.trade} · {ex.location}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                    category === 'qa' ? 'bg-blue-900/40 text-blue-400' : 'bg-slate-800 text-slate-400'
-                  }`}>
-                    {category === 'qa' ? 'Q&A' : 'Social'}
-                  </span>
-                  <span className="text-xs text-slate-500">{ex.time}</span>
-                </div>
+          {postsWithProfiles.length === 0 ? (
+            <div className="space-y-3">
+              <div className="rounded-lg border border-slate-800 bg-slate-900/50 px-5 py-4 text-center">
+                <p className="text-sm text-slate-400">
+                  No posts yet.{' '}
+                  <a href="/profile" className="text-amber-400 hover:underline">
+                    Be the first to post.
+                  </a>
+                </p>
               </div>
-              <p className="text-sm text-slate-300">{ex.content}</p>
-              <span className="absolute right-3 top-3 rounded bg-slate-800 px-1.5 py-0.5 text-xs text-slate-500">
-                example
-              </span>
+
+              <p className="pt-2 text-xs font-medium uppercase tracking-wider text-slate-600">
+                Example posts
+              </p>
+              {examples.map((ex, i) => (
+                <div
+                  key={i}
+                  className="relative rounded-lg border border-slate-800/60 bg-slate-900/40 p-4 opacity-60"
+                >
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-700 text-sm font-bold text-amber-500">
+                        {ex.username.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-100">@{ex.username}</p>
+                        <p className="text-xs text-slate-400">
+                          {ex.trade} · {ex.location}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                        category === 'qa' ? 'bg-blue-900/40 text-blue-400' : 'bg-slate-800 text-slate-400'
+                      }`}>
+                        {category === 'qa' ? 'Q&A' : 'Social'}
+                      </span>
+                      <span className="text-xs text-slate-500">{ex.time}</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-slate-300">{ex.content}</p>
+                  <span className="absolute right-3 top-3 rounded bg-slate-800 px-1.5 py-0.5 text-xs text-slate-500">
+                    example
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {postsWithProfiles.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
-        </div>
-      )}
+          ) : (
+            <div className="space-y-3">
+              {postsWithProfiles.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+          )}
+        </main>
+
+        <aside className="hidden lg:block w-60 shrink-0 sticky top-20 self-start">
+          <FeedSidebar
+            recentlyVerified={recentlyVerified}
+            suggestedPeople={suggestedPeople}
+          />
+        </aside>
+      </div>
     </div>
   )
 }
