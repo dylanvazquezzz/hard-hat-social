@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Rebrand & Growth
 status: executing
-stopped_at: Phase 7 context gathered
-last_updated: "2026-03-08T18:58:25.341Z"
+stopped_at: "07-01 tasks 1+2 complete; checkpoint:human-verify pending for Task 3"
+last_updated: "2026-03-08T23:34:03.566Z"
 last_activity: 2026-03-05 — 06-03 SUMMARY created; infrastructure cutover checklist ready
 progress:
   total_phases: 9
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  completed_phases: 2
+  total_plans: 4
+  completed_plans: 4
   percent: 38
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-04)
 
 **Core value:** A contractor can find and contact a verified sub in their trade within 5 minutes — zero unverified people, no spam, no guesswork.
-**Current focus:** v1.2 Phase 6 — Bug Fixes & Rebrand
+**Current focus:** v1.2 Phase 7 — Feed Redesign
 
 ## Current Position
 
-Phase: 6 of 9 (Bug Fixes & Rebrand)
-Plan: 3 of 3 in current phase (all plans documented — awaiting infrastructure actions)
-Status: In progress — awaiting DNS propagation (24-48hr) and human dashboard actions
-Last activity: 2026-03-05 — 06-03 SUMMARY created; infrastructure cutover checklist ready
+Phase: 7 of 9 (Feed Redesign)
+Plan: 1 of 1 in current phase (07-01 tasks 1+2 complete; checkpoint:human-verify at Task 3)
+Status: In progress — awaiting human visual verification of two-column Explore layout
+Last activity: 2026-03-08 — 07-01 Tasks 1+2 committed; FeedSidebar + Explore page restructured
 
-Progress: [████░░░░░░] 38% (v1.2 phases — 3/8 plans complete)
+Progress: [██████████] 100% (v1.2 phases — 4/4 plans complete)
 
 ## Accumulated Context
 
@@ -57,10 +57,19 @@ Progress: [████░░░░░░] 38% (v1.2 phases — 3/8 plans comple
 - Supabase project rename is cosmetic only — project ref, URL, and API keys remain unchanged
 - NEXT_PUBLIC_APP_URL = https://hardhatsocial.net must be set in Vercel before redeploying
 
+### Phase 7 Decisions (from execution)
+
+- Sidebar links go to /contractors/[id] not /u/[username] per locked project decision
+- FeedSidebar is props-driven (no internal async) — page fetches data, passes as props; keeps component reusable
+- Auth cookie parsed server-side for viewer detection — no client fetch, no hydration flash
+- Suggested People falls back to Recently Verified when viewer has no trade or is not logged in
+- Sidebar hidden entirely below lg breakpoint; feed takes full width on mobile
+
 ### Pending Todos
 
 - Complete infrastructure cutover: GoDaddy DNS, Vercel domain verify, NEXT_PUBLIC_APP_URL update, Supabase Auth URL update, Resend domain verify
 - Test approval email from hardhatsocial.net to personal Gmail before onboarding any real user
+- Human visual verification of /explore two-column layout, sticky sidebar, responsive behavior (Task 3 checkpoint)
 
 ### Blockers/Concerns
 
@@ -68,7 +77,7 @@ Progress: [████░░░░░░] 38% (v1.2 phases — 3/8 plans comple
 
 ## Session Continuity
 
-Last session: 2026-03-08T18:58:25.339Z
-Stopped at: Phase 7 context gathered
-Next action: After all 4 infrastructure tasks complete, mark Phase 6 done and proceed to Phase 7
-Resume file: .planning/phases/07-feed-redesign/07-CONTEXT.md
+Last session: 2026-03-08T23:34:03.565Z
+Stopped at: 07-01 tasks 1+2 complete; checkpoint:human-verify pending for Task 3
+Next action: Human visits http://localhost:3000/explore to verify two-column layout, sticky sidebar, responsive behavior; then approve Task 3 checkpoint to complete plan 07-01
+Resume file: .planning/phases/07-feed-redesign/07-01-PLAN.md (Task 3 checkpoint)

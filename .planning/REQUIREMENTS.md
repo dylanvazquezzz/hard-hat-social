@@ -27,8 +27,8 @@ Requirements for this milestone: bug fixes, full rebrand to Hard Hat Social, fee
 
 ### Feed Redesign
 
-- [ ] **FEED-01**: Explore page posts fill the full content column width — no excessive side margins
-- [ ] **FEED-02**: Explore page has a right sidebar with "Recently Verified" and "Suggested People (same trade)" widgets
+- [x] **FEED-01**: Explore page posts fill the full content column width — no excessive side margins
+- [x] **FEED-02**: Explore page has a right sidebar with "Recently Verified" and "Suggested People (same trade)" widgets
 
 ### Jobs Lifecycle
 
@@ -80,8 +80,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BRAND-05 | Phase 6 | Complete |
 | BRAND-06 | Phase 6 | Complete |
 | BRAND-07 | Phase 6 | Complete |
-| FEED-01 | Phase 7 | Pending |
-| FEED-02 | Phase 7 | Pending |
+| FEED-01 | Phase 7 | Complete |
+| FEED-02 | Phase 7 | Complete |
 | JOBS-01 | Phase 9 | Pending |
 | JOBS-02 | Phase 9 | Pending |
 | JOBS-03 | Phase 9 | Pending |

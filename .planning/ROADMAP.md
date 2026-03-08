@@ -134,6 +134,6 @@ Phases execute in numeric order: 6 → 7 → 8 → 9
 | 4. Homepage Redesign | v1.1 | 1/1 | Complete | 2026-03-05 |
 | 5. Founding Cohort Onboarding | v1.1 | 4/4 | Complete | 2026-03-05 |
 | 6. Bug Fixes & Rebrand | 3/3 | Complete   | 2026-03-06 | - |
-| 7. Feed Redesign | v1.2 | 0/1 | Not started | - |
+| 7. Feed Redesign | 1/1 | Complete   | 2026-03-08 | - |
 | 8. Jobs Schema | v1.2 | 0/1 | Not started | - |
 | 9. Jobs UI | v1.2 | 0/3 | Not started | - |
