@@ -99,10 +99,10 @@ Plans:
   1. A Supabase migration creates the `jobs` table with a text + CHECK status constraint (open, hired, completed), a BEFORE UPDATE trigger that rejects invalid transitions (hired → open, completed → any), and RLS policies (public SELECT for open jobs, GC-only INSERT and status UPDATE)
   2. The `Job` TypeScript interface is defined in lib/types.ts with all fields and status union type — no TypeScript errors on import
   3. Running `npm run build` after the migration types are added completes without errors
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 08-01: Write and apply jobs table migration with trigger, RLS policies, and TypeScript types
+- [ ] 08-01-PLAN.md — Write and apply jobs table migration with trigger, RLS policies, and TypeScript types
 
 ### Phase 9: Jobs UI
 **Goal**: A GC can post a job, mark a contractor as hired, and mark the job complete — and completed jobs appear as a verified portfolio section on the hired contractor's profile page
