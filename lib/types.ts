@@ -67,3 +67,23 @@ export interface Post {
   profiles?: Profile
   contractors?: { full_name: string; trade: string; location_city: string; location_state: string }
 }
+
+export type JobStatus = 'open' | 'hired' | 'completed'
+
+export interface Job {
+  id: string
+  gc_contractor_id: string
+  hired_contractor_id: string | null
+  title: string
+  description: string
+  trade: string
+  location_city: string | null
+  location_state: string | null
+  status: JobStatus
+  created_at: string
+  hired_at: string | null
+  completed_at: string | null
+  // Optional joined fields for Phase 9 queries
+  gc_contractor?: { full_name: string; trade: string }
+  hired_contractor?: { full_name: string; trade: string } | null
+}
