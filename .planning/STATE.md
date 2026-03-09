@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Rebrand & Growth
 status: verifying
-stopped_at: Completed 07-01-PLAN.md — all 3 tasks done including human-verified checkpoint
-last_updated: "2026-03-08T23:54:26.601Z"
-last_activity: 2026-03-08 — 07-01 all tasks complete; two-column Explore layout human-approved
+stopped_at: Completed 08-01-PLAN.md Tasks 1-2; awaiting human verification of Task 3 checkpoint
+last_updated: "2026-03-09T01:05:38Z"
+last_activity: 2026-03-09 — 08-01 Tasks 1-2 complete; migration written, types added; awaiting Task 3 human verification
 progress:
   total_phases: 9
   completed_phases: 2
-  total_plans: 4
+  total_plans: 5
   completed_plans: 4
-  percent: 100
+  percent: 80
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-04)
 
 **Core value:** A contractor can find and contact a verified sub in their trade within 5 minutes — zero unverified people, no spam, no guesswork.
-**Current focus:** v1.2 Phase 7 — Feed Redesign
+**Current focus:** v1.2 Phase 8 — Jobs Schema
 
 ## Current Position
 
-Phase: 7 of 9 (Feed Redesign) — COMPLETE
-Plan: 1 of 1 in current phase — all 3 tasks done, including human-verified checkpoint
-Status: Complete — Phase 7 fully done; all plans committed and verified
-Last activity: 2026-03-08 — 07-01 all tasks complete; two-column Explore layout human-approved
+Phase: 8 of 9 (Jobs Schema) — IN PROGRESS
+Plan: 1 of 1 in current phase — Tasks 1-2 committed; Task 3 awaiting human verification of Supabase trigger
+Status: Checkpoint — awaiting human verification of jobs table migration
+Last activity: 2026-03-09 — 08-01 Tasks 1-2 complete; migration file and types written; build + lint pass
 
-Progress: [██████████] 100% (v1.2 phases — 4/4 plans complete)
+Progress: [████████--] 80% (v1.2 phases — 4/5 plans complete, Task 3 pending)
 
 ## Accumulated Context
 
@@ -65,6 +65,14 @@ Progress: [██████████] 100% (v1.2 phases — 4/4 plans compl
 - Suggested People falls back to Recently Verified when viewer has no trade or is not logged in
 - Sidebar hidden entirely below lg breakpoint; feed takes full width on mobile
 
+### Phase 8 Decisions (from execution)
+
+- Used text + CHECK for jobs.status (not Postgres ENUM) — consistent with contractors.status and posts.category
+- BEFORE UPDATE trigger (not AFTER) — only BEFORE can prevent the write from landing
+- hired_contractor_id nullable — only set on open->hired transition; NULL for open jobs
+- Two SELECT RLS policies (public open + GC own) instead of one combined — explicit and auditable
+- is_gc() uses security definer to prevent privilege escalation in RLS context
+
 ### Pending Todos
 
 - Complete infrastructure cutover: GoDaddy DNS, Vercel domain verify, NEXT_PUBLIC_APP_URL update, Supabase Auth URL update, Resend domain verify
@@ -77,7 +85,7 @@ Progress: [██████████] 100% (v1.2 phases — 4/4 plans compl
 
 ## Session Continuity
 
-Last session: 2026-03-08T23:49:41.586Z
-Stopped at: Completed 07-01-PLAN.md — all 3 tasks done including human-verified checkpoint
-Next action: Advance to Phase 8 — next planned phase per ROADMAP.md
+Last session: 2026-03-09T01:05:38Z
+Stopped at: 08-01 Tasks 1-2 committed; paused at Task 3 checkpoint:human-verify
+Next action: User applies 008_jobs_table.sql to Supabase, verifies trigger behavior, then resumes Task 3
 Resume file: None
