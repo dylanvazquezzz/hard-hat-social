@@ -113,12 +113,12 @@ Plans:
   2. The GC who posted a job can select an approved contractor from the directory and mark them as hired — the job card updates to "Hired" status and shows the hired contractor's name
   3. The GC can mark a hired job as "Completed" — the job card updates to "Completed" status
   4. A completed job appears as a verified portfolio entry on the hired contractor's profile page, showing job title, GC name, and completion date
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 09-01: Jobs board page using jobs table — JobCard component, createJob server action, job listing with status pills
-- [ ] 09-02: Hired flow — SubSelectorModal, markHired server action, hired status display
-- [ ] 09-03: Completion flow and portfolio — markCompleted server action, CompletedJobsSection on contractor profiles
+- [ ] 09-01-PLAN.md — Jobs board rebuilt from jobs table: migration 009, createJob/markHired/markCompleted actions, JobCard, CreateJobForm, jobs page server component
+- [ ] 09-02-PLAN.md — Hired flow: SubSelectorModal with contractor search, JobCard wired to markHired via modal
+- [ ] 09-03-PLAN.md — Completion flow and portfolio: CompletedJobsSection on contractor profiles, human verification checkpoint
 
 ## Progress
 
