@@ -136,4 +136,4 @@ Phases execute in numeric order: 6 → 7 → 8 → 9
 | 6. Bug Fixes & Rebrand | 3/3 | Complete   | 2026-03-06 | - |
 | 7. Feed Redesign | 1/1 | Complete   | 2026-03-08 | - |
 | 8. Jobs Schema | 1/1 | Complete   | 2026-03-10 | - |
-| 9. Jobs UI | v1.2 | 0/3 | Not started | - |
+| 9. Jobs UI | 1/3 | In Progress|  | - |

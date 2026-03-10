@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Rebrand & Growth
 status: verifying
-stopped_at: Completed 08-01-PLAN.md — all 3 tasks complete, migration and types verified
-last_updated: "2026-03-10T00:41:36.329Z"
-last_activity: 2026-03-09 — 08-01 complete; all tasks committed and verified
+stopped_at: Completed 09-01-PLAN.md — all 3 tasks complete, jobs board rebuilt on jobs table
+last_updated: "2026-03-10T01:05:00Z"
+last_activity: 2026-03-10 — 09-01 complete; migration 009, server actions, JobCard, CreateJobForm, jobs page rebuilt
 progress:
   total_phases: 9
   completed_phases: 3
-  total_plans: 5
-  completed_plans: 5
-  percent: 100
+  total_plans: 8
+  completed_plans: 6
+  percent: 75
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-04)
 
 **Core value:** A contractor can find and contact a verified sub in their trade within 5 minutes — zero unverified people, no spam, no guesswork.
-**Current focus:** v1.2 Phase 8 — Jobs Schema
+**Current focus:** v1.2 Phase 9 — Jobs UI
 
 ## Current Position
 
-Phase: 8 of 9 (Jobs Schema) — COMPLETE
-Plan: 1 of 1 in current phase — all 3 tasks complete
-Status: Complete — migration verified by user, trigger and RLS confirmed working
-Last activity: 2026-03-09 — 08-01 complete; all tasks committed and verified
+Phase: 9 of 9 (Jobs UI) — IN PROGRESS
+Plan: 1 of 2 in current phase — all 3 tasks complete
+Status: 09-01 complete — jobs board rebuilt on jobs table with CreateJobForm, JobCard, server actions
+Last activity: 2026-03-10 — 09-01 complete; migration 009, server actions, components, page rebuilt
 
-Progress: [██████████] 100% (v1.2 phases — 5/5 plans complete)
+Progress: [████████░░] 75% (v1.2 phases — 6/8 plans complete)
 
 ## Accumulated Context
 
@@ -65,6 +65,12 @@ Progress: [██████████] 100% (v1.2 phases — 5/5 plans compl
 - Suggested People falls back to Recently Verified when viewer has no trade or is not logged in
 - Sidebar hidden entirely below lg breakpoint; feed takes full width on mobile
 
+### Phase 9 Decisions (from execution)
+
+- Cast Supabase dual-FK query result as `unknown as Job[]` — TS infers joined arrays as `T[]` not `T`, requires intermediate cast
+- showModal state wired in JobCard for "Mark Hired" but SubSelectorModal deferred to plan 09-02
+- GC gate enforced in jobs page (viewerIsGC check) not inside CreateJobForm component — keeps form dumb and reusable
+
 ### Phase 8 Decisions (from execution)
 
 - Used text + CHECK for jobs.status (not Postgres ENUM) — consistent with contractors.status and posts.category
@@ -85,7 +91,7 @@ Progress: [██████████] 100% (v1.2 phases — 5/5 plans compl
 
 ## Session Continuity
 
-Last session: 2026-03-10T00:39:16.252Z
-Stopped at: Completed 08-01-PLAN.md — all 3 tasks complete, migration and types verified
-Next action: Phase 9 (Jobs UI) — build CRUD UI on top of the jobs table foundation
+Last session: 2026-03-10T01:05:00Z
+Stopped at: Completed 09-01-PLAN.md — all 3 tasks complete, jobs board rebuilt on jobs table
+Next action: Phase 9 plan 02 (Jobs UI) — SubSelectorModal + hired status display
 Resume file: None
