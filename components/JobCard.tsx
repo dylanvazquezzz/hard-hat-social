@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Job, JobStatus } from '@/lib/types'
 import { markCompleted } from '@/app/jobs/actions'
+import SubSelectorModal from '@/components/SubSelectorModal'
 
 interface JobCardProps {
   job: Job
@@ -97,9 +98,10 @@ export default function JobCard({ job, isOwner }: JobCardProps) {
                 Mark Hired
               </button>
               {showModal && (
-                <div className="mt-2 rounded border border-slate-700 bg-slate-800 p-3 text-xs text-slate-400">
-                  Sub selector coming in plan 09-02
-                </div>
+                <SubSelectorModal
+                  jobId={job.id}
+                  onClose={() => setShowModal(false)}
+                />
               )}
             </>
           )}
