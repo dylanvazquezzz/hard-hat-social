@@ -4,6 +4,7 @@ import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import ProfileHeader from '@/components/ProfileHeader'
 import CertificationBadge from '@/components/CertificationBadge'
 import ContactSection from '@/components/ContactSection'
+import CompletedJobsSection from '@/components/CompletedJobsSection'
 import type { Contractor, Certification } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -50,7 +51,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ContractorProfilePage({ params }: PageProps) {
   const admin = getSupabaseAdmin()
-  const [{ data: contractorData }, { data: certData }] = await Promise.all([
+  const [{ data: contractorData }, { data: certData }, { data: completedJobsData }] = await Promise.all([
     admin
       .from('contractors')
       .select('id, user_id, full_name, trade, specialties, location_city, location_state, years_experience, bio, website, profile_photo_url, status, created_at')
@@ -58,6 +59,15 @@ export default async function ContractorProfilePage({ params }: PageProps) {
       .eq('status', 'approved')
       .single(),
     admin.from('certifications').select('*').eq('contractor_id', params.id),
+    admin
+      .from('jobs')
+      .select(`
+        id, title, trade, location_city, location_state, completed_at,
+        gc_contractor:contractors!jobs_gc_contractor_id_fkey(full_name)
+      `)
+      .eq('hired_contractor_id', params.id)
+      .eq('status', 'completed')
+      .order('completed_at', { ascending: false }),
   ])
 
   if (!contractorData) {
@@ -66,6 +76,15 @@ export default async function ContractorProfilePage({ params }: PageProps) {
 
   const contractor = contractorData as Omit<Contractor, 'phone' | 'email'>
   const certifications = (certData as Certification[]) ?? []
+  const completedJobs = (completedJobsData ?? []) as unknown as Array<{
+    id: string
+    title: string
+    trade: string
+    location_city: string | null
+    location_state: string | null
+    completed_at: string | null
+    gc_contractor?: { full_name: string } | null
+  }>
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -131,6 +150,8 @@ export default async function ContractorProfilePage({ params }: PageProps) {
                 </div>
               </section>
             )}
+
+            <CompletedJobsSection jobs={completedJobs} />
           </div>
 
           <aside className="space-y-4">
