@@ -56,7 +56,7 @@ completed: 2026-03-09
 - **Duration:** ~1 min
 - **Started:** 2026-03-09T01:04:35Z
 - **Completed:** 2026-03-09T01:05:38Z
-- **Tasks:** 2 of 3 complete (Task 3 is a human-verify checkpoint)
+- **Tasks:** 3 of 3 complete
 - **Files modified:** 2
 
 ## Accomplishments
@@ -70,7 +70,7 @@ Each task was committed atomically:
 
 1. **Task 1: Write 008_jobs_table.sql migration** - `6ddb605` (feat)
 2. **Task 2: Add JobStatus and Job interface to lib/types.ts** - `8642b74` (feat)
-3. **Task 3: Verify migration applies and trigger enforces state transitions** - Pending human verification
+3. **Task 3: Verify migration applies and trigger enforces state transitions** - `d4852ff` (chore — human verified)
 
 ## Files Created/Modified
 - `supabase/migrations/008_jobs_table.sql` - Complete jobs table DDL with is_gc() helper, BEFORE UPDATE trigger, RLS policies, and 4 indexes
@@ -91,14 +91,7 @@ None - plan executed exactly as written.
 None.
 
 ## User Setup Required
-Task 3 requires manual verification against local Supabase. See checkpoint instructions below.
-
-**Verification steps:**
-1. Apply migration: `npx supabase db reset` locally, or paste 008_jobs_table.sql into Supabase dashboard SQL editor
-2. Insert a test job using a real gc_contractor_id (trade = 'General Contractor')
-3. Test trigger blocks hired->open (expect: ERROR: Cannot revert a hired job to open)
-4. Test trigger blocks completed->any (expect: ERROR: Job status cannot change after completion)
-5. Test anon SELECT returns only status='open' rows
+None — migration verified by user against local Supabase. Trigger behavior and RLS policies confirmed working.
 
 ## Next Phase Readiness
 - Phase 9 (Jobs UI) can import `Job` and `JobStatus` from `lib/types.ts` immediately
