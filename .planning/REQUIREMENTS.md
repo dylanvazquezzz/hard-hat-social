@@ -33,7 +33,7 @@ Requirements for this milestone: bug fixes, full rebrand to Hard Hat Social, fee
 ### Jobs Lifecycle
 
 - [x] **JOBS-01**: A GC can create a job posting on the Jobs board
-- [ ] **JOBS-02**: A GC can mark a job as "hired" by selecting which approved contractor was hired
+- [x] **JOBS-02**: A GC can mark a job as "hired" by selecting which approved contractor was hired
 - [ ] **JOBS-03**: A GC can mark a hired job as "completed"
 - [ ] **JOBS-04**: Completed jobs appear as a verified portfolio section on the hired contractor's profile
 
@@ -83,7 +83,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FEED-01 | Phase 7 | Complete |
 | FEED-02 | Phase 7 | Complete |
 | JOBS-01 | Phase 9 | Complete |
-| JOBS-02 | Phase 9 | Pending |
+| JOBS-02 | Phase 9 | Complete |
 | JOBS-03 | Phase 9 | Pending |
 | JOBS-04 | Phase 9 | Pending |
 

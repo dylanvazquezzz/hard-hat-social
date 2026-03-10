@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Rebrand & Growth
-status: verifying
-stopped_at: Completed 09-01-PLAN.md — all 3 tasks complete, jobs board rebuilt on jobs table
-last_updated: "2026-03-10T01:05:00Z"
-last_activity: 2026-03-10 — 09-01 complete; migration 009, server actions, JobCard, CreateJobForm, jobs page rebuilt
+status: completed
+stopped_at: Completed 09-02-PLAN.md — SubSelectorModal and hired flow complete
+last_updated: "2026-03-10T01:08:13.055Z"
+last_activity: 2026-03-10 — 09-01 complete; migration 009, server actions, components, page rebuilt
 progress:
   total_phases: 9
   completed_phases: 3
   total_plans: 8
-  completed_plans: 6
+  completed_plans: 7
   percent: 75
 ---
 
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 
 ## Current Position
 
-Phase: 9 of 9 (Jobs UI) — IN PROGRESS
-Plan: 1 of 2 in current phase — all 3 tasks complete
-Status: 09-01 complete — jobs board rebuilt on jobs table with CreateJobForm, JobCard, server actions
-Last activity: 2026-03-10 — 09-01 complete; migration 009, server actions, components, page rebuilt
+Phase: 9 of 9 (Jobs UI) — COMPLETE
+Plan: 2 of 2 in current phase — all tasks complete
+Status: 09-02 complete — SubSelectorModal and hired flow wired into JobCard
+Last activity: 2026-03-10 — 09-02 complete; SubSelectorModal, JobCard modal wiring
 
-Progress: [████████░░] 75% (v1.2 phases — 6/8 plans complete)
+Progress: [█████████░] 88% (v1.2 phases — 7/8 plans complete)
 
 ## Accumulated Context
 
@@ -70,6 +70,9 @@ Progress: [████████░░] 75% (v1.2 phases — 6/8 plans comple
 - Cast Supabase dual-FK query result as `unknown as Job[]` — TS infers joined arrays as `T[]` not `T`, requires intermediate cast
 - showModal state wired in JobCard for "Mark Hired" but SubSelectorModal deferred to plan 09-02
 - GC gate enforced in jobs page (viewerIsGC check) not inside CreateJobForm component — keeps form dumb and reusable
+- Browser supabase client (not admin) used in SubSelectorModal — client components cannot import server-only modules without build failure
+- Modal is separate component (SubSelectorModal) not inline JSX — keeps JobCard single-responsibility
+- No additional client state needed after hiring — markHired calls revalidatePath('/jobs') server-side causing automatic re-render
 
 ### Phase 8 Decisions (from execution)
 
@@ -91,7 +94,7 @@ Progress: [████████░░] 75% (v1.2 phases — 6/8 plans comple
 
 ## Session Continuity
 
-Last session: 2026-03-10T01:05:00Z
-Stopped at: Completed 09-01-PLAN.md — all 3 tasks complete, jobs board rebuilt on jobs table
-Next action: Phase 9 plan 02 (Jobs UI) — SubSelectorModal + hired status display
+Last session: 2026-03-10T01:08:13.053Z
+Stopped at: Completed 09-02-PLAN.md — SubSelectorModal and hired flow complete
+Next action: Phase 9 complete — all plans done; jobs lifecycle (post, hire, complete) fully functional
 Resume file: None
