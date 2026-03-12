@@ -1,28 +1,29 @@
 # GSD State
 
-**Active Milestone:** M001 — v1.3 UX & Trade Expansion — ✅ COMPLETE
-**Active Slice:** None
-**Phase:** complete
-**Requirements Status:** 18 complete · 0 pending · 0 deferred · 0 out of scope
+**Active Milestone:** M002 — Social Layer — 🟡 PLANNED
+**Active Slice:** None (ready to start S01)
+**Phase:** planning complete
 
 ## Milestone Registry
-- ✅ **M001:** v1.3 UX & Trade Expansion (all 6 slices shipped to production)
+- ✅ **M001:** v1.3 UX & Trade Expansion (all 6 slices shipped to production; M001-SUMMARY.md written)
+- 🟡 **M002:** Social Layer (7 slices planned)
 
-## Completed Slices
-- ✅ **S01:** Auto-Deploy + Bug Fix
-- ✅ **S02:** Directory Filter Expansion
-- ✅ **S03:** Job Posting UX Overhaul
-- ✅ **S04:** GC Recent Contacts
-- ✅ **S05:** Drywall Trade
-- ✅ **S06:** Homepage Hero Redesign
+## M002 Slices
+- [ ] **S01:** Foundation Cleanup — TRADES constant, rate limiting, admin audit, error boundaries
+- [ ] **S02:** Comments on Posts
+- [ ] **S03:** Notifications (in-app bell + Resend email)
+- [ ] **S04:** Follow System + Following feed
+- [ ] **S05:** SEO + Public Profile Discoverability
+- [ ] **S06:** Onboarding + Homepage Polish
+- [ ] **S07:** Direct Messaging
 
 ## Blockers
 - None
 
 ## Production Status
-- hardhatsocial.net: live, HTTP 200, domain verified
-- Migrations 010–012: applied and verified in production Supabase
-- All 18 M001 requirements: validated
+- hardhatsocial.net: live, HTTP 200
+- Migrations 001–012: applied and verified in production Supabase
+- M001 complete — all 18 requirements validated; M001-SUMMARY.md written
 
 ## Next Action
-M001 complete. Queue M002 or continue with new milestone.
+Start M002/S01: Foundation Cleanup. Branch: gsd/M002/S01

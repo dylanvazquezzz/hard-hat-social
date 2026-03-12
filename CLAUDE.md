@@ -262,3 +262,15 @@ npm run lint       # linting
 - Ask before adding any new npm package
 - The `NEXT_PUBLIC_ADMIN_EMAILS` env var controls who can access `/admin`
 - Storage buckets (`avatars`, `post-images`, `application-docs`) must be created manually in Supabase dashboard
+
+---
+
+## Slice Completion Protocol (MANDATORY — every slice, no exceptions)
+At the end of every GSD slice, in this exact order:
+1. **Verify locally** — run the full user flow in the browser at localhost:3000, use browser assertions, check console for errors
+2. **Build check** — `npm run build` must pass clean
+3. **Apply migrations** — run `./scripts/migrate.sh supabase/migrations/NNN_name.sql` for any new migrations, verify with a follow-up SELECT
+4. **Deploy** — `./scripts/deploy.sh "<S0X>: short description"` — this gates on build before pushing
+5. **Verify production** — repeat key browser assertions against hardhatsocial.net
+
+Never mark a slice complete until step 5 passes. Every slice ships to production.
