@@ -2,7 +2,7 @@
 
 **Active Milestone:** M002 — Social Layer
 **Active Slice:** S02 — Comments on Posts
-**Phase:** planning
+**Phase:** executing
 **Requirements Status:** 0 active · 0 validated · 0 deferred · 0 out of scope
 
 ## Milestone Registry
@@ -16,4 +16,4 @@
 - None
 
 ## Next Action
-Plan slice S02 (Comments on Posts).
+Execute T01: Create comments table migration and Comment type in slice S02.
