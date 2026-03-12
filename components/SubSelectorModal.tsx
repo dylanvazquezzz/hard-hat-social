@@ -10,20 +10,88 @@ interface SubSelectorModalProps {
   onClose: () => void
 }
 
+interface RecentContact {
+  id: string
+  full_name: string
+  trade: string
+  location_city: string | null
+  location_state: string | null
+}
+
 export default function SubSelectorModal({ jobId, onClose }: SubSelectorModalProps) {
   const [contractors, setContractors] = useState<Contractor[]>([])
+  const [recentContacts, setRecentContacts] = useState<RecentContact[]>([])
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    supabase
-      .from('contractors')
-      .select('id, full_name, trade, location_city, location_state')
-      .eq('status', 'approved')
-      .order('full_name')
-      .then(({ data }) => setContractors((data as Contractor[]) ?? []))
+    async function load() {
+      // Get current user's contractor record (to know which GC is acting)
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
+        const { data: gcContractor } = await supabase
+          .from('contractors')
+          .select('id')
+          .eq('user_id', session.user.id)
+          .eq('status', 'approved')
+          .maybeSingle()
+
+        if (gcContractor) {
+          // Query up to 5 distinct recently hired contractors for this GC.
+          // We use hired_at DESC and deduplicate in JS since PostgREST
+          // doesn't support DISTINCT ON.
+          const { data: recentJobs } = await supabase
+            .from('jobs')
+            .select('hired_contractor_id, hired_at')
+            .eq('gc_contractor_id', gcContractor.id)
+            .not('hired_contractor_id', 'is', null)
+            .order('hired_at', { ascending: false })
+            .limit(20) // over-fetch to allow dedup down to 5 distinct
+
+          if (recentJobs && recentJobs.length > 0) {
+            // Deduplicate by hired_contractor_id — keep most-recent hire per contractor
+            const seen = new Set<string>()
+            const distinctIds: string[] = []
+            for (const job of recentJobs) {
+              if (job.hired_contractor_id && !seen.has(job.hired_contractor_id)) {
+                seen.add(job.hired_contractor_id)
+                distinctIds.push(job.hired_contractor_id)
+                if (distinctIds.length === 5) break
+              }
+            }
+
+            if (distinctIds.length > 0) {
+              const { data: recentData } = await supabase
+                .from('contractors')
+                .select('id, full_name, trade, location_city, location_state')
+                .in('id', distinctIds)
+                .eq('status', 'approved')
+
+              if (recentData && recentData.length > 0) {
+                // Re-sort to match the hired_at order (Supabase IN doesn't preserve order)
+                const byId = new Map(recentData.map((c) => [c.id, c]))
+                const ordered = distinctIds
+                  .map((id) => byId.get(id))
+                  .filter((c): c is RecentContact => c !== undefined)
+                setRecentContacts(ordered)
+              }
+            }
+          }
+        }
+      }
+
+      // Load all approved contractors for search
+      const { data } = await supabase
+        .from('contractors')
+        .select('id, full_name, trade, location_city, location_state')
+        .eq('status', 'approved')
+        .order('full_name')
+      setContractors((data as Contractor[]) ?? [])
+    }
+
+    load()
   }, [])
 
   const filtered = contractors.filter(
@@ -46,6 +114,28 @@ export default function SubSelectorModal({ jobId, onClose }: SubSelectorModalPro
     }
   }
 
+  function ContractorButton({ c }: { c: RecentContact | Contractor }) {
+    return (
+      <button
+        key={c.id}
+        onClick={() => setSelectedId(c.id)}
+        className={`w-full text-left rounded-md border px-3 py-2.5 transition-colors ${
+          selectedId === c.id
+            ? 'border-amber-500 bg-amber-500/10'
+            : 'border-slate-700 bg-slate-800 hover:border-slate-600'
+        }`}
+      >
+        <p className="text-sm font-semibold text-slate-100">{c.full_name}</p>
+        <p className="text-xs text-slate-400">
+          {c.trade}
+          {(c.location_city || c.location_state) && (
+            <> &middot; {[c.location_city, c.location_state].filter(Boolean).join(', ')}</>
+          )}
+        </p>
+      </button>
+    )
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
@@ -57,6 +147,24 @@ export default function SubSelectorModal({ jobId, onClose }: SubSelectorModalPro
       >
         <h2 className="text-base font-bold text-slate-100 mb-4">Select a Contractor to Hire</h2>
 
+        {/* Recent Contacts — only shown when there is hire history */}
+        {recentContacts.length > 0 && (
+          <div className="mb-4">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Recent Contacts
+            </p>
+            <div className="space-y-2">
+              {recentContacts.map((c) => (
+                <ContractorButton key={c.id} c={c} />
+              ))}
+            </div>
+            <div className="mt-4 mb-3 border-t border-slate-800" />
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              All Contractors
+            </p>
+          </div>
+        )}
+
         <input
           type="text"
           value={search}
@@ -65,28 +173,12 @@ export default function SubSelectorModal({ jobId, onClose }: SubSelectorModalPro
           className="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500 mb-3"
         />
 
-        <div className="max-h-72 overflow-y-auto space-y-2">
+        <div className="max-h-60 overflow-y-auto space-y-2">
           {filtered.length === 0 && (
             <p className="text-sm text-slate-500 py-4 text-center">No contractors found.</p>
           )}
           {filtered.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setSelectedId(c.id)}
-              className={`w-full text-left rounded-md border px-3 py-2.5 transition-colors ${
-                selectedId === c.id
-                  ? 'border-amber-500 bg-amber-500/10'
-                  : 'border-slate-700 bg-slate-800 hover:border-slate-600'
-              }`}
-            >
-              <p className="text-sm font-semibold text-slate-100">{c.full_name}</p>
-              <p className="text-xs text-slate-400">
-                {c.trade}
-                {(c.location_city || c.location_state) && (
-                  <> &middot; {[c.location_city, c.location_state].filter(Boolean).join(', ')}</>
-                )}
-              </p>
-            </button>
+            <ContractorButton key={c.id} c={c} />
           ))}
         </div>
 
