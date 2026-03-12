@@ -18,6 +18,15 @@
 - Deploy script gates on `npm run build` before any git operations — broken code never reaches production; script exits 1 and aborts before `git add` if build fails
 - Pattern: when RLS policy already scopes rows to the current user (user_id = auth.uid()), client queries must NOT include user_id in PostgREST URL params — RLS executes server-side in Postgres at the row level, not at PostgREST's HTTP column-validation layer; including a column that may be absent in PostgREST's schema cache causes HTTP 400
 
+## v1.3 S02
+
+- Insurance/cert filters resolved via certifications table ILIKE sub-query → `.in('id', ids)` on main contractors query — PostgREST does not support SQL subquery IN natively; resolve matching IDs in a separate query first, then apply as an IN filter
+- Empty certFilterIds list short-circuits to renderPage([], ...) before issuing `.in('id', [])` — avoids PostgREST empty array edge case which can return unexpected results
+- Insurance filter uses ILIKE on cert name/issuing_body rather than a dedicated boolean column — avoids schema change; tradeoff is dependence on cert naming conventions
+- CERT_OPTIONS hardcoded in SearchFilters — avoids a DB round-trip for a mostly-static list at MVP cert volume; make dynamic when distinct cert count exceeds ~15
+- `renderPage()` helper extracted as module-level function in contractors/page.tsx — avoids JSX duplication for early-return empty-result path without adding a separate component file
+- Pattern: sub-query → IN filter is the standard approach for any filter requiring a JOIN-like operation in PostgREST (applies to future cert-type, tag, or category filters)
+
 ## Admin
 
 - Admin access controlled by `NEXT_PUBLIC_ADMIN_EMAILS` env var (comma-separated)

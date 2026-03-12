@@ -13,13 +13,31 @@ const US_STATES = [
   'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
 ]
 
+const CERT_OPTIONS = [
+  'AWS Certified Welder',
+  'State Contractor License',
+  'EPA 608',
+  'State Electrician License',
+  'State Plumber License',
+  'D1.1 Structural Certification',
+  'D1.5 Bridge Welding Certification',
+]
+
 interface Props {
   currentTrade?: string
   currentState?: string
   currentQuery?: string
+  currentInsurance?: string   // 'gl' | 'wc' | '' — general liability or workers comp
+  currentCert?: string        // cert name from CERT_OPTIONS
 }
 
-export default function SearchFilters({ currentTrade, currentState, currentQuery }: Props) {
+export default function SearchFilters({
+  currentTrade,
+  currentState,
+  currentQuery,
+  currentInsurance,
+  currentCert,
+}: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [searchInput, setSearchInput] = useState(currentQuery ?? '')
@@ -46,7 +64,12 @@ export default function SearchFilters({ currentTrade, currentState, currentQuery
     updateFilter('q', searchInput.trim())
   }
 
-  const hasFilters = !!currentTrade || !!currentState || !!currentQuery
+  const hasFilters =
+    !!currentTrade ||
+    !!currentState ||
+    !!currentQuery ||
+    !!currentInsurance ||
+    !!currentCert
 
   return (
     <div className="space-y-6">
@@ -112,6 +135,56 @@ export default function SearchFilters({ currentTrade, currentState, currentQuery
           {US_STATES.map((state) => (
             <option key={state} value={state}>
               {state}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Insurance filter */}
+      <div>
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Insurance</p>
+        <div className="space-y-1.5">
+          <label className="flex items-center gap-2.5 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={currentInsurance === 'gl'}
+              onChange={(e) => updateFilter('insurance', e.target.checked ? 'gl' : '')}
+              className="h-4 w-4 rounded border-slate-600 bg-slate-800 text-amber-500 focus:ring-amber-500 focus:ring-offset-slate-900"
+            />
+            <span className={`text-sm transition-colors ${
+              currentInsurance === 'gl' ? 'text-amber-400 font-medium' : 'text-slate-400 group-hover:text-slate-200'
+            }`}>
+              General Liability
+            </span>
+          </label>
+          <label className="flex items-center gap-2.5 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={currentInsurance === 'wc'}
+              onChange={(e) => updateFilter('insurance', e.target.checked ? 'wc' : '')}
+              className="h-4 w-4 rounded border-slate-600 bg-slate-800 text-amber-500 focus:ring-amber-500 focus:ring-offset-slate-900"
+            />
+            <span className={`text-sm transition-colors ${
+              currentInsurance === 'wc' ? 'text-amber-400 font-medium' : 'text-slate-400 group-hover:text-slate-200'
+            }`}>
+              Workers&apos; Comp
+            </span>
+          </label>
+        </div>
+      </div>
+
+      {/* Certification filter */}
+      <div>
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Certification</p>
+        <select
+          value={currentCert ?? ''}
+          onChange={(e) => updateFilter('cert', e.target.value)}
+          className="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
+        >
+          <option value="">Any Certification</option>
+          {CERT_OPTIONS.map((cert) => (
+            <option key={cert} value={cert}>
+              {cert}
             </option>
           ))}
         </select>

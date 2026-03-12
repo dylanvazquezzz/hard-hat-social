@@ -3,8 +3,8 @@
 ## Requirement Counts
 
 - Total: 18
-- Complete: 2
-- Pending: 16
+- Complete: 5
+- Pending: 13
 
 ## Requirements
 
@@ -15,9 +15,9 @@
 - [x] **BUG-06**: Fix 400 Bad Request on `GET /rest/v1/applications?select=status&user_id=eq.{id}&status=eq.pending`
 
 ### Directory Filters
-- [ ] **FILTER-01**: /contractors filter panel includes insurance and certification filters
-- [ ] **FILTER-02**: Filters compose correctly — trade + cert returns only contractors matching both
-- [ ] **FILTER-03**: Filter UI works on mobile at 375px — no overflow
+- [x] **FILTER-01**: /contractors filter panel includes insurance and certification filters
+- [x] **FILTER-02**: Filters compose correctly — trade + cert returns only contractors matching both
+- [x] **FILTER-03**: Filter UI works on mobile at 375px — no overflow
 
 ### Job Posting UX
 - [ ] **JOBS-05**: Navigating to /profile as a GC defaults to Posts tab with Jobs sub-category pre-selected
