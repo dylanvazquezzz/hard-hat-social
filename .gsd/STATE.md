@@ -1,20 +1,18 @@
 # GSD State
 
 **Active Milestone:** M001 — v1.3 UX & Trade Expansion
-**Active Slice:** S01 — Auto-Deploy + Bug Fix
-**Phase:** complete
-**Requirements Status:** 2 complete · 16 pending
+**Active Slice:** S02 — Directory Filter Expansion
+**Phase:** executing
+**Requirements Status:** 0 active · 0 validated · 0 deferred · 0 out of scope
 
 ## Milestone Registry
-- 🔄 **M001:** v1.3 UX & Trade Expansion — 1 of 6 slices complete (S01 ✅)
+- 🔄 **M001:** v1.3 UX & Trade Expansion
 
 ## Recent Decisions
-- BUG-06: Remove user_id from PostgREST URL params when RLS already scopes to current user
-- Migration 010 idempotent — ADD COLUMN IF NOT EXISTS safe to run multiple times
-- Deploy script gates on npm run build before git operations
+- None recorded
 
 ## Blockers
-- Migration 010 must be applied to production Supabase (pzjommfcglozzuskubnl) before S01 deploy ships
+- None
 
-## Completed Slices
-- ✅ **S01:** Auto-Deploy + Bug Fix — BUG-06 fixed, scripts/deploy.sh created
+## Next Action
+Execute T01: Add insurance + cert filter UI to SearchFilters in slice S02.
