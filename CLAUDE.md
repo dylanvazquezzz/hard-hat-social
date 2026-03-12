@@ -239,6 +239,7 @@ Verification is **manual** — admin reviews documents in the application queue.
 npm run dev        # local development (http://localhost:3000)
 npm run build      # production build
 npm run lint       # linting
+./scripts/deploy.sh "message"  # build → commit → push → triggers Vercel auto-deploy
 ```
 
 ---

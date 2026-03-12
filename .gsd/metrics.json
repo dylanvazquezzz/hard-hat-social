@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "projectStartedAt": 1773279294232,
+  "units": [
+    {
+      "type": "execute-task",
+      "id": "M001/S01/T01",
+      "model": "claude-sonnet-4-6",
+      "startedAt": 1773279294253,
+      "finishedAt": 1773279696461,
+      "tokens": {
+        "input": 81,
+        "output": 16467,
+        "cacheRead": 5108176,
+        "cacheWrite": 77093,
+        "total": 5201817
+      },
+      "cost": 2.06879955,
+      "toolCalls": 0,
+      "assistantMessages": 79,
+      "userMessages": 0
+    },
+    {
+      "type": "execute-task",
+      "id": "M001/S01/T02",
+      "model": "claude-sonnet-4-6",
+      "startedAt": 1773279696463,
+      "finishedAt": 1773279798825,
+      "tokens": {
+        "input": 23,
+        "output": 4155,
+        "cacheRead": 746492,
+        "cacheWrite": 13943,
+        "total": 764613
+      },
+      "cost": 0.33862784999999995,
+      "toolCalls": 0,
+      "assistantMessages": 21,
+      "userMessages": 0
+    }
+  ]
+}

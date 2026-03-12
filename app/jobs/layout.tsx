@@ -33,10 +33,14 @@ export default function JobsLayout({ children }: { children: React.ReactNode }) 
         router.replace('/auth')
         return
       }
+      // Query applications without filtering by user_id explicitly —
+      // the RLS policy (user_id = auth.uid()) already scopes this to
+      // the current user's rows, so filtering by status alone is safe.
+      // Filtering by user_id directly caused a 400 when migration 004
+      // had not yet been applied to production (BUG-06).
       const { data: app } = await supabase
         .from('applications')
         .select('status')
-        .eq('user_id', session.user.id)
         .eq('status', 'pending')
         .maybeSingle()
       setStatus(app ? 'pending' : 'ok')

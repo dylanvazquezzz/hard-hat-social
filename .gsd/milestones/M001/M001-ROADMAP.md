@@ -12,7 +12,11 @@
 
 ## Slices
 
+<<<<<<< HEAD
 - [ ] **S01: Auto-Deploy + Bug Fix** `risk:low`
+=======
+- [x] **S01: Auto-Deploy + Bug Fix** `risk:low`
+>>>>>>> gsd/M001/S01
   > After this: every future push auto-deploys to hardhatsocial.net; 400 error on applications query resolved
 
 - [ ] **S02: Directory Filter Expansion** `risk:medium`

@@ -53,11 +53,13 @@ export default function ProfilePage() {
         router.replace('/auth')
         return
       }
-      // Check for pending application before loading full profile
+      // Check for pending application before loading full profile.
+      // The RLS policy (user_id = auth.uid()) scopes this to the current
+      // user's rows — filtering by status alone is sufficient and avoids
+      // the 400 that occurs when user_id column is absent in prod (BUG-06).
       const { data: app } = await supabase
         .from('applications')
         .select('status')
-        .eq('user_id', session.user.id)
         .eq('status', 'pending')
         .maybeSingle()
       if (app) {

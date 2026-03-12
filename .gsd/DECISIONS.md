@@ -11,6 +11,14 @@
 - GC gate enforced in jobs page (viewerIsGC check) not inside CreateJobForm — keeps form dumb and reusable
 - `markHired` calls `revalidatePath('/jobs')` server-side for automatic re-render after hire
 
+<<<<<<< HEAD
+=======
+## v1.3 S01
+
+- BUG-06 fix: Remove explicit `user_id` filter from the applications pending check in layouts and profile page — the RLS policy `user_id = auth.uid()` scopes the result to the current user, so `.eq('status', 'pending')` alone is sufficient and avoids the 400 that PostgREST returns when the `user_id` column is absent from its schema cache
+- Migration 010 written idempotently (ADD COLUMN IF NOT EXISTS) to ensure `user_id` and `document_urls` columns exist on applications and RLS policies are in sync regardless of which prior migrations landed in production
+
+>>>>>>> gsd/M001/S01
 ## Admin
 
 - Admin access controlled by `NEXT_PUBLIC_ADMIN_EMAILS` env var (comma-separated)
