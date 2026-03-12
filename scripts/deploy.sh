@@ -54,7 +54,17 @@ else
   echo "✅  Committed: $COMMIT_MSG"
 fi
 
-# ── 5. Push to origin master ──────────────────────────────────────────────────
+# ── 5. Merge current branch to master if not already on master ───────────────
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+if [[ "$CURRENT_BRANCH" != "master" ]]; then
+  echo ""
+  echo "🔀  On branch '$CURRENT_BRANCH' — merging to master..."
+  git checkout master
+  git merge "$CURRENT_BRANCH" --no-ff -m "feat: merge $CURRENT_BRANCH to master"
+  echo "✅  Merged $CURRENT_BRANCH → master"
+fi
+
+# ── 6. Push to origin master ──────────────────────────────────────────────────
 echo ""
 echo "🚀  Pushing to origin master..."
 git push origin master
