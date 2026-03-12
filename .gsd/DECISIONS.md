@@ -56,6 +56,13 @@
 - `renderPage()` helper extracted as module-level function in contractors/page.tsx — avoids JSX duplication for early-return empty-result path without adding a separate component file
 - Pattern: sub-query → IN filter is the standard approach for any filter requiring a JOIN-like operation in PostgREST (applies to future cert-type, tag, or category filters)
 
+## M002 S01
+
+- TRADES constant split into two exports: `TRADES` (6-item canonical list) and `TRADES_WITH_OTHER` (extends TRADES with `'Other'`) — both live in `lib/constants.ts`. `CreateJobForm.tsx` imports `TRADES_WITH_OTHER` aliased as `TRADES` to preserve existing JSX references. Downstream M002 notification/job-matching logic should reference `TRADES` only (not `TRADES_WITH_OTHER`) to avoid `'Other'` leaking into trade-matching logic.
+- Admin server action guard pattern: `lib/admin-guard.ts` (server-only) exports `assertIsAdmin()` which extracts the Supabase access token from request cookies using the `sb-*-auth-token` cookie name pattern (same as `app/explore/page.tsx` lines 62–77), calls `admin.auth.getUser(token)`, then checks email against `NEXT_PUBLIC_ADMIN_EMAILS`. Throws `Error('403 Forbidden: admin access required')` on failure. Every exported function in admin action files calls this as its first line.
+- Apply form rate limiting is a server action check only — `submitApplication` was not introduced; only `checkApplyRateLimit(email)` is a server action. The DB insert, auth signup, and Storage upload remain client-side to preserve the complex multi-step flow. Rate check failure (DB error) is non-blocking (logs + allows) to prevent transient DB issues from blocking legitimate users.
+- Error boundaries use Next.js App Router `error.tsx` convention — `'use client'` required, `reset()` prop called directly on retry button (no `router.push` which breaks the error boundary contract). `/explore` gets both `error.tsx` and `loading.tsx`; `/contractors` gets `error.tsx` only (already had `loading.tsx`).
+
 ## Admin
 
 - Admin access controlled by `NEXT_PUBLIC_ADMIN_EMAILS` env var (comma-separated)

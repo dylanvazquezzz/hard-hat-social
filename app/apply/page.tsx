@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
-
-const TRADES = ['Welding', 'HVAC', 'Electrical', 'Plumbing', 'General Contractor', 'Drywall']
+import { TRADES } from '@/lib/constants'
+import { checkApplyRateLimit } from './actions'
 
 const SPECIALTIES_BY_TRADE: Record<string, string[]> = {
   Welding: [
@@ -129,6 +129,12 @@ export default function ApplyPage() {
 
     if (form.password.length < 8) {
       setError('Password must be at least 8 characters.')
+      return
+    }
+
+    const rateCheck = await checkApplyRateLimit(form.email)
+    if (!rateCheck.allowed) {
+      setError(rateCheck.error ?? 'Too many submissions. Please try again later.')
       return
     }
 

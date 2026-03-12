@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { createJob } from '@/app/jobs/actions'
-
-const TRADES = ['Welding', 'HVAC', 'Electrical', 'Plumbing', 'General Contractor', 'Drywall', 'Other']
+import { TRADES_WITH_OTHER as TRADES } from '@/lib/constants'
 
 const US_STATES = [
   'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',

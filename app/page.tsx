@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
-
-const TRADES = ['Welding', 'HVAC', 'Electrical', 'Plumbing', 'General Contractor', 'Drywall']
+import { TRADES } from '@/lib/constants'
 
 // Trade icons (SVG paths) for the Browse by Trade grid
 const TRADE_ICONS: Record<string, string> = {

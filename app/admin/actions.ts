@@ -3,9 +3,11 @@
 import { revalidatePath } from 'next/cache'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import { sendApprovalEmail, sendRejectionEmail } from '@/lib/email'
+import { assertIsAdmin } from '@/lib/admin-guard'
 import type { Application } from '@/lib/types'
 
 export async function approveApplication(applicationId: string) {
+  await assertIsAdmin()
   const admin = getSupabaseAdmin()
 
   const { data: app } = await admin
@@ -86,6 +88,7 @@ export async function approveApplication(applicationId: string) {
 }
 
 export async function rejectApplication(applicationId: string) {
+  await assertIsAdmin()
   const admin = getSupabaseAdmin()
 
   const { data: app } = await admin

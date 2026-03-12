@@ -49,7 +49,7 @@ This milestone is complete only when all are true:
 
 ## Slices
 
-- [ ] **S01: Foundation Cleanup** `risk:low` `depends:[]`
+- [x] **S01: Foundation Cleanup** `risk:low` `depends:[]`
   > After this: TRADES consolidated to lib/constants.ts, apply form rate-limited, admin actions audited and confirmed server-protected, error boundaries on Directory + Explore
 
 - [ ] **S02: Comments on Posts** `risk:medium` `depends:[S01]`

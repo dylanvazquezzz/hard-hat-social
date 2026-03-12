@@ -1,7 +1,7 @@
 # GSD State
 
 **Active Milestone:** M002 — Social Layer
-**Active Slice:** S01 — Foundation Cleanup
+**Active Slice:** S02 — Comments on Posts
 **Phase:** planning
 **Requirements Status:** 0 active · 0 validated · 0 deferred · 0 out of scope
 
@@ -16,4 +16,4 @@
 - None
 
 ## Next Action
-Plan slice S01 (Foundation Cleanup).
+Plan slice S02 (Comments on Posts).

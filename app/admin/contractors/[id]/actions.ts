@@ -2,8 +2,10 @@
 
 import { revalidatePath } from 'next/cache'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
+import { assertIsAdmin } from '@/lib/admin-guard'
 
 export async function addCertification(contractorId: string, formData: FormData) {
+  await assertIsAdmin()
   const admin = getSupabaseAdmin()
 
   const name = formData.get('name') as string
@@ -28,6 +30,7 @@ export async function addCertification(contractorId: string, formData: FormData)
 }
 
 export async function deleteCertification(certId: string, contractorId: string) {
+  await assertIsAdmin()
   const admin = getSupabaseAdmin()
 
   await admin.from('certifications').delete().eq('id', certId)
@@ -47,6 +50,7 @@ export async function updateCertification(
   },
   contractorId: string
 ) {
+  await assertIsAdmin()
   const admin = getSupabaseAdmin()
   await admin.from('certifications').update(fields).eq('id', certId)
   revalidatePath(`/admin/contractors/${contractorId}`)
