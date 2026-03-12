@@ -13,7 +13,11 @@
 ## Slices
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 - [ ] **S01: Auto-Deploy + Bug Fix** `risk:low`
+=======
+- [x] **S01: Auto-Deploy + Bug Fix** `risk:low`
+>>>>>>> gsd/M001/S01
 =======
 - [x] **S01: Auto-Deploy + Bug Fix** `risk:low`
 >>>>>>> gsd/M001/S01

@@ -1,9 +1,18 @@
 {
   "pid": 2247,
+<<<<<<< HEAD
   "startedAt": "2026-03-12T01:43:18.826Z",
   "unitType": "reassess-roadmap",
   "unitId": "M001/S01",
   "unitStartedAt": "2026-03-12T01:43:18.826Z",
   "completedUnits": 2,
   "sessionFile": "/Users/dylanvazquez/.gsd/sessions/--Users-dylanvazquez-Desktop-contractors-connect--/2026-03-12T01-43-18-826Z_37d5b73a-d5ad-4f11-b794-2e4958051a1f.jsonl"
+=======
+  "startedAt": "2026-03-12T01:43:56.292Z",
+  "unitType": "complete-slice",
+  "unitId": "M001/S01",
+  "unitStartedAt": "2026-03-12T01:43:56.292Z",
+  "completedUnits": 3,
+  "sessionFile": "/Users/dylanvazquez/.gsd/sessions/--Users-dylanvazquez-Desktop-contractors-connect--/2026-03-12T01-43-56-292Z_e29ead97-f425-40dc-b01b-e89c02957f11.jsonl"
+>>>>>>> gsd/M001/S01
 }
