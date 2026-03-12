@@ -77,6 +77,8 @@ export interface Job {
   title: string
   description: string
   trade: string
+  pay_rate: string | null
+  duration: string | null
   location_city: string | null
   location_state: string | null
   status: JobStatus

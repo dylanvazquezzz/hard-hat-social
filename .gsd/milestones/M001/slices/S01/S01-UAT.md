@@ -1,35 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-# S01: Recovery placeholder UAT
-
-**Milestone:** M001
-**Written:** 2026-03-12T01:43:18.661Z
-
-## Preconditions
-- Doctor created this placeholder because the expected UAT file was missing.
-
-## Smoke Test
-- Re-run the slice verification from the slice plan before shipping.
-
-## Test Cases
-### 1. Replace this placeholder
-1. Read the slice plan and task summaries.
-2. Write a real UAT script.
-3. **Expected:** This placeholder is replaced with meaningful human checks.
-
-## Edge Cases
-### Missing completion artifacts
-1. Confirm the summary, roadmap checkbox, and state file are coherent.
-2. **Expected:** GSD doctor reports no remaining completion drift for this slice.
-
-## Failure Signals
-- Placeholder content still present when treating the slice as done
-
-## Notes for Tester
-Doctor created this file only to restore the required artifact shape. Replace it with a real UAT script.
-=======
-=======
->>>>>>> gsd/M001/S01
 # M001/S01: Auto-Deploy + Bug Fix — UAT
 
 **Milestone:** M001
@@ -128,7 +96,3 @@ Run `./scripts/deploy.sh "test: smoke"` from the repo root — it should print `
 - After applying migration 010, reload the PostgREST schema cache in Supabase Dashboard → API section to ensure the cache reflects the current schema.
 - Test case 3 (build failure gate) requires temporarily breaking the build — remember to revert before running any other test cases.
 - The deploy script pushes to `origin master` — ensure your local master is up to date with origin before running test case 4 to avoid unexpected conflicts.
-<<<<<<< HEAD
->>>>>>> gsd/M001/S01
-=======
->>>>>>> gsd/M001/S01

@@ -6,8 +6,10 @@ import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
 import type { Profile, Post, Contractor } from '@/lib/types'
 import type { User } from '@supabase/supabase-js'
+import CreateJobForm from '@/components/CreateJobForm'
 
 type Tab = 'profile' | 'posts' | 'settings'
+type PostCategory = 'social' | 'qa' | 'jobs'
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -25,6 +27,7 @@ export default function ProfilePage() {
   const [contractor, setContractor] = useState<Contractor | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
   const [tab, setTab] = useState<Tab>('profile')
+  const [isGC, setIsGC] = useState(false)
   const [loading, setLoading] = useState(true)
   const [isPending, setIsPending] = useState(false)
 
@@ -37,7 +40,7 @@ export default function ProfilePage() {
   const [postLink, setPostLink] = useState('')
   const [postImage, setPostImage] = useState<File | null>(null)
   const [postImagePreview, setPostImagePreview] = useState<string | null>(null)
-  const [postCategory, setPostCategory] = useState<'social' | 'qa'>('social')
+  const [postCategory, setPostCategory] = useState<PostCategory>('social')
   const [postSubmitting, setPostSubmitting] = useState(false)
   const postImageRef = useRef<HTMLInputElement>(null)
 
@@ -91,6 +94,11 @@ export default function ProfilePage() {
       .eq('status', 'approved')
       .single()
     setContractor(data)
+    if (data?.trade === 'General Contractor') {
+      setIsGC(true)
+      setTab('posts')
+      setPostCategory('jobs')
+    }
   }
 
   async function loadPosts(userId: string) {
@@ -392,33 +400,39 @@ export default function ProfilePage() {
             <p className="text-slate-400">Set a username in the Profile tab first.</p>
           ) : (
             <>
-              <form onSubmit={handleSubmitPost} className="rounded-lg border border-slate-800 bg-slate-900 p-4 space-y-3">
-                <div className="flex gap-2">
-                  {(['social', 'qa'] as const).map((cat) => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setPostCategory(cat)}
-                      className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                        postCategory === cat
-                          ? 'bg-amber-500 text-slate-950'
-                          : 'bg-slate-800 text-slate-400 hover:text-slate-100'
-                      }`}
-                    >
-                      {cat === 'social' ? 'Social' : 'Q&A'}
-                    </button>
-                  ))}
-                  <a
-                    href="/jobs"
-                    className="rounded-full px-3 py-1 text-xs font-medium bg-slate-800 text-slate-400 hover:text-slate-100 transition-colors"
+              {/* Category selector */}
+              <div className="flex gap-2">
+                {([
+                  { key: 'social', label: 'Social' },
+                  { key: 'qa',     label: 'Q&A' },
+                  ...(contractor ? [{ key: 'jobs', label: 'Post a Job' }] : []),
+                ] as { key: PostCategory; label: string }[]).map(({ key, label }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setPostCategory(key)}
+                    className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                      postCategory === key
+                        ? 'bg-amber-500 text-slate-950'
+                        : 'bg-slate-800 text-slate-400 hover:text-slate-100'
+                    }`}
                   >
-                    Jobs →
-                  </a>
-                </div>
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Jobs category — inline CreateJobForm */}
+              {postCategory === 'jobs' && contractor ? (
+                <CreateJobForm gcContractorId={contractor.id} defaultOpen />
+              ) : (
+              <form onSubmit={handleSubmitPost} className="rounded-lg border border-slate-800 bg-slate-900 p-4 space-y-3">
                 <textarea
                   value={postContent}
                   onChange={(e) => setPostContent(e.target.value)}
-                  placeholder="What's on your mind? Looking for subs, available for work, tips…"
+                  placeholder={postCategory === 'qa'
+                    ? 'Ask a trade question…'
+                    : 'What\'s on your mind? Looking for subs, available for work, tips…'}
                   rows={3}
                   className="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
                 />
@@ -459,6 +473,7 @@ export default function ProfilePage() {
                   </button>
                 </div>
               </form>
+              )}
 
               <div className="space-y-3">
                 {posts.length === 0 && (

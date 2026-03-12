@@ -12,34 +12,22 @@
 
 ## Slices
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-- [ ] **S01: Auto-Deploy + Bug Fix** `risk:low`
-=======
 - [x] **S01: Auto-Deploy + Bug Fix** `risk:low`
->>>>>>> gsd/M001/S01
-=======
-- [x] **S01: Auto-Deploy + Bug Fix** `risk:low`
->>>>>>> gsd/M001/S01
-=======
-- [x] **S01: Auto-Deploy + Bug Fix** `risk:low`
->>>>>>> gsd/M001/S01
   > After this: every future push auto-deploys to hardhatsocial.net; 400 error on applications query resolved
 
-- [ ] **S02: Directory Filter Expansion** `risk:medium`
+- [x] **S02: Directory Filter Expansion** `risk:medium`
   > After this: contractors can be filtered by insurance type and certification name in addition to trade and location
 
-- [ ] **S03: Job Posting UX Overhaul** `risk:medium`
+- [x] **S03: Job Posting UX Overhaul** `risk:medium`
   > After this: GCs land on the job posting form directly; structured fields (pay, location, duration) appear on job cards
 
-- [ ] **S04: GC Recent Contacts** `risk:low`
+- [x] **S04: GC Recent Contacts** `risk:low`
   > After this: the Mark Hired modal shows up to 5 recently hired contractors at the top for fast repeat selection
 
-- [ ] **S05: Drywall Trade** `risk:low`
+- [x] **S05: Drywall Trade** `risk:low`
   > After this: Drywall is selectable on apply form, filterable in directory, and visible on homepage
 
-- [ ] **S06: Homepage Hero Redesign** `risk:medium`
+- [x] **S06: Homepage Hero Redesign** `risk:medium`
   > After this: hero has full-bleed B&W trade photo background; Browse by Trade is a clearly separated section below
 
 ## Boundary Map
