@@ -27,6 +27,13 @@
 - Supabase project ref: `pzjommfcglozzuskubnl` (in NEXT_PUBLIC_SUPABASE_URL)
 - Management API endpoint: `https://api.supabase.com/v1/projects/{ref}/database/query` — auth via `SUPABASE_ACCESS_TOKEN` in .env.local
 
+## v1.3 S03
+
+- GC detection by `contractor.trade === 'General Contractor'` exact string match — consistent across jobs/page.tsx and profile/page.tsx; any trade value normalization must update both locations
+- "Post a Job" tab available to all approved contractors (not GC-only) — any contractor can post subcontracting work; GC-specific behavior is only the auto-default on /profile load
+- `defaultOpen` prop on CreateJobForm — caller controls initial expanded state; GC via /profile defaults open, /jobs standalone button stays collapsed
+- Trade and State changed from freetext to dropdowns in CreateJobForm — enforces consistent values; Drywall added proactively for S05
+
 ## v1.3 S02
 
 - Insurance/cert filters resolved via certifications table ILIKE sub-query → `.in('id', ids)` on main contractors query — PostgREST does not support SQL subquery IN natively; resolve matching IDs in a separate query first, then apply as an IN filter

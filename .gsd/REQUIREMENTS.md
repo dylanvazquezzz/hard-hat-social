@@ -3,8 +3,8 @@
 ## Requirement Counts
 
 - Total: 18
-- Complete: 5
-- Pending: 13
+- Complete: 8
+- Pending: 10
 
 ## Requirements
 
@@ -20,9 +20,9 @@
 - [x] **FILTER-03**: Filter UI works on mobile at 375px — no overflow
 
 ### Job Posting UX
-- [ ] **JOBS-05**: Navigating to /profile as a GC defaults to Posts tab with Jobs sub-category pre-selected
-- [ ] **JOBS-06**: Job post composer has structured fields: Title, Trade, Pay Rate, Location, Duration, Description
-- [ ] **JOBS-07**: JobCard renders structured fields (pay, location, duration) clearly
+- [x] **JOBS-05**: Navigating to /profile as a GC defaults to Posts tab with Jobs sub-category pre-selected
+- [x] **JOBS-06**: Job post composer has structured fields: Title, Trade, Pay Rate, Location, Duration, Description
+- [x] **JOBS-07**: JobCard renders structured fields (pay, location, duration) clearly
 
 ### GC Recent Contacts
 - [ ] **JOBS-08**: "Mark Hired" modal shows Recent Contacts (up to 5 previously hired) at the top

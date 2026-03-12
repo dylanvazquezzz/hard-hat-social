@@ -18,7 +18,7 @@
 - [x] **S02: Directory Filter Expansion** `risk:medium`
   > After this: contractors can be filtered by insurance type and certification name in addition to trade and location
 
-- [ ] **S03: Job Posting UX Overhaul** `risk:medium`
+- [x] **S03: Job Posting UX Overhaul** `risk:medium`
   > After this: GCs land on the job posting form directly; structured fields (pay, location, duration) appear on job cards
 
 - [ ] **S04: GC Recent Contacts** `risk:low`
