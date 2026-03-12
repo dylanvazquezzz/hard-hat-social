@@ -27,7 +27,7 @@
 - [x] **S05: Drywall Trade** `risk:low`
   > After this: Drywall is selectable on apply form, filterable in directory, and visible on homepage
 
-- [ ] **S06: Homepage Hero Redesign** `risk:medium`
+- [x] **S06: Homepage Hero Redesign** `risk:medium`
   > After this: hero has full-bleed B&W trade photo background; Browse by Trade is a clearly separated section below
 
 ## Boundary Map

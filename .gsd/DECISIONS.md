@@ -27,6 +27,14 @@
 - Supabase project ref: `pzjommfcglozzuskubnl` (in NEXT_PUBLIC_SUPABASE_URL)
 - Management API endpoint: `https://api.supabase.com/v1/projects/{ref}/database/query` — auth via `SUPABASE_ACCESS_TOKEN` in .env.local
 
+## v1.3 S06
+
+- Hero background photos use CSS background-image with Unsplash CDN URLs (not next/image) — avoids remotePatterns config and binary asset commits; decorative backgrounds don't need Next.js image optimization pipeline
+- 4-panel photo collage via CSS grid with grayscale + brightness-50 Tailwind classes — achieves B&W aesthetic without image editing tools
+- Dark gradient overlay (from-slate-950/80 to-slate-950/90) on hero — ensures text legibility regardless of photo content
+- TRADE_ICONS constant maps trade name to SVG path — trade-specific icons without external icon library dependency
+- Browse by Trade divider: border-t border-slate-800 — matches "How it works" section separator for visual consistency
+
 ## v1.3 S04
 
 - Recent contacts: over-fetch 20 jobs ordered by hired_at DESC, deduplicate in JS to 5 distinct contractor IDs, fetch details via IN, re-sort to match original order — PostgREST has no DISTINCT ON support

@@ -3,8 +3,8 @@
 ## Requirement Counts
 
 - Total: 18
-- Complete: 14
-- Pending: 4
+- Complete: 18
+- Pending: 0
 
 ## Requirements
 
@@ -35,7 +35,7 @@
 - [x] **TRADE-04**: Drywall verification requirements documented (state license + GL insurance)
 
 ### Homepage Hero
-- [ ] **HOME-01**: Hero has full-bleed B&W trade photo background (HVAC, welding, plumbing, drywall, electricians)
-- [ ] **HOME-02**: "Browse by Trade" is a separate section below hero divided by a horizontal rule
-- [ ] **HOME-03**: Hero text readable over photo background (dark overlay or text shadow)
-- [ ] **HOME-04**: Hero responsive — photo scales correctly on mobile
+- [x] **HOME-01**: Hero has full-bleed B&W trade photo background (HVAC, welding, plumbing, drywall, electricians)
+- [x] **HOME-02**: "Browse by Trade" is a separate section below hero divided by a horizontal rule
+- [x] **HOME-03**: Hero text readable over photo background (dark overlay or text shadow)
+- [x] **HOME-04**: Hero responsive — photo scales correctly on mobile
