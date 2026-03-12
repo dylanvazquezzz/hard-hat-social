@@ -16,4 +16,9 @@
 - None
 
 ## Next Action
-Execute T01: Create comments table migration and Comment type in slice S02.
+Execute T02: Add createComment server action in slice S02 (app/explore/actions.ts).
+
+## S02 Task Progress
+- [x] T01: Create comments table migration and Comment type
+- [ ] T02: Add createComment server action
+- [ ] T03: Update Explore page to fetch comment counts and render CommentThread
