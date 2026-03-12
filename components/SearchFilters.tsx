@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useState, useEffect } from 'react'
 
-const TRADES = ['Welding', 'HVAC', 'Electrical', 'Plumbing', 'General Contractor']
+const TRADES = ['Welding', 'HVAC', 'Electrical', 'Plumbing', 'General Contractor', 'Drywall']
 
 const US_STATES = [
   'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',

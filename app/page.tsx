@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 
-const TRADES = ['Welding', 'HVAC', 'Electrical', 'Plumbing', 'General Contractor']
+const TRADES = ['Welding', 'HVAC', 'Electrical', 'Plumbing', 'General Contractor', 'Drywall']
 
 export const revalidate = 3600
 

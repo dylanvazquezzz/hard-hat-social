@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
-const TRADES = ['Welding', 'HVAC', 'Electrical', 'Plumbing', 'General Contractor']
+const TRADES = ['Welding', 'HVAC', 'Electrical', 'Plumbing', 'General Contractor', 'Drywall']
 
 const SPECIALTIES_BY_TRADE: Record<string, string[]> = {
   Welding: [
@@ -27,6 +27,15 @@ const SPECIALTIES_BY_TRADE: Record<string, string[]> = {
   ],
   Plumbing: ['Commercial', 'Residential', 'Pipefitting', 'Fire Suppression', 'Gas Lines'],
   'General Contractor': ['Remodeling', 'New Construction', 'Commercial Build-Out', 'Concrete'],
+  Drywall: [
+    'New Construction',
+    'Remodeling',
+    'Commercial',
+    'Residential',
+    'Taping & Finishing',
+    'Texture',
+    'Acoustic Ceilings',
+  ],
 }
 
 const CREDENTIAL_NOTES: Record<string, string[]> = {
@@ -43,6 +52,10 @@ const CREDENTIAL_NOTES: Record<string, string[]> = {
     'State GC license',
     'Proof of general liability insurance',
     'Bonding documentation',
+  ],
+  Drywall: [
+    'State contractor license',
+    'Proof of general liability insurance',
   ],
 }
 
