@@ -3,13 +3,13 @@
 ## Requirement Counts
 
 - Total: 18
-- Complete: 1
-- Pending: 17
+- Complete: 2
+- Pending: 16
 
 ## Requirements
 
 ### Auto-Deploy
-- [ ] **DEPLOY-01**: After any phase is approved, GSD automatically commits, pushes to GitHub, and Vercel deploys to hardhatsocial.net
+- [x] **DEPLOY-01**: After any phase is approved, GSD automatically commits, pushes to GitHub, and Vercel deploys to hardhatsocial.net
 
 ### Bug Fix
 - [x] **BUG-06**: Fix 400 Bad Request on `GET /rest/v1/applications?select=status&user_id=eq.{id}&status=eq.pending`

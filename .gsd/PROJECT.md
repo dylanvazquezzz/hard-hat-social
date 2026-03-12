@@ -56,3 +56,5 @@ contractors-connect/
 - Migrations applied via Supabase Management API (not CLI — no Docker required)
 - Vercel auto-deploys on every push to master branch
 - Admin emails: dylan@mediaflooding.com, admin@hardhatsocial.net
+- BUG-06 fix: applications queries use status-only filter; RLS handles user isolation (no user_id in PostgREST URL params)
+- Deploy via `./scripts/deploy.sh "message"` — gates on build success before committing and pushing
