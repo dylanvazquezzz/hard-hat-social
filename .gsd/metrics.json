@@ -181,6 +181,24 @@
       "toolCalls": 0,
       "assistantMessages": 17,
       "userMessages": 0
+    },
+    {
+      "type": "plan-slice",
+      "id": "M002/S02",
+      "model": "claude-sonnet-4-6",
+      "startedAt": 1773356787642,
+      "finishedAt": 1773357584933,
+      "tokens": {
+        "input": 8,
+        "output": 3324,
+        "cacheRead": 256385,
+        "cacheWrite": 21349,
+        "total": 281066
+      },
+      "cost": 0.20685825000000002,
+      "toolCalls": 0,
+      "assistantMessages": 6,
+      "userMessages": 0
     }
   ]
 }

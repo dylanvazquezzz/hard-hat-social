@@ -46,7 +46,7 @@
 
 ## Tasks
 
-- [ ] **T01: Create comments table migration and Comment type** `est:30m`
+- [x] **T01: Create comments table migration and Comment type** `est:30m`
   - Why: Establishes the DB contract (table + RLS) and TypeScript type that all subsequent tasks depend on
   - Files: `supabase/migrations/013_comments.sql`, `lib/types.ts`
   - Do: Write idempotent migration creating `comments` table (id uuid pk, post_id uuid FK posts, user_id uuid FK auth.users, content text not null, created_at timestamptz default now()); add RLS policies: `select` for public, `insert` for authenticated with `auth.uid() = user_id` check, `delete` for owner (`auth.uid() = user_id`). Apply migration via `./scripts/migrate.sh`. Add `Comment` type to `lib/types.ts`. Add `comments?: [{ count: number }] | null` to `Post` type to hold PostgREST embedded count response.
