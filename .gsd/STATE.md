@@ -1,19 +1,18 @@
 # GSD State
 
-**Milestone:** M001 — v1.3 UX & Trade Expansion
-**Active Slice:** S01
-**Status:** in-progress
+**Active Milestone:** M001 — v1.3 UX & Trade Expansion
+**Active Slice:** S01 — Auto-Deploy + Bug Fix
+**Phase:** executing
+**Requirements Status:** 0 active · 0 validated · 0 deferred · 0 out of scope
 
-## Current Position
+## Milestone Registry
+- 🔄 **M001:** v1.3 UX & Trade Expansion
 
-S01 T01 complete (BUG-06 fixed). T02 (auto-deploy script) is next.
+## Recent Decisions
+- None recorded
 
-## T01 Output
+## Blockers
+- None
 
-- Removed `user_id` filter from 3 applications pending-check queries (contractors layout, jobs layout, profile page)
-- Migration 010 written — idempotent fix for applications table user_id column + RLS policies
-- `npm run build` and `npm run lint` pass clean
-
-## Next
-
-- T02: `scripts/deploy.sh` + CLAUDE.md update
+## Next Action
+Execute T02: Document and wire auto-deploy in slice S01.
