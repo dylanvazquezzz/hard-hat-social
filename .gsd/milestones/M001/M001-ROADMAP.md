@@ -24,7 +24,7 @@
 - [x] **S04: GC Recent Contacts** `risk:low`
   > After this: the Mark Hired modal shows up to 5 recently hired contractors at the top for fast repeat selection
 
-- [ ] **S05: Drywall Trade** `risk:low`
+- [x] **S05: Drywall Trade** `risk:low`
   > After this: Drywall is selectable on apply form, filterable in directory, and visible on homepage
 
 - [ ] **S06: Homepage Hero Redesign** `risk:medium`

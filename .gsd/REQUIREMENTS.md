@@ -3,8 +3,8 @@
 ## Requirement Counts
 
 - Total: 18
-- Complete: 10
-- Pending: 8
+- Complete: 14
+- Pending: 4
 
 ## Requirements
 
@@ -29,10 +29,10 @@
 - [x] **JOBS-09**: Full contractor search remains available below Recent Contacts
 
 ### Drywall Trade
-- [ ] **TRADE-01**: "Drywall" selectable on application form
-- [ ] **TRADE-02**: "Drywall" appears in /contractors trade filter
-- [ ] **TRADE-03**: "Drywall" appears in Browse by Trade on homepage
-- [ ] **TRADE-04**: Drywall verification requirements documented (state license + GL insurance)
+- [x] **TRADE-01**: "Drywall" selectable on application form
+- [x] **TRADE-02**: "Drywall" appears in /contractors trade filter
+- [x] **TRADE-03**: "Drywall" appears in Browse by Trade on homepage
+- [x] **TRADE-04**: Drywall verification requirements documented (state license + GL insurance)
 
 ### Homepage Hero
 - [ ] **HOME-01**: Hero has full-bleed B&W trade photo background (HVAC, welding, plumbing, drywall, electricians)
