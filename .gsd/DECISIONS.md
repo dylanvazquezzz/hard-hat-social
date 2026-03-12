@@ -18,6 +18,15 @@
 - Deploy script gates on `npm run build` before any git operations — broken code never reaches production; script exits 1 and aborts before `git add` if build fails
 - Pattern: when RLS policy already scopes rows to the current user (user_id = auth.uid()), client queries must NOT include user_id in PostgREST URL params — RLS executes server-side in Postgres at the row level, not at PostgREST's HTTP column-validation layer; including a column that may be absent in PostgREST's schema cache causes HTTP 400
 
+## Operational (permanent)
+
+- **Migration workflow:** Write SQL in `supabase/migrations/NNN_name.sql` → apply via `./scripts/migrate.sh <file>` → verify with `./scripts/migrate.sh "SELECT ..."` against pg_indexes/information_schema → commit file. Never ask the user to apply migrations manually.
+- **Every migration must be idempotent** — use `IF NOT EXISTS`, `CREATE OR REPLACE`, `DROP POLICY IF EXISTS` etc. so re-runs are safe
+- **Verification query must confirm the specific object landed** — check pg_indexes for indexes, information_schema.columns for columns, pg_policies for RLS policies. HTTP 201 from the API alone is not sufficient proof.
+- **Deploy workflow:** `./scripts/deploy.sh "message"` — gates on `npm run build`, then commits and pushes to origin master. Never push without a passing build.
+- Supabase project ref: `pzjommfcglozzuskubnl` (in NEXT_PUBLIC_SUPABASE_URL)
+- Management API endpoint: `https://api.supabase.com/v1/projects/{ref}/database/query` — auth via `SUPABASE_ACCESS_TOKEN` in .env.local
+
 ## v1.3 S02
 
 - Insurance/cert filters resolved via certifications table ILIKE sub-query → `.in('id', ids)` on main contractors query — PostgREST does not support SQL subquery IN natively; resolve matching IDs in a separate query first, then apply as an IN filter

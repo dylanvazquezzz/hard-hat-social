@@ -46,7 +46,10 @@ contractors-connect/
 │   ├── types.ts
 │   ├── supabase.ts                     # Browser client (use everywhere)
 │   └── supabase-admin.ts              # Server-only admin client
-└── supabase/migrations/               # 001-009 applied to production
+├── scripts/
+│   ├── deploy.sh                       # build → commit → push → Vercel auto-deploy
+│   └── migrate.sh                      # apply SQL file or inline SQL to production Supabase
+└── supabase/migrations/               # 001-011 applied to production
 ```
 
 ## Key Decisions
@@ -58,3 +61,6 @@ contractors-connect/
 - Admin emails: dylan@mediaflooding.com, admin@hardhatsocial.net
 - BUG-06 fix: applications queries use status-only filter; RLS handles user isolation (no user_id in PostgREST URL params)
 - Deploy via `./scripts/deploy.sh "message"` — gates on build success before committing and pushing
+- Migrations applied via `./scripts/migrate.sh <file.sql>` — hits Management API directly, no dashboard access needed
+- Migration verification via `./scripts/migrate.sh "SELECT ... FROM pg_indexes ..."` — confirm schema landed before marking slice done
+- **Every slice that includes a migration must: (1) run migrate.sh, (2) run a verification query, (3) confirm both pass before committing**
