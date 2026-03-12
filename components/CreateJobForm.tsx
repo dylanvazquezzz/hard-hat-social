@@ -8,6 +8,7 @@ interface CreateJobFormProps {
 }
 
 export default function CreateJobForm({ gcContractorId }: CreateJobFormProps) {
+  const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [trade, setTrade] = useState('')
@@ -35,6 +36,7 @@ export default function CreateJobForm({ gcContractorId }: CreateJobFormProps) {
       setTrade('')
       setLocationCity('')
       setLocationState('')
+      setOpen(false)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to post job')
     } finally {
@@ -43,8 +45,26 @@ export default function CreateJobForm({ gcContractorId }: CreateJobFormProps) {
   }
 
   return (
-    <div className="mb-6 rounded-lg border border-slate-700 bg-slate-900 p-5">
-      <h2 className="mb-4 text-base font-semibold text-slate-100">Post a Job</h2>
+    <div className="mb-6">
+      {!open ? (
+        <button
+          onClick={() => setOpen(true)}
+          className="w-full rounded-lg border border-dashed border-slate-700 bg-slate-900 px-4 py-3 text-sm font-medium text-amber-400 hover:border-amber-500 hover:bg-slate-800 transition-colors"
+        >
+          + Post a Job
+        </button>
+      ) : (
+      <div className="rounded-lg border border-slate-700 bg-slate-900 p-5">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-base font-semibold text-slate-100">Post a Job</h2>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="text-slate-500 hover:text-slate-300 text-sm"
+          >
+            Cancel
+          </button>
+        </div>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
           <label className="mb-1 block text-xs font-medium text-slate-400">
@@ -126,6 +146,8 @@ export default function CreateJobForm({ gcContractorId }: CreateJobFormProps) {
           {posting ? 'Posting...' : 'Post Job'}
         </button>
       </form>
+      </div>
+      )}
     </div>
   )
 }

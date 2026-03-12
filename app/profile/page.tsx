@@ -37,7 +37,7 @@ export default function ProfilePage() {
   const [postLink, setPostLink] = useState('')
   const [postImage, setPostImage] = useState<File | null>(null)
   const [postImagePreview, setPostImagePreview] = useState<string | null>(null)
-  const [postCategory, setPostCategory] = useState<'social' | 'qa' | 'jobs'>('social')
+  const [postCategory, setPostCategory] = useState<'social' | 'qa'>('social')
   const [postSubmitting, setPostSubmitting] = useState(false)
   const postImageRef = useRef<HTMLInputElement>(null)
 
@@ -392,7 +392,7 @@ export default function ProfilePage() {
             <>
               <form onSubmit={handleSubmitPost} className="rounded-lg border border-slate-800 bg-slate-900 p-4 space-y-3">
                 <div className="flex gap-2">
-                  {(['social', 'qa', 'jobs'] as const).map((cat) => (
+                  {(['social', 'qa'] as const).map((cat) => (
                     <button
                       key={cat}
                       type="button"
@@ -403,9 +403,15 @@ export default function ProfilePage() {
                           : 'bg-slate-800 text-slate-400 hover:text-slate-100'
                       }`}
                     >
-                      {cat === 'social' ? 'Social' : cat === 'qa' ? 'Q&A' : 'Jobs'}
+                      {cat === 'social' ? 'Social' : 'Q&A'}
                     </button>
                   ))}
+                  <a
+                    href="/jobs"
+                    className="rounded-full px-3 py-1 text-xs font-medium bg-slate-800 text-slate-400 hover:text-slate-100 transition-colors"
+                  >
+                    Jobs →
+                  </a>
                 </div>
                 <textarea
                   value={postContent}

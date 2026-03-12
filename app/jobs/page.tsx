@@ -1,58 +1,52 @@
-import { cookies } from 'next/headers'
-import { getSupabaseAdmin } from '@/lib/supabase-admin'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
 import JobCard from '@/components/JobCard'
 import CreateJobForm from '@/components/CreateJobForm'
 import type { Job } from '@/lib/types'
 
-export const dynamic = 'force-dynamic'
+export default function JobsPage() {
+  const [jobs, setJobs] = useState<Job[]>([])
+  const [viewerContractorId, setViewerContractorId] = useState<string | null>(null)
+  const [viewerIsGC, setViewerIsGC] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-export default async function JobsPage() {
-  const admin = getSupabaseAdmin()
+  useEffect(() => {
+    async function load() {
+      const { data: { session } } = await supabase.auth.getSession()
 
-  // Determine viewer identity using cookie auth pattern
-  const cookieStore = cookies()
-  const allCookies = cookieStore.getAll()
-  const authCookie = allCookies.find((c) => c.name.includes('-auth-token'))
-  const token = authCookie
-    ? (() => {
-        try {
-          return JSON.parse(authCookie.value)?.[0]
-        } catch {
-          return null
+      if (session?.user) {
+        const { data: contractor } = await supabase
+          .from('contractors')
+          .select('id, trade')
+          .eq('user_id', session.user.id)
+          .eq('status', 'approved')
+          .maybeSingle()
+
+        if (contractor) {
+          setViewerContractorId(contractor.id)
+          setViewerIsGC(contractor.trade === 'General Contractor')
         }
-      })()
-    : null
-  const {
-    data: { user },
-  } = await admin.auth.getUser(token ?? '')
+      }
 
-  let viewerContractorId: string | null = null
-  let viewerIsGC = false
+      const { data: jobsData } = await supabase
+        .from('jobs')
+        .select(`
+          id, title, description, trade, location_city, location_state,
+          status, created_at, hired_at, completed_at, gc_contractor_id, hired_contractor_id,
+          gc_contractor:contractors!jobs_gc_contractor_id_fkey(full_name, trade),
+          hired_contractor:contractors!jobs_hired_contractor_id_fkey(full_name, trade)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(50)
 
-  if (user) {
-    const { data: viewerContractor } = await admin
-      .from('contractors')
-      .select('id, trade')
-      .eq('user_id', user.id)
-      .eq('status', 'approved')
-      .maybeSingle()
-    viewerContractorId = viewerContractor?.id ?? null
-    viewerIsGC = viewerContractor?.trade === 'General Contractor'
-  }
+      setJobs((jobsData as unknown as Job[]) ?? [])
+      setLoading(false)
+    }
 
-  // Fetch jobs with dual FK hint syntax (required — two FKs to contractors table)
-  const { data: jobsData } = await admin
-    .from('jobs')
-    .select(`
-      id, title, description, trade, location_city, location_state,
-      status, created_at, hired_at, completed_at, gc_contractor_id, hired_contractor_id,
-      gc_contractor:contractors!jobs_gc_contractor_id_fkey(full_name, trade),
-      hired_contractor:contractors!jobs_hired_contractor_id_fkey(full_name, trade)
-    `)
-    .order('created_at', { ascending: false })
-    .limit(50)
-
-  const jobs = (jobsData as unknown as Job[]) ?? []
+    load()
+  }, [])
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
@@ -67,7 +61,11 @@ export default async function JobsPage() {
         <CreateJobForm gcContractorId={viewerContractorId} />
       )}
 
-      {jobs.length === 0 ? (
+      {loading ? (
+        <div className="rounded-lg border border-slate-800 bg-slate-900/50 px-5 py-8 text-center">
+          <p className="text-sm text-slate-400">Loading...</p>
+        </div>
+      ) : jobs.length === 0 ? (
         <div className="rounded-lg border border-slate-800 bg-slate-900/50 px-5 py-8 text-center">
           <p className="text-sm text-slate-400">
             No jobs posted yet. GCs can post subcontracting opportunities here.
