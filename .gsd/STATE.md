@@ -1,7 +1,7 @@
 # GSD State
 
 **Active Milestone:** M001 — v1.3 UX & Trade Expansion
-**Active Slice:** S01 — Auto-Deploy + Bug Fix
+**Active Slice:** S02 — Directory Filter Expansion
 **Phase:** executing
 **Requirements Status:** 0 active · 0 validated · 0 deferred · 0 out of scope
 
@@ -15,4 +15,4 @@
 - None
 
 ## Next Action
-S01 complete — all tasks done (T01: BUG-06 fix, T02: deploy script). Awaiting next slice or milestone direction.
+Execute T01: Add insurance + cert filter UI to SearchFilters in slice S02.
