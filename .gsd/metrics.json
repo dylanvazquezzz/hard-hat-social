@@ -145,6 +145,42 @@
       "toolCalls": 0,
       "assistantMessages": 21,
       "userMessages": 0
+    },
+    {
+      "type": "reassess-roadmap",
+      "id": "M002/S01",
+      "model": "claude-sonnet-4-6",
+      "startedAt": 1773356636804,
+      "finishedAt": 1773356674989,
+      "tokens": {
+        "input": 6,
+        "output": 1726,
+        "cacheRead": 152607,
+        "cacheWrite": 13374,
+        "total": 167713
+      },
+      "cost": 0.12184260000000001,
+      "toolCalls": 0,
+      "assistantMessages": 4,
+      "userMessages": 0
+    },
+    {
+      "type": "research-slice",
+      "id": "M002/S02",
+      "model": "claude-sonnet-4-6",
+      "startedAt": 1773356674989,
+      "finishedAt": 1773356787641,
+      "tokens": {
+        "input": 19,
+        "output": 4951,
+        "cacheRead": 817971,
+        "cacheWrite": 32277,
+        "total": 855218
+      },
+      "cost": 0.44075205000000006,
+      "toolCalls": 0,
+      "assistantMessages": 17,
+      "userMessages": 0
     }
   ]
 }
