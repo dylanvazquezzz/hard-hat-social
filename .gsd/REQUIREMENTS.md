@@ -5,6 +5,7 @@
 - Total: 18
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Complete: 0
 - Pending: 18
 =======
@@ -15,10 +16,15 @@
 - Complete: 2
 - Pending: 16
 >>>>>>> gsd/M001/S01
+=======
+- Complete: 2
+- Pending: 16
+>>>>>>> gsd/M001/S01
 
 ## Requirements
 
 ### Auto-Deploy
+<<<<<<< HEAD
 <<<<<<< HEAD
 - [ ] **DEPLOY-01**: After any phase is approved, GSD automatically commits, pushes to GitHub, and Vercel deploys to hardhatsocial.net
 
@@ -29,10 +35,15 @@
 - [x] **BUG-06**: Fix 400 Bad Request on `GET /rest/v1/applications?select=status&user_id=eq.{id}&status=eq.pending`
 >>>>>>> gsd/M001/S01
 =======
+=======
+>>>>>>> gsd/M001/S01
 - [x] **DEPLOY-01**: After any phase is approved, GSD automatically commits, pushes to GitHub, and Vercel deploys to hardhatsocial.net
 
 ### Bug Fix
 - [x] **BUG-06**: Fix 400 Bad Request on `GET /rest/v1/applications?select=status&user_id=eq.{id}&status=eq.pending`
+<<<<<<< HEAD
+>>>>>>> gsd/M001/S01
+=======
 >>>>>>> gsd/M001/S01
 
 ### Directory Filters

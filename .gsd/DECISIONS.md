@@ -13,7 +13,10 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> gsd/M001/S01
 =======
 >>>>>>> gsd/M001/S01
 ## v1.3 S01
@@ -21,6 +24,12 @@
 - BUG-06 fix: Remove explicit `user_id` filter from the applications pending check in layouts and profile page — the RLS policy `user_id = auth.uid()` scopes the result to the current user, so `.eq('status', 'pending')` alone is sufficient and avoids the 400 that PostgREST returns when the `user_id` column is absent from its schema cache
 - Migration 010 written idempotently (ADD COLUMN IF NOT EXISTS) to ensure `user_id` and `document_urls` columns exist on applications and RLS policies are in sync regardless of which prior migrations landed in production
 <<<<<<< HEAD
+<<<<<<< HEAD
+
+>>>>>>> gsd/M001/S01
+=======
+- Deploy script gates on `npm run build` before any git operations — broken code never reaches production; script exits 1 and aborts before `git add` if build fails
+- Pattern: when RLS policy already scopes rows to the current user (user_id = auth.uid()), client queries must NOT include user_id in PostgREST URL params — RLS executes server-side in Postgres at the row level, not at PostgREST's HTTP column-validation layer; including a column that may be absent in PostgREST's schema cache causes HTTP 400
 
 >>>>>>> gsd/M001/S01
 =======

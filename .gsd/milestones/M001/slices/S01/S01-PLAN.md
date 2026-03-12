@@ -10,9 +10,15 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 - [x] **T01: Diagnose and fix BUG-06** — The 400 Bad Request on `GET /rest/v1/applications?select=status&user_id=eq.{id}&status=eq.pending` needs root cause analysis. Migration 004 (which adds user_id to applications) was missing until 2026-03-12 — verify if that self-resolved the bug. If not, fix the RLS policy or query. Verify admin can still see all applications.
 
 - [x] **T02: Document and wire auto-deploy** — Add a `scripts/deploy.sh` that: (1) runs `npm run build` to verify no errors, (2) commits any unstaged changes with a provided message, (3) pushes to origin master. Update CLAUDE.md with the deploy command. GSD will call this after each approved slice going forward.
+=======
+- [x] **T01: Diagnose and fix BUG-06** — The 400 Bad Request on `GET /rest/v1/applications?select=status&user_id=eq.{id}&status=eq.pending` needs root cause analysis. Migration 004 (which adds user_id to applications) was missing until 2026-03-12 — verify if that self-resolved the bug. If not, fix the RLS policy or query. Verify admin can still see all applications.
+
+- [x] **T02: Document and wire auto-deploy** — Add a `scripts/deploy.sh` that: (1) runs `npm run build` to verify no errors, (2) commits any unstaged changes with a provided message, (3) pushes to origin master. Update CLAUDE.md with the deploy command. GSD will call this after each approved slice going forward.
+>>>>>>> gsd/M001/S01
 =======
 - [x] **T01: Diagnose and fix BUG-06** — The 400 Bad Request on `GET /rest/v1/applications?select=status&user_id=eq.{id}&status=eq.pending` needs root cause analysis. Migration 004 (which adds user_id to applications) was missing until 2026-03-12 — verify if that self-resolved the bug. If not, fix the RLS policy or query. Verify admin can still see all applications.
 

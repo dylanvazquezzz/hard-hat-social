@@ -57,6 +57,11 @@ contractors-connect/
 - Vercel auto-deploys on every push to master branch
 - Admin emails: dylan@mediaflooding.com, admin@hardhatsocial.net
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+- BUG-06 fix: applications queries use status-only filter; RLS handles user isolation (no user_id in PostgREST URL params)
+- Deploy via `./scripts/deploy.sh "message"` — gates on build success before committing and pushing
+>>>>>>> gsd/M001/S01
 =======
 - BUG-06 fix: applications queries use status-only filter; RLS handles user isolation (no user_id in PostgREST URL params)
 - Deploy via `./scripts/deploy.sh "message"` — gates on build success before committing and pushing

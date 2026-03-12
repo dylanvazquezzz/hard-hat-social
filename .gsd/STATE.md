@@ -2,8 +2,13 @@
 
 **Active Milestone:** M001 — v1.3 UX & Trade Expansion
 <<<<<<< HEAD
+<<<<<<< HEAD
 **Active Slice:** S01 — Auto-Deploy + Bug Fix
 **Phase:** summarizing
+=======
+**Active Slice:** S02 — Directory Filter Expansion
+**Phase:** executing
+>>>>>>> gsd/M001/S01
 =======
 **Active Slice:** S02 — Directory Filter Expansion
 **Phase:** executing
@@ -21,7 +26,11 @@
 
 ## Next Action
 <<<<<<< HEAD
+<<<<<<< HEAD
 All tasks done in S01. Write slice summary and complete slice.
+=======
+Execute T01: Add insurance + cert filter UI to SearchFilters in slice S02.
+>>>>>>> gsd/M001/S01
 =======
 Execute T01: Add insurance + cert filter UI to SearchFilters in slice S02.
 >>>>>>> gsd/M001/S01

@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # S01: Recovery placeholder UAT
 
 **Milestone:** M001
@@ -27,6 +28,8 @@
 ## Notes for Tester
 Doctor created this file only to restore the required artifact shape. Replace it with a real UAT script.
 =======
+=======
+>>>>>>> gsd/M001/S01
 # M001/S01: Auto-Deploy + Bug Fix — UAT
 
 **Milestone:** M001
@@ -125,4 +128,7 @@ Run `./scripts/deploy.sh "test: smoke"` from the repo root — it should print `
 - After applying migration 010, reload the PostgREST schema cache in Supabase Dashboard → API section to ensure the cache reflects the current schema.
 - Test case 3 (build failure gate) requires temporarily breaking the build — remember to revert before running any other test cases.
 - The deploy script pushes to `origin master` — ensure your local master is up to date with origin before running test case 4 to avoid unexpected conflicts.
+<<<<<<< HEAD
+>>>>>>> gsd/M001/S01
+=======
 >>>>>>> gsd/M001/S01

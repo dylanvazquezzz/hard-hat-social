@@ -1,5 +1,6 @@
 ---
 <<<<<<< HEAD
+<<<<<<< HEAD
 id: S01
 parent: M001
 milestone: M001
@@ -39,6 +40,8 @@ This file is intentionally incomplete and should be replaced by a real summary.
 ## Files Created/Modified
 - `.gsd/milestones/M001/slices/S01/S01-SUMMARY.md` — doctor-created placeholder summary
 =======
+=======
+>>>>>>> gsd/M001/S01
 id: M001/S01
 parent: M001
 milestone: M001
@@ -142,11 +145,15 @@ None from task plan. T01 could not verify production DB state directly (no direc
 - `supabase/migrations/010_fix_applications_user_id_rls.sql` — Idempotent: ensures user_id + document_urls columns, index, and RLS policies on applications
 - `scripts/deploy.sh` — Build-gated deploy helper: build → commit → push → Vercel auto-deploy
 - `CLAUDE.md` — Added `./scripts/deploy.sh "message"` to Commands section
+<<<<<<< HEAD
+>>>>>>> gsd/M001/S01
+=======
 >>>>>>> gsd/M001/S01
 
 ## Forward Intelligence
 
 ### What the next slice should know
+<<<<<<< HEAD
 <<<<<<< HEAD
 - Doctor had to reconstruct completion artifacts; inspect task summaries before continuing.
 
@@ -159,6 +166,8 @@ None from task plan. T01 could not verify production DB state directly (no direc
 ### What assumptions changed
 - The system assumed completion would always write a slice summary; in practice doctor may need to restore missing artifacts.
 =======
+=======
+>>>>>>> gsd/M001/S01
 - The `applications` table RLS policies were rebuilt in migration 010 — any slice that reads applications should use status-only or other non-user_id filters in PostgREST URLs; rely on RLS for user isolation
 - `deploy.sh` is now the canonical way to ship code — always gate on `npm run build` passing locally before calling it
 - Migration 010 must be confirmed applied to production before S02 ships; if not applied, application queries for non-admin users will fail entirely
@@ -173,4 +182,7 @@ None from task plan. T01 could not verify production DB state directly (no direc
 
 ### What assumptions changed
 - Original assumption: migration 004 may have self-resolved the bug in production — Actual: cannot confirm without direct DB access; applied both code fix and idempotent migration 010 to be safe regardless of production state
+<<<<<<< HEAD
+>>>>>>> gsd/M001/S01
+=======
 >>>>>>> gsd/M001/S01

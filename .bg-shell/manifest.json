@@ -1,14 +1,14 @@
 [
   {
-    "id": "04f49fbd",
+    "id": "25062e6e",
     "label": "next-dev",
     "command": "cd /Users/dylanvazquez/Desktop/contractors-connect && npm run dev",
     "cwd": "/Users/dylanvazquez/Desktop/contractors-connect",
-    "startedAt": 1773279556223,
+    "startedAt": 1773280289826,
     "processType": "server",
     "group": null,
     "readyPattern": null,
     "readyPort": 3000,
-    "pid": 2552
+    "pid": 3105
   }
 ]
