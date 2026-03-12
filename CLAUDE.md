@@ -239,8 +239,16 @@ Verification is **manual** — admin reviews documents in the application queue.
 npm run dev        # local development (http://localhost:3000)
 npm run build      # production build
 npm run lint       # linting
-./scripts/deploy.sh "message"  # build → commit → push → triggers Vercel auto-deploy
+./scripts/deploy.sh "message"           # build → commit → push → triggers Vercel auto-deploy
+./scripts/migrate.sh <file.sql>         # apply a migration file to production Supabase
+./scripts/migrate.sh "SELECT ..."       # run inline SQL against production Supabase
 ```
+
+### Migration workflow (fully automated)
+1. Write migration SQL in `supabase/migrations/NNN_name.sql`
+2. `./scripts/migrate.sh supabase/migrations/NNN_name.sql` — applies to production
+3. `./scripts/migrate.sh "SELECT ... FROM pg_indexes WHERE ..."` — verify schema change landed
+4. Commit migration file with the slice changes
 
 ---
 
