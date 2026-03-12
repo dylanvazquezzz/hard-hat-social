@@ -1,36 +1,47 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.2
-milestone_name: Rebrand & Growth
-status: completed
-stopped_at: Completed 09-02-PLAN.md — SubSelectorModal and hired flow complete
-last_updated: "2026-03-10T01:08:13.055Z"
-last_activity: 2026-03-10 — 09-01 complete; migration 009, server actions, components, page rebuilt
+milestone: v1.3
+milestone_name: UX & Trade Expansion
+status: planning
+stopped_at: v1.2 complete — planning v1.3 phases 10-15
+last_updated: "2026-03-12T01:20:00.000Z"
+last_activity: 2026-03-12 — v1.2 complete, all migrations applied, admin@hardhatsocial.net configured, v1.3 roadmap written
 progress:
-  total_phases: 9
-  completed_phases: 3
-  total_plans: 8
-  completed_plans: 7
-  percent: 75
+  total_phases: 15
+  completed_phases: 9
+  total_plans: 6
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-04)
+See: .planning/PROJECT.md
+See: .planning/milestones/v1.3-phases/v1.3-REQUIREMENTS.md
 
 **Core value:** A contractor can find and contact a verified sub in their trade within 5 minutes — zero unverified people, no spam, no guesswork.
-**Current focus:** v1.2 Phase 9 — Jobs UI
+**Current focus:** v1.3 — Phases 10-15
 
 ## Current Position
 
-Phase: 9 of 9 (Jobs UI) — COMPLETE
-Plan: 2 of 2 in current phase — all tasks complete
-Status: 09-02 complete — SubSelectorModal and hired flow wired into JobCard
-Last activity: 2026-03-10 — 09-02 complete; SubSelectorModal, JobCard modal wiring
+Phase: Starting Phase 10 (Auto-Deploy + Bug Fix)
+Status: Ready to begin — v1.2 fully complete and deployed to hardhatsocial.net
+Last activity: 2026-03-12 — all 9 migrations applied, admin account created, Phase 9 code pushed to production
 
-Progress: [█████████░] 88% (v1.2 phases — 7/8 plans complete)
+Progress: v1.3 not yet started
+
+## v1.3 Phase Overview
+
+| # | Phase | Requirements | Status |
+|---|-------|-------------|--------|
+| 10 | Auto-Deploy + Bug Fix | DEPLOY-01, BUG-06 | Pending |
+| 11 | Directory Filter Expansion | FILTER-01/02/03 | Pending |
+| 12 | Job Posting UX Overhaul | JOBS-05/06/07 | Pending |
+| 13 | GC Recent Contacts | JOBS-08/09 | Pending |
+| 14 | Drywall Trade | TRADE-01/02/03/04 | Pending |
+| 15 | Homepage Hero Redesign | HOME-01/02/03/04 | Pending |
 
 ## Accumulated Context
 
@@ -42,59 +53,40 @@ Progress: [█████████░] 88% (v1.2 phases — 7/8 plans comple
 - Query applications table (not contractors) for pending check — pending users have no contractors row yet
 - NEXT_PUBLIC_APP_URL must be set in Vercel before NEXT_PUBLIC_CONTACT_EMAIL — email links read from APP_URL
 
-### Phase 6 Critical Notes
+### From v1.2
 
-- Start Resend DNS for hardhatsocial.net BEFORE writing any code — 48-hour propagation
-- Rebrand touches 4 systems atomically: Vercel env var + redeploy, Supabase Site URL + redirect allowlist, Resend domain DNS, email.ts fallback constant
-- Send a real test approval email to personal Gmail BEFORE onboarding any real user
-- BUG-02 and BRAND-04/05/06 share the same env var root cause — fix together, verify together
+- NEXT_PUBLIC_ADMIN_EMAILS is baked at build time — env var changes require a real git push + rebuild, not just Vercel redeploy from cache
+- Vercel token: stored in session (do not log)
+- Supabase Management API endpoint: `https://api.supabase.com/v1/projects/{ref}/database/query`
+- Supabase Auth Admin API: `https://{ref}.supabase.co/auth/v1/admin/users`
+- Migration filenames use 001-009 format (not timestamps) — CLI migration tracking not used; apply via Management API
+- Cast Supabase dual-FK query result as `unknown as Job[]` — TS infers joined arrays as `T[]` not `T`
+- Browser supabase client (not admin) in client components — server-only modules cause build failure
+- GC gate enforced in jobs page (viewerIsGC check) not inside CreateJobForm
+- markHired calls revalidatePath('/jobs') server-side for automatic re-render
 
-### Phase 6 Decisions (from execution)
+### Phase 10 Notes (BUG-06)
 
-- DNS records must be added to GoDaddy before Vercel can verify domain — 24-48 hour propagation window; project renames can be done immediately in parallel
-- Resend domain hardhatsocial.net must be verified (SPF + DKIM) before approval emails land in inbox
-- Keep old Supabase Auth redirect URLs in allowlist until hardhatsocial.net auth is confirmed working
-- Supabase project rename is cosmetic only — project ref, URL, and API keys remain unchanged
-- NEXT_PUBLIC_APP_URL = https://hardhatsocial.net must be set in Vercel before redeploying
+- The 400 error is on: `GET /rest/v1/applications?select=status&user_id=eq.{id}&status=eq.pending`
+- Likely cause: RLS SELECT policy on applications uses `user_id = auth.uid()` but the query may be running as anon role, OR the `user_id` column was added in migration 004 which was missing until 2026-03-12
+- Migration 004 was applied on 2026-03-12 — the bug may be self-resolved; verify before writing fix code
+- Fix must not regress admin's ability to see all applications
 
-### Phase 7 Decisions (from execution)
+### Deployment Context
 
-- Sidebar links go to /contractors/[id] not /u/[username] per locked project decision
-- FeedSidebar is props-driven (no internal async) — page fetches data, passes as props; keeps component reusable
-- Auth cookie parsed server-side for viewer detection — no client fetch, no hydration flash
-- Suggested People falls back to Recently Verified when viewer has no trade or is not logged in
-- Sidebar hidden entirely below lg breakpoint; feed takes full width on mobile
+- Vercel project: `contractors-connect` (prj_NzOPBEhplUq7MzdFVXZdqxhMSnYR)
+- Production domain: hardhatsocial.net
+- GitHub repo: dylanvazquezzz/hard-hat-social (branch: master)
+- Auto-deploy: Vercel auto-deploys on every push to master — Phase 10 should wire this into GSD completion flow
 
-### Phase 9 Decisions (from execution)
+### Admin Accounts
 
-- Cast Supabase dual-FK query result as `unknown as Job[]` — TS infers joined arrays as `T[]` not `T`, requires intermediate cast
-- showModal state wired in JobCard for "Mark Hired" but SubSelectorModal deferred to plan 09-02
-- GC gate enforced in jobs page (viewerIsGC check) not inside CreateJobForm component — keeps form dumb and reusable
-- Browser supabase client (not admin) used in SubSelectorModal — client components cannot import server-only modules without build failure
-- Modal is separate component (SubSelectorModal) not inline JSX — keeps JobCard single-responsibility
-- No additional client state needed after hiring — markHired calls revalidatePath('/jobs') server-side causing automatic re-render
-
-### Phase 8 Decisions (from execution)
-
-- Used text + CHECK for jobs.status (not Postgres ENUM) — consistent with contractors.status and posts.category
-- BEFORE UPDATE trigger (not AFTER) — only BEFORE can prevent the write from landing
-- hired_contractor_id nullable — only set on open->hired transition; NULL for open jobs
-- Two SELECT RLS policies (public open + GC own) instead of one combined — explicit and auditable
-- is_gc() uses security definer to prevent privilege escalation in RLS context
-
-### Pending Todos
-
-- Complete infrastructure cutover: GoDaddy DNS, Vercel domain verify, NEXT_PUBLIC_APP_URL update, Supabase Auth URL update, Resend domain verify
-- Test approval email from hardhatsocial.net to personal Gmail before onboarding any real user
-- Phase 7 complete: /explore two-column layout visually verified by user (Task 3 checkpoint approved)
-
-### Blockers/Concerns
-
-- DNS propagation: 24-48 hours after GoDaddy records are added before Vercel can verify hardhatsocial.net
+- dylan@mediaflooding.com — original admin
+- admin@hardhatsocial.net — added 2026-03-12, password test1234
 
 ## Session Continuity
 
-Last session: 2026-03-10T01:08:13.053Z
-Stopped at: Completed 09-02-PLAN.md — SubSelectorModal and hired flow complete
-Next action: Phase 9 complete — all plans done; jobs lifecycle (post, hire, complete) fully functional
+Last session: 2026-03-12T01:20:00.000Z
+Stopped at: v1.3 planning complete — roadmap and requirements written
+Next action: Begin Phase 10 — auto-deploy wiring + BUG-06 diagnosis
 Resume file: None

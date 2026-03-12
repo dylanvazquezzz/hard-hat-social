@@ -120,11 +120,65 @@ Plans:
 - [ ] 09-02-PLAN.md — Hired flow: SubSelectorModal with contractor search, JobCard wired to markHired via modal
 - [ ] 09-03-PLAN.md — Completion flow and portfolio: CompletedJobsSection on contractor profiles, human verification checkpoint
 
+### 🔜 v1.3 UX & Trade Expansion
+
+**Milestone Goal:** Auto-deploy on phase approval, fix the 400 error on applications query, expand directory filters to include insurance/certs, overhaul job posting UX with structured fields, add GC recent contacts to the hired flow, add Drywall as a trade, and redesign the homepage hero with trade photography.
+
+### Phase 10: Auto-Deploy + Bug Fix
+**Goal**: GSD automatically pushes to hardhatsocial.net after each approved phase. The 400 error on the applications status query is diagnosed and fixed.
+**Requirements**: DEPLOY-01, BUG-06
+**Plans**: 2 plans
+
+Plans:
+- [ ] 10-01-PLAN.md — Add auto-deploy step to GSD phase completion: git commit + push + Vercel production redeploy
+- [ ] 10-02-PLAN.md — Diagnose and fix 400 on applications query (RLS or query filter issue)
+
+### Phase 11: Directory Filter Expansion
+**Goal**: The /contractors directory filter panel includes insurance and certification filters — users can find contractors by whether they carry specific insurance or hold specific certs.
+**Requirements**: FILTER-01, FILTER-02, FILTER-03
+**Plans**: 1 plan
+
+Plans:
+- [ ] 11-01-PLAN.md — Add insurance and cert filters to SearchFilters component and /contractors query
+
+### Phase 12: Job Posting UX Overhaul
+**Goal**: Posting a job from the profile page pre-selects the Jobs tab. The job post form has structured fields (pay, location, duration). JobCard renders the structured data clearly.
+**Requirements**: JOBS-05, JOBS-06, JOBS-07
+**Plans**: 2 plans
+
+Plans:
+- [ ] 12-01-PLAN.md — Pre-select Jobs tab on /profile for GC users; add structured fields to job post form and jobs table
+- [ ] 12-02-PLAN.md — Update JobCard to render structured pay/location/duration fields
+
+### Phase 13: GC Recent Contacts
+**Goal**: The "Mark Hired" modal shows a Recent Contacts section (up to 5 previously hired contractors) at the top for fast repeat hiring, with full search still available below.
+**Requirements**: JOBS-08, JOBS-09
+**Plans**: 1 plan
+
+Plans:
+- [ ] 13-01-PLAN.md — Add recent contacts query and section to SubSelectorModal
+
+### Phase 14: Drywall Trade
+**Goal**: Drywall is a fully supported trade — selectable on the application form, filterable in the directory, shown in Browse by Trade on the homepage, with verification requirements documented.
+**Requirements**: TRADE-01, TRADE-02, TRADE-03, TRADE-04
+**Plans**: 1 plan
+
+Plans:
+- [ ] 14-01-PLAN.md — Add Drywall to trades enum across apply form, directory filter, homepage, and verification docs
+
+### Phase 15: Homepage Hero Redesign
+**Goal**: The hero section has a full-bleed black-and-white trade photo background. "Browse by Trade" is visually separated as its own section below the hero with a divider line.
+**Requirements**: HOME-01, HOME-02, HOME-03, HOME-04
+**Plans**: 1 plan
+
+Plans:
+- [ ] 15-01-PLAN.md — Redesign hero with trade photo background overlay; separate Browse by Trade with divider
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 6 → 7 → 8 → 9
-(Phase 8 can start in parallel with Phase 7 since they share only a Phase 6 dependency)
+v1.2: 6 → 7 → 8 → 9
+v1.3: 10 → 11 → 12 → 13 → 14 → 15
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -133,7 +187,13 @@ Phases execute in numeric order: 6 → 7 → 8 → 9
 | 3. UX Polish | v1.1 | 2/2 | Complete | 2026-03-04 |
 | 4. Homepage Redesign | v1.1 | 1/1 | Complete | 2026-03-05 |
 | 5. Founding Cohort Onboarding | v1.1 | 4/4 | Complete | 2026-03-05 |
-| 6. Bug Fixes & Rebrand | 3/3 | Complete   | 2026-03-06 | - |
-| 7. Feed Redesign | 1/1 | Complete   | 2026-03-08 | - |
-| 8. Jobs Schema | 1/1 | Complete   | 2026-03-10 | - |
-| 9. Jobs UI | 2/3 | In Progress|  | - |
+| 6. Bug Fixes & Rebrand | v1.2 | 3/3 | Complete | 2026-03-06 |
+| 7. Feed Redesign | v1.2 | 1/1 | Complete | 2026-03-08 |
+| 8. Jobs Schema | v1.2 | 1/1 | Complete | 2026-03-10 |
+| 9. Jobs UI | v1.2 | 3/3 | Complete | 2026-03-11 |
+| 10. Auto-Deploy + Bug Fix | v1.3 | 0/2 | Pending | - |
+| 11. Directory Filter Expansion | v1.3 | 0/1 | Pending | - |
+| 12. Job Posting UX Overhaul | v1.3 | 0/2 | Pending | - |
+| 13. GC Recent Contacts | v1.3 | 0/1 | Pending | - |
+| 14. Drywall Trade | v1.3 | 0/1 | Pending | - |
+| 15. Homepage Hero Redesign | v1.3 | 0/1 | Pending | - |
