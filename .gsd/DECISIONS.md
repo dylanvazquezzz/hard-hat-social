@@ -27,6 +27,11 @@
 - Supabase project ref: `pzjommfcglozzuskubnl` (in NEXT_PUBLIC_SUPABASE_URL)
 - Management API endpoint: `https://api.supabase.com/v1/projects/{ref}/database/query` — auth via `SUPABASE_ACCESS_TOKEN` in .env.local
 
+## v1.3 S04
+
+- Recent contacts: over-fetch 20 jobs ordered by hired_at DESC, deduplicate in JS to 5 distinct contractor IDs, fetch details via IN, re-sort to match original order — PostgREST has no DISTINCT ON support
+- Pattern: "ordered distinct by FK" requires over-fetch → JS dedup → IN fetch → re-sort
+
 ## v1.3 S03
 
 - GC detection by `contractor.trade === 'General Contractor'` exact string match — consistent across jobs/page.tsx and profile/page.tsx; any trade value normalization must update both locations

@@ -21,7 +21,7 @@
 - [x] **S03: Job Posting UX Overhaul** `risk:medium`
   > After this: GCs land on the job posting form directly; structured fields (pay, location, duration) appear on job cards
 
-- [ ] **S04: GC Recent Contacts** `risk:low`
+- [x] **S04: GC Recent Contacts** `risk:low`
   > After this: the Mark Hired modal shows up to 5 recently hired contractors at the top for fast repeat selection
 
 - [ ] **S05: Drywall Trade** `risk:low`

@@ -3,8 +3,8 @@
 ## Requirement Counts
 
 - Total: 18
-- Complete: 8
-- Pending: 10
+- Complete: 10
+- Pending: 8
 
 ## Requirements
 
@@ -25,8 +25,8 @@
 - [x] **JOBS-07**: JobCard renders structured fields (pay, location, duration) clearly
 
 ### GC Recent Contacts
-- [ ] **JOBS-08**: "Mark Hired" modal shows Recent Contacts (up to 5 previously hired) at the top
-- [ ] **JOBS-09**: Full contractor search remains available below Recent Contacts
+- [x] **JOBS-08**: "Mark Hired" modal shows Recent Contacts (up to 5 previously hired) at the top
+- [x] **JOBS-09**: Full contractor search remains available below Recent Contacts
 
 ### Drywall Trade
 - [ ] **TRADE-01**: "Drywall" selectable on application form
