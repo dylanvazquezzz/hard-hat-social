@@ -16,4 +16,4 @@
 - None
 
 ## Next Action
-Execute T02: Add createComment server action in slice S02.
+Execute T03: Update Explore page to fetch comment counts and render CommentThread in slice S02.

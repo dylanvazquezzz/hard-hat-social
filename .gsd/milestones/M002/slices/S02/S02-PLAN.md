@@ -53,7 +53,7 @@
   - Verify: `./scripts/migrate.sh "SELECT table_name FROM information_schema.tables WHERE table_name = 'comments'"` returns a row; `./scripts/migrate.sh "SELECT policyname FROM pg_policies WHERE tablename = 'comments'"` shows at least 3 policies; `npm run build` passes
   - Done when: migration applied to production, `Comment` type and updated `Post` type in `lib/types.ts`, build clean
 
-- [ ] **T02: Add createComment server action** `est:30m`
+- [x] **T02: Add createComment server action** `est:30m`
   - Why: Provides the authenticated insert entry point that CommentThread will call; establishes the S03 notification hook stub
   - Files: `app/explore/actions.ts` (new file)
   - Do: Create `'use server'` file. Export `createComment(postId: string, content: string): Promise<{ error?: string }>`. Extract auth token from cookies using same pattern as `lib/admin-guard.ts` (find cookie with name startsWith `sb-` + endsWith `-auth-token`, parse JSON, take `[0]` or `.access_token`). Call `admin.auth.getUser(token)` — return `{ error: 'Unauthorized' }` if no user. Validate `content.trim()` is non-empty — return `{ error: 'Content required' }` if empty. Insert into `comments` with `{ post_id: postId, user_id: user.id, content: content.trim() }`. On insert error, log `[createComment] error:` and return `{ error: 'Insert failed' }`. Call `revalidatePath('/explore')`. Add TODO comment: `// TODO S03: call createNotification(user.id, post.user_id, 'comment', newComment.id)`. Return `{}` on success.
