@@ -25,9 +25,12 @@ const categoryColor: Record<Post['category'], string> = {
 interface Props {
   post: Post
   showAuthor?: boolean
+  commentCount?: number
+  /** When true, strips the card shell (border/bg/rounded) — use when a parent provides the shell */
+  bare?: boolean
 }
 
-export default function PostCard({ post, showAuthor = true }: Props) {
+export default function PostCard({ post, showAuthor = true, commentCount, bare = false }: Props) {
   const username = post.profiles?.username
   const avatarUrl = post.profiles?.avatar_url
   const trade = post.contractors?.trade
@@ -36,7 +39,7 @@ export default function PostCard({ post, showAuthor = true }: Props) {
   const initials = username ? username.charAt(0).toUpperCase() : '?'
 
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-900 p-4">
+    <div className={bare ? 'p-4' : 'rounded-lg border border-slate-800 bg-slate-900 p-4'}>
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           {showAuthor && (
