@@ -41,32 +41,32 @@ export default async function HomePage() {
     <div>
       {/* ── Hero — full-bleed B&W trade photo background ─────────────────── */}
       <section className="relative min-h-[520px] sm:min-h-[600px] flex items-center overflow-hidden">
-        {/* Photo collage — 4 panels, grayscale, slight parallax feel */}
+        {/* Photo collage — 4 panels, full color, all IDs visually verified on Unsplash */}
         <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 sm:grid-cols-4 sm:grid-rows-1">
-          {/* Welder */}
+          {/* Welder — golden sparks flying */}
           <div
-            className="bg-cover bg-center brightness-50"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600&q=60&fm=jpg')" }}
+            className="bg-cover bg-center"
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80')" }}
           />
-          {/* HVAC tech */}
+          {/* Electrician — amber work jacket, colored wires */}
           <div
-            className="bg-cover bg-center brightness-50"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=60&fm=jpg')" }}
+            className="bg-cover bg-center"
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1682345262055-8f95f3c513ea?w=800&q=80')" }}
           />
-          {/* Electrician */}
+          {/* Lineman — red hard hat, orange hi-vis vest on power tower */}
           <div
-            className="bg-cover bg-center brightness-50"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=600&q=60&fm=jpg')" }}
+            className="bg-cover bg-center"
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1555963966-b7ae5404b6ed?w=800&q=80')" }}
           />
-          {/* Carpenter / drywall */}
+          {/* Carpenter — wood framing on build site, blue sky */}
           <div
-            className="bg-cover bg-center brightness-50"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1508450859948-4e04fabaa4ea?w=600&q=60&fm=jpg')" }}
+            className="bg-cover bg-center"
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1632862378913-b4fe820ce73b?w=800&q=80')" }}
           />
         </div>
 
-        {/* Dark overlay for text legibility */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/70 to-slate-950/90" />
+        {/* Dark overlay — lighter so color reads through */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-slate-950/55 to-slate-950/80" />
 
         {/* Subtle amber edge glow */}
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
