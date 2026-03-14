@@ -45,22 +45,22 @@ export default async function HomePage() {
         <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 sm:grid-cols-4 sm:grid-rows-1">
           {/* Welder */}
           <div
-            className="bg-cover bg-center grayscale brightness-50"
+            className="bg-cover bg-center brightness-50"
             style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600&q=60&fm=jpg')" }}
           />
           {/* HVAC tech */}
           <div
-            className="bg-cover bg-center grayscale brightness-50"
+            className="bg-cover bg-center brightness-50"
             style={{ backgroundImage: "url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=60&fm=jpg')" }}
           />
           {/* Electrician */}
           <div
-            className="bg-cover bg-center grayscale brightness-50"
+            className="bg-cover bg-center brightness-50"
             style={{ backgroundImage: "url('https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=600&q=60&fm=jpg')" }}
           />
           {/* Carpenter / drywall */}
           <div
-            className="bg-cover bg-center grayscale brightness-50"
+            className="bg-cover bg-center brightness-50"
             style={{ backgroundImage: "url('https://images.unsplash.com/photo-1508450859948-4e04fabaa4ea?w=600&q=60&fm=jpg')" }}
           />
         </div>
