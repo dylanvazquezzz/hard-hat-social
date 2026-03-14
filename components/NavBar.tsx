@@ -78,7 +78,7 @@ export default function NavBar() {
   }
 
   return (
-    <nav className="border-b border-slate-800 bg-slate-900">
+    <nav className="relative z-50 border-b border-slate-800 bg-slate-900">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <a href="/" className="flex items-center">
@@ -191,7 +191,7 @@ export default function NavBar() {
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 mt-2 w-56 rounded-md border border-slate-700 bg-slate-800 shadow-lg">
+                <div className="absolute right-0 mt-2 w-56 rounded-md border border-slate-700 bg-slate-800 shadow-lg z-50">
                   <a
                     href="/contractors"
                     onClick={() => setMenuOpen(false)}

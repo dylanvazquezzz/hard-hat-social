@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import PostCard from '@/components/PostCard'
+import CommentThread from '@/components/CommentThread'
 import FeedSidebar from '@/components/FeedSidebar'
 import type { Post } from '@/lib/types'
 
@@ -73,7 +74,7 @@ export default async function ExplorePage({ searchParams }: PageProps) {
   const admin = getSupabaseAdmin()
   const { data: postsData } = await admin
     .from('posts')
-    .select('*, contractors(full_name, trade, location_city, location_state)')
+    .select('*, comments(count), contractors(full_name, trade, location_city, location_state)')
     .eq('category', category)
     .order('created_at', { ascending: false })
     .limit(20)
@@ -88,6 +89,11 @@ export default async function ExplorePage({ searchParams }: PageProps) {
     : { data: [] }
   const profileMap = Object.fromEntries((profilesData ?? []).map((p) => [p.id, p]))
   const postsWithProfiles = posts.map((p) => ({ ...p, profiles: profileMap[p.user_id] ?? null }))
+
+  // Extract comment counts from PostgREST embedded count shape
+  const commentCountMap = Object.fromEntries(
+    postsWithProfiles.map((p) => [p.id, (p.comments?.[0] as any)?.count ?? 0])
+  )
   const examples = EXAMPLE_POSTS[category]
 
   // Sidebar: Recently Verified — 5 most recently approved contractors
@@ -243,7 +249,10 @@ export default async function ExplorePage({ searchParams }: PageProps) {
           ) : (
             <div className="space-y-3">
               {postsWithProfiles.map((post) => (
-                <PostCard key={post.id} post={post} />
+                <div key={post.id} className="rounded-lg border border-slate-800 bg-slate-900 overflow-hidden">
+                  <PostCard post={post} commentCount={commentCountMap[post.id]} bare />
+                  <CommentThread postId={post.id} initialCount={commentCountMap[post.id]} />
+                </div>
               ))}
             </div>
           )}

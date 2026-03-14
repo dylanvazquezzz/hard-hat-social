@@ -66,6 +66,18 @@ export interface Post {
   // joined
   profiles?: Profile
   contractors?: { full_name: string; trade: string; location_city: string; location_state: string }
+  // PostgREST embedded count shape — present when query includes comments(count)
+  comments?: [{ count: number }] | null
+}
+
+export interface Comment {
+  id: string
+  post_id: string
+  user_id: string
+  content: string
+  created_at: string
+  // joined
+  profiles?: Pick<Profile, 'username' | 'avatar_url'>
 }
 
 export type JobStatus = 'open' | 'hired' | 'completed'
