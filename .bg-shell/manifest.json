@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": "d8f06358",
+    "label": "deploy",
+    "command": "cd /Users/dylanvazquez/Desktop/hardhat && ./scripts/deploy.sh \"fix: mobile nav z-index — burger menu now renders above hero\"",
+    "cwd": "/Users/dylanvazquez/Desktop/hardhat",
+    "startedAt": 1773499139170,
+    "processType": "build",
+    "group": null,
+    "readyPattern": "git push|error|failed\"",
+    "readyPort": null,
+    "pid": 6798
+  }
+]
