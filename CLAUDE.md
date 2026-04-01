@@ -19,12 +19,12 @@ The B2B (contractor-to-contractor) side is the primary focus first. Once a trust
 
 ---
 
-## Current State (as of Feb 2026)
+## Current State (as of April 2026)
 
 ### MVP — COMPLETE ✅
 All 5 core MVP features are fully functional:
 1. ✅ Contractor profiles — trade, location, certifications, years experience, contact info
-2. ✅ Search and filter — by trade, state, text search
+2. ✅ Search and filter — by trade, state, text search, insurance, certification
 3. ✅ Contractor application form — multi-step with document upload to Supabase Storage
 4. ✅ Admin review queue — approve/reject with email notifications via Resend
 5. ✅ Contact info gating — phone/email only visible to approved contractors (API-level enforcement)
@@ -39,61 +39,71 @@ All 5 core MVP features are fully functional:
 - ✅ Email notifications — approval/rejection emails via Resend
 - ✅ 6 database migrations deployed — full schema with RLS
 
+### SEO — COMPLETE ✅ (April 2026)
+Full SEO optimization pass. Estimated score moved from ~52 to ~90+:
+- ✅ Next.js Image components with alt text on homepage hero (was CSS backgrounds — unindexable)
+- ✅ FAQ section + FAQPage JSON-LD on homepage — eligible for Google rich results
+- ✅ Organization + WebSite JSON-LD on homepage (enables sitelinks search box)
+- ✅ BreadcrumbList JSON-LD on all `/contractors/[id]` profile pages
+- ✅ OG + Twitter Card tags on root layout and all key pages
+- ✅ Unique metadata (title + description) on every public page
+- ✅ Title template in root layout: `%s | Hard Hat Social`
+- ✅ `/about`, `/privacy`, `/terms` pages with real content
+- ✅ `Footer` component on every page linking to trust/legal pages
+- ✅ 6 trade landing pages: `/welding-contractors`, `/hvac-contractors`, `/electrical-contractors`, `/plumbing-contractors`, `/general-contractors`, `/drywall-contractors`
+- ✅ `app/robots.ts` — blocks admin/api/profile/auth from crawlers
+- ✅ `app/sitemap.ts` — static routes + all approved contractor profiles (dynamic)
+- ✅ Guide page at `/guides/find-welding-subcontractor` (1200+ words, FAQPage + Article + Breadcrumb schema)
+- ✅ External authority links to AWS, EPA 608, NCCER on apply page
+- ✅ Intro copy on `/contractors` directory page (shown with no active filters)
+- ✅ Google Search Console verified + sitemap submitted
+- ✅ Google Rich Results Test — FAQPage valid, no errors
+
 ---
 
 ## Next Steps (Prioritized)
 
-### 1. Production Readiness (Do First)
-Before getting real users, lock down the deployment:
-- [ ] **Deploy to Vercel** — set up production project, connect GitHub repo
-- [ ] **Set environment variables in Vercel:**
-  - `NEXT_PUBLIC_SUPABASE_URL`
-  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-  - `SUPABASE_SERVICE_ROLE_KEY`
-  - `RESEND_API_KEY`
-  - `NEXT_PUBLIC_ADMIN_EMAILS` (comma-separated admin emails)
-  - `NEXT_PUBLIC_APP_URL` (production URL)
-- [ ] **Create Supabase Storage buckets** (must be done manually in dashboard):
-  - `avatars` — public read, authenticated write
-  - `post-images` — public read, authenticated write
-  - `application-docs` bucket already in migration 006, verify it exists
-- [ ] **Verify Resend domain** — add DNS records so approval/rejection emails don't land in spam
-- [ ] **Run all 6 migrations** against production Supabase project
+### 1. Seed Founding Cohort (Most Important Now)
+Real users unlock rankings, social proof, and word of mouth:
+- [ ] Use the application → approval flow to onboard the first welders personally known to the co-founder
+- [ ] Manually add certifications via Supabase dashboard after approval
+- [ ] Replace the 3 seeded testimonials on homepage with real quotes from actual contractors
 
-### 2. Password Reset Flow (Missing)
-No forgot password / reset flow exists yet. Users who forget their password are locked out.
-- [ ] Add "Forgot password?" link on `/auth` page
-- [ ] Create `/auth/reset` page that calls `supabase.auth.resetPasswordForEmail()`
-- [ ] Create `/auth/update-password` page (the redirect target from the email link) that calls `supabase.auth.updateUser({ password })`
+### 2. More Guide Pages (SEO momentum)
+Each guide targets real B2B search queries. Same format as `/guides/find-welding-subcontractor`:
+- [ ] `/guides/find-hvac-subcontractor`
+- [ ] `/guides/find-electrical-subcontractor`
+- [ ] `/guides/find-plumbing-subcontractor`
 
-### 3. Certifications After Approval (Gap)
-Admin approves applications and uploads docs, but certifications in the `certifications` table are never populated automatically. The admin action (`actions.ts`) only creates a `contractors` row — it doesn't parse document_urls into certification records. Options:
-- [ ] Admin can manually add certifications via a `/admin/contractors/[id]` management page, OR
-- [ ] Extend `approveApplication()` server action to auto-create a basic certification record from the application data
+### 3. Password Reset Flow (Missing)
+Users who forget their password are locked out:
+- [ ] `/auth/reset` — calls `supabase.auth.resetPasswordForEmail()`
+- [ ] `/auth/update-password` — redirect target from email link
 
-### 4. Homepage Polish
-The landing page (`/`) exists but should convert visitors into applicants. Review and tighten:
-- [ ] Hero headline and subhead — make the value prop crystal clear
-- [ ] Add social proof placeholder (e.g., "Join 50+ verified welding contractors")
-- [ ] Ensure CTA buttons are prominent and go to the right pages
-- [ ] Mobile layout check — tradespeople are on phones
+### 4. Certifications After Approval (Gap)
+Admin approves applications but `certifications` table rows are never auto-created:
+- [ ] Extend `approveApplication()` to create a basic certification record, OR
+- [ ] Admin manually adds certs via `/admin/contractors/[id]` page
 
-### 5. Seed Founding Cohort
-The founding welders need real profiles. Options:
-- [ ] Admin creates profiles directly in Supabase dashboard for the first cohort, OR
-- [ ] Use the existing application → approval flow (preferred, creates a paper trail)
-- [ ] Once profiles exist, manually add certifications via Supabase dashboard
+### 5. Update Contact Email
+- [ ] Replace `hello@hardhatsocial.net` placeholder in `/about`, `/privacy`, `/terms` with a real inbox
 
-### 6. SEO / Metadata
-- [ ] Add OpenGraph tags to key pages (homepage, `/contractors`, contractor detail pages)
-- [ ] Add structured data (JSON-LD) to contractor profile pages for Google rich results
-- [ ] Set unique `<title>` and `<meta description>` per page via Next.js `generateMetadata()`
+### 6. Legal Review
+- [ ] Privacy Policy and Terms should be reviewed by a lawyer before significant user volume
 
 ### 7. UX Polish (Lower Priority)
-- [ ] Loading skeletons on contractor directory while fetching
-- [ ] Empty state on `/contractors` when no results match filters
-- [ ] Better mobile nav — hamburger menu or bottom nav bar for small screens
-- [ ] Toast/snackbar feedback on form submissions (currently uses inline state)
+- [ ] Loading skeletons on contractor directory
+- [ ] Better mobile nav
+- [ ] Toast/snackbar feedback on form submissions
+
+### 8. SEO ✅ COMPLETE (April 2026)
+- [x] OG + Twitter tags, unique metadata on every page
+- [x] FAQPage + Organization + WebSite + BreadcrumbList JSON-LD
+- [x] 6 trade landing pages, robots.ts, sitemap.ts
+- [x] /about, /privacy, /terms + Footer
+- [x] Welding guide at /guides/find-welding-subcontractor
+- [x] Google Search Console verified + sitemap submitted
+- [x] Rich Results Test passing — FAQPage eligible
 
 ---
 
@@ -122,53 +132,67 @@ Do not introduce additional dependencies without asking.
 
 ## Actual Project Structure
 ```
-contractors-connect/
+hardhat/
 ├── app/
-│   ├── page.tsx                        # Homepage / landing page
-│   ├── layout.tsx                      # Root layout with NavBar
+│   ├── page.tsx                        # Homepage — hero, trade grid, how it works, FAQ, testimonials, CTA
+│   ├── layout.tsx                      # Root layout — NavBar + Footer + global metadata + OG/Twitter tags
+│   ├── robots.ts                       # Robots.txt — blocks admin/api/profile/auth
+│   ├── sitemap.ts                      # Sitemap — all static routes + approved contractor profiles
 │   ├── contractors/
 │   │   ├── layout.tsx                  # Auth guard — redirects to /auth if not logged in
-│   │   ├── page.tsx                    # Directory with search/filter + jobs feed
-│   │   └── [id]/page.tsx              # Individual contractor profile
+│   │   ├── page.tsx                    # Verified Contractor Directory — search/filter + intro copy + jobs feed
+│   │   └── [id]/page.tsx              # Contractor profile — Person + BreadcrumbList JSON-LD
 │   ├── apply/
-│   │   └── page.tsx                    # Multi-step application form with doc upload
+│   │   ├── layout.tsx                  # Metadata wrapper (client page can't export metadata directly)
+│   │   └── page.tsx                    # Multi-step application form with doc upload + credentialing links
 │   ├── auth/
-│   │   └── page.tsx                    # Sign in / Sign up toggle
+│   │   ├── page.tsx                    # Sign in / Sign up toggle
+│   │   ├── reset/page.tsx              # Password reset request
+│   │   └── update-password/page.tsx    # Password update (email link target)
 │   ├── profile/
 │   │   └── page.tsx                    # 3-tab dashboard (Profile, Posts, Settings)
 │   ├── u/
 │   │   └── [username]/page.tsx         # Public profile page at /u/@handle
 │   ├── explore/
-│   │   └── page.tsx                    # Social + Q&A feed (server component)
+│   │   └── page.tsx                    # Social + Q&A feed
 │   ├── jobs/
+│   │   ├── layout.tsx                  # Auth + pending-review guard (server wrapper)
+│   │   ├── JobsGuard.tsx               # Client component — auth/pending check logic
 │   │   └── page.tsx                    # Jobs/subcontracting board
 │   ├── admin/
 │   │   ├── layout.tsx                  # Admin email guard
 │   │   ├── page.tsx                    # Application review queue
-│   │   └── actions.ts                  # Server actions: approveApplication, rejectApplication
+│   │   └── contractors/[id]/           # Per-contractor admin management
+│   ├── about/page.tsx                  # About page — mission, verification process, contact
+│   ├── privacy/page.tsx                # Privacy Policy
+│   ├── terms/page.tsx                  # Terms of Service
+│   ├── welding-contractors/page.tsx    # Trade landing page — welding
+│   ├── hvac-contractors/page.tsx       # Trade landing page — HVAC
+│   ├── electrical-contractors/page.tsx # Trade landing page — electrical
+│   ├── plumbing-contractors/page.tsx   # Trade landing page — plumbing
+│   ├── general-contractors/page.tsx    # Trade landing page — general contractors
+│   ├── drywall-contractors/page.tsx    # Trade landing page — drywall
+│   ├── guides/
+│   │   └── find-welding-subcontractor/page.tsx  # SEO guide — FAQPage + Article + BreadcrumbList JSON-LD
 │   └── api/
-│       └── contact/[id]/route.ts       # Protected endpoint — returns phone/email to approved contractors
+│       └── contact/[id]/route.ts       # Protected — returns phone/email to approved contractors
 ├── components/
 │   ├── NavBar.tsx                      # Auth-aware nav with username dropdown
+│   ├── Footer.tsx                      # Site footer — Platform + Company links
 │   ├── ContractorCard.tsx              # Card for directory grid
-│   ├── SearchFilters.tsx               # Trade/state/text filter sidebar
-│   ├── ProfileHeader.tsx               # Contractor profile header (photo, name, trade, location)
+│   ├── SearchFilters.tsx               # Trade/state/insurance/cert filter sidebar
+│   ├── ProfileHeader.tsx               # Contractor profile header
 │   ├── CertificationBadge.tsx          # Cert display with verified/expired status
-│   ├── PostCard.tsx                    # Social post card (author, category, content, image)
-│   └── ContactSection.tsx              # Contact info with auth gating (client component)
+│   ├── PostCard.tsx                    # Social post card
+│   └── ContactSection.tsx              # Contact info with auth gating
 ├── lib/
-│   ├── types.ts                        # Contractor, Certification, Application, Profile, Post
-│   ├── supabase.ts                     # Browser-safe Supabase client (use this everywhere)
+│   ├── types.ts                        # Contractor, Certification, Application, Profile, Post, Job
+│   ├── supabase.ts                     # Browser-safe Supabase client
 │   ├── supabase-admin.ts               # Server-only admin client (bypasses RLS)
-│   └── email.ts                        # Resend email functions (approval/rejection)
-├── supabase/
-│   └── migrations/
-│       ├── 001_initial.sql             # contractors, certifications, applications + RLS
-│       ├── 002_profiles_posts.sql      # profiles, posts tables
-│       ├── 003_posts_category.sql      # category column on posts
-│       ├── 004_applications_user_id.sql # user_id FK on applications
-│       ├── 005_rls_improvements.sql    # RLS fixes + full-text search index
-│       └── 006_application_documents.sql # document_urls on applications + storage bucket
+│   ├── constants.ts                    # TRADES array
+│   └── email.ts                        # Resend email functions
+├── supabase/migrations/                # 006 migrations deployed to production
+├── next.config.js                      # remotePatterns: supabase + images.unsplash.com
 └── CLAUDE.md
 ```
 
