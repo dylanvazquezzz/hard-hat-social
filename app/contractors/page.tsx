@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import ContractorCard from '@/components/ContractorCard'
 import SearchFilters from '@/components/SearchFilters'
@@ -5,6 +6,18 @@ import PostCard from '@/components/PostCard'
 import type { Contractor, Post } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Contractor Directory',
+  description:
+    'Browse verified contractors across all trades — welding, HVAC, electrical, plumbing, and more. Filter by trade, location, and certification.',
+  openGraph: {
+    title: 'Contractor Directory | Hard Hat Social',
+    description:
+      'Browse verified contractors across all trades — welding, HVAC, electrical, plumbing, and more.',
+    url: 'https://hardhatsocial.net/contractors',
+  },
+}
 
 interface PageProps {
   searchParams: {
@@ -133,7 +146,7 @@ function renderPage(
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-100">Contractor Directory</h1>
+        <h1 className="text-3xl font-bold text-slate-100">Verified Contractor Directory</h1>
         <p className="mt-2 text-slate-400">
           {contractors.length} verified contractor{contractors.length !== 1 ? 's' : ''}
           {searchParams.trade ? ` in ${searchParams.trade}` : ''}
@@ -148,6 +161,34 @@ function renderPage(
             </span>
           )}
         </p>
+
+        {/* Intro copy — only show when no filters are active */}
+        {activeFilterCount === 0 && (
+          <div className="mt-6 rounded-lg border border-slate-800 bg-slate-900 p-5 text-sm leading-relaxed text-slate-400">
+            <p>
+              Every contractor in this directory has been manually verified by the Hard Hat
+              Social team. That means we reviewed their trade certifications, checked their
+              state contractor license, and confirmed they carry current general liability
+              insurance before approving their profile — no exceptions.
+            </p>
+            <p className="mt-3">
+              The directory covers{' '}
+              <a href="/welding-contractors" className="text-amber-400 hover:underline">welding</a>,{' '}
+              <a href="/hvac-contractors" className="text-amber-400 hover:underline">HVAC</a>,{' '}
+              <a href="/electrical-contractors" className="text-amber-400 hover:underline">electrical</a>,{' '}
+              <a href="/plumbing-contractors" className="text-amber-400 hover:underline">plumbing</a>,{' '}
+              <a href="/general-contractors" className="text-amber-400 hover:underline">general contracting</a>, and{' '}
+              <a href="/drywall-contractors" className="text-amber-400 hover:underline">drywall</a>.
+              Use the filters to narrow by trade, state, insurance coverage, or specific
+              certification. Contact information is visible to logged-in approved members only.
+            </p>
+            <p className="mt-3">
+              If you&apos;re a credentialed tradesperson who isn&apos;t on the platform yet,{' '}
+              <a href="/apply" className="text-amber-400 hover:underline">apply here</a>.
+              Most applications are reviewed within 2–5 business days.
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-8 lg:flex-row">

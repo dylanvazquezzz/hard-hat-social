@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { getSupabaseAdmin } from '@/lib/supabase-admin'
 import PostCard from '@/components/PostCard'
@@ -6,6 +7,12 @@ import FeedSidebar from '@/components/FeedSidebar'
 import type { Post } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Explore',
+  description:
+    'Discover posts, updates, and Q&A from verified contractors on Hard Hat Social. Stay connected with the trades community.',
+}
 
 type Category = 'social' | 'qa'
 

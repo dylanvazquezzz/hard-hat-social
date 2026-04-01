@@ -470,6 +470,39 @@ export default function ApplyPage() {
               ))}
             </ul>
 
+            {/* Credentialing body links */}
+            <div className="mb-5 rounded-md border border-slate-700 bg-slate-800/50 p-4">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">
+                Official Credentialing Bodies
+              </p>
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                <a
+                  href="https://www.aws.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-400 hover:underline"
+                >
+                  AWS — American Welding Society ↗
+                </a>
+                <a
+                  href="https://www.epa.gov/section608"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-400 hover:underline"
+                >
+                  EPA Section 608 (HVAC) ↗
+                </a>
+                <a
+                  href="https://www.nccer.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-400 hover:underline"
+                >
+                  NCCER — National Center for Construction Education ↗
+                </a>
+              </div>
+            </div>
+
             <div className="space-y-3">
               <label className="block text-sm text-slate-300 font-medium">
                 Upload documents ({docs.length}/{MAX_DOCS})

@@ -86,6 +86,8 @@ export default async function ContractorProfilePage({ params }: PageProps) {
     gc_contractor?: { full_name: string } | null
   }>
 
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? 'https://hardhatsocial.net'
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -97,7 +99,32 @@ export default async function ContractorProfilePage({ params }: PageProps) {
       addressRegion: contractor.location_state,
       addressCountry: 'US',
     },
-    url: `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://hardhatsocial.net'}/contractors/${contractor.id}`,
+    url: `${base}/contractors/${contractor.id}`,
+  }
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: base,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Contractors',
+        item: `${base}/contractors`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: contractor.full_name,
+        item: `${base}/contractors/${contractor.id}`,
+      },
+    ],
   }
 
   return (
@@ -105,6 +132,10 @@ export default async function ContractorProfilePage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
         <ProfileHeader contractor={contractor} />
