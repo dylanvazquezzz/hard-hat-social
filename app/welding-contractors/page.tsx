@@ -120,6 +120,15 @@ export default function WeldingContractorsPage() {
           Browse Welding Contractors
         </Link>
       </div>
+
+      <div className="mt-8 rounded-lg border border-slate-800 bg-slate-900 p-6">
+        <p className="text-sm text-slate-400">
+          Not sure what to look for in a welding sub?{' '}
+          <Link href="/guides/find-welding-subcontractor" className="text-amber-400 hover:underline">
+            Read our guide — how to find and vet a verified welding subcontractor →
+          </Link>
+        </p>
+      </div>
     </div>
   )
 }

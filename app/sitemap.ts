@@ -47,6 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       'general-contractors',
       'drywall-contractors',
       'about',
+      'guides/find-welding-subcontractor',
     ] as const).map((slug) => ({
       url: `${base}/${slug}`,
       lastModified: new Date(),
