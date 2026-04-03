@@ -92,12 +92,6 @@ export default function NavBar() {
             {/* Desktop nav -- hidden below md breakpoint */}
             <div className="hidden md:flex items-center gap-6">
               <a
-                href="/contractors"
-                className="text-sm text-slate-400 hover:text-slate-100 transition-colors"
-              >
-                Directory
-              </a>
-              <a
                 href="/explore"
                 className="text-sm text-slate-400 hover:text-slate-100 transition-colors"
               >
@@ -108,6 +102,12 @@ export default function NavBar() {
                 className="text-sm text-slate-400 hover:text-slate-100 transition-colors"
               >
                 Jobs
+              </a>
+              <a
+                href="/contractors"
+                className="text-sm text-slate-400 hover:text-slate-100 transition-colors"
+              >
+                Directory
               </a>
               {!session && (
                 <a
@@ -216,16 +216,9 @@ export default function NavBar() {
               {menuOpen && (
                 <div className="absolute right-0 mt-2 w-56 rounded-md border border-slate-700 bg-slate-800 shadow-lg z-50">
                   <a
-                    href="/contractors"
-                    onClick={() => setMenuOpen(false)}
-                    className="block px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-colors rounded-t-md"
-                  >
-                    Directory
-                  </a>
-                  <a
                     href="/explore"
                     onClick={() => setMenuOpen(false)}
-                    className="block px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-colors"
+                    className="block px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-colors rounded-t-md"
                   >
                     Explore
                   </a>
@@ -235,6 +228,13 @@ export default function NavBar() {
                     className="block px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-colors"
                   >
                     Jobs
+                  </a>
+                  <a
+                    href="/contractors"
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-4 py-3 text-sm text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-colors"
+                  >
+                    Directory
                   </a>
                   {!session && (
                     <a
