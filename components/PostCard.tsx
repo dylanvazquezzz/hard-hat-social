@@ -31,22 +31,41 @@ interface Props {
 }
 
 export default function PostCard({ post, showAuthor = true, commentCount, bare = false }: Props) {
-  const username = post.profiles?.username
-  const avatarUrl = post.profiles?.avatar_url
+  // Identity resolution:
+  // - If the post has a contractor_id, show the contractor's name + profile_photo_url.
+  //   These posts are authored "as" the contractor (seed accounts, or future verified posts).
+  // - If no contractor_id, show the user's profile username + avatar_url.
+  const hasContractor = !!post.contractor_id && !!post.contractors?.full_name
+
+  const displayName = hasContractor
+    ? post.contractors!.full_name
+    : post.profiles?.username ? `@${post.profiles.username}` : 'Unknown'
+
+  const displayHref = hasContractor
+    ? '#'
+    : post.profiles?.username ? `/u/${post.profiles.username}` : '#'
+
+  const avatarUrl = hasContractor
+    ? (post.contractors!.profile_photo_url ?? null)
+    : (post.profiles?.avatar_url ?? null)
+
+  const initials = hasContractor
+    ? post.contractors!.full_name.charAt(0).toUpperCase()
+    : post.profiles?.username?.charAt(0).toUpperCase() ?? '?'
+
   const trade = post.contractors?.trade
   const city = post.contractors?.location_city
   const state = post.contractors?.location_state
-  const initials = username ? username.charAt(0).toUpperCase() : '?'
 
   return (
     <div className={bare ? 'p-4' : 'rounded-lg border border-slate-800 bg-slate-900 p-4'}>
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           {showAuthor && (
-            <a href={username ? `/u/${username}` : '#'} className="shrink-0">
+            <a href={displayHref} className="shrink-0">
               <div className="relative h-9 w-9 overflow-hidden rounded-full bg-slate-700">
                 {avatarUrl ? (
-                  <Image src={avatarUrl} alt={username ?? ''} fill className="object-cover" />
+                  <Image src={avatarUrl} alt={displayName} fill className="object-cover" />
                 ) : (
                   <span className="flex h-full w-full items-center justify-center text-sm font-bold text-amber-500">
                     {initials}
@@ -58,10 +77,10 @@ export default function PostCard({ post, showAuthor = true, commentCount, bare =
           <div className="min-w-0">
             {showAuthor && (
               <a
-                href={username ? `/u/${username}` : '#'}
+                href={displayHref}
                 className="text-sm font-semibold text-slate-100 hover:text-amber-400 transition-colors"
               >
-                {username ? `@${username}` : 'Unknown'}
+                {displayName}
               </a>
             )}
             {(trade || city) && (

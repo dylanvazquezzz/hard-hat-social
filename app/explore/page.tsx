@@ -81,7 +81,7 @@ export default async function ExplorePage({ searchParams }: PageProps) {
   const admin = getSupabaseAdmin()
   const { data: postsData } = await admin
     .from('posts')
-    .select('*, comments(count), contractors(full_name, trade, location_city, location_state)')
+    .select('*, comments(count), contractors(full_name, trade, location_city, location_state, profile_photo_url)')
     .eq('category', category)
     .order('created_at', { ascending: false })
     .limit(20)

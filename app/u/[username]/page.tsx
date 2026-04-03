@@ -64,7 +64,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
       .single(),
     admin
       .from('posts')
-      .select('*')
+      .select('*, contractors(full_name, trade, location_city, location_state, profile_photo_url)')
       .eq('user_id', profile.id)
       .order('created_at', { ascending: false }),
   ])

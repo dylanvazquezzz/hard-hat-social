@@ -65,7 +65,7 @@ export interface Post {
   created_at: string
   // joined
   profiles?: Profile
-  contractors?: { full_name: string; trade: string; location_city: string; location_state: string }
+  contractors?: { full_name: string; trade: string; location_city: string; location_state: string; profile_photo_url?: string | null }
   // PostgREST embedded count shape — present when query includes comments(count)
   comments?: [{ count: number }] | null
 }
