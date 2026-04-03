@@ -3,11 +3,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { useTheme } from '@/components/ThemeProvider'
 import type { Session } from '@supabase/supabase-js'
 
 export default function NavBar() {
   const router = useRouter()
   const pathname = usePathname()
+  const { theme, toggleTheme } = useTheme()
   const [session, setSession] = useState<Session | null>(null)
   const [username, setUsername] = useState<string | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
@@ -170,6 +172,27 @@ export default function NavBar() {
                 </a>
               )}
             </div>
+
+            {/* Theme toggle — visible at all breakpoints */}
+            <button
+              onClick={toggleTheme}
+              className="flex items-center justify-center rounded-md p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+            >
+              {theme === 'dark' ? (
+                /* Sun icon */
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <circle cx="12" cy="12" r="5" />
+                  <path strokeLinecap="round" d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                </svg>
+              ) : (
+                /* Moon icon */
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+                </svg>
+              )}
+            </button>
 
             {/* Hamburger -- visible below md breakpoint only */}
             <div className="relative md:hidden" ref={menuRef}>

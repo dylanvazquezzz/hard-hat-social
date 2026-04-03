@@ -73,6 +73,12 @@ export default function PlumbingContractorsPage() {
         <h2 className="text-xl font-semibold text-slate-100">Find a verified plumber</h2>
         <p className="mt-2 text-slate-400">Browse the directory, filtered to plumbing.</p>
         <Link href="/contractors?trade=Plumbing" className="mt-6 inline-flex rounded-md bg-amber-500 px-8 py-3 font-semibold text-slate-950 hover:bg-amber-400 transition-colors">Browse Plumbing Contractors</Link>
+        <p className="mt-4 text-sm text-slate-500">
+          Not sure what to look for?{' '}
+          <Link href="/guides/find-plumbing-subcontractor" className="text-amber-400 hover:underline">
+            Read our plumbing hiring guide →
+          </Link>
+        </p>
       </div>
     </div>
   )

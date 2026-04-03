@@ -28,6 +28,21 @@ export default function Footer() {
               </Link>
             </div>
             <div className="flex flex-col gap-2">
+              <p className="text-xs font-semibold uppercase tracking-widest text-slate-600">Guides</p>
+              <Link href="/guides/find-welding-subcontractor" className="hover:text-slate-100 transition-colors">
+                Find a Welder
+              </Link>
+              <Link href="/guides/find-hvac-subcontractor" className="hover:text-slate-100 transition-colors">
+                Find an HVAC Sub
+              </Link>
+              <Link href="/guides/find-electrical-subcontractor" className="hover:text-slate-100 transition-colors">
+                Find an Electrician
+              </Link>
+              <Link href="/guides/find-plumbing-subcontractor" className="hover:text-slate-100 transition-colors">
+                Find a Plumber
+              </Link>
+            </div>
+            <div className="flex flex-col gap-2">
               <p className="text-xs font-semibold uppercase tracking-widest text-slate-600">Company</p>
               <Link href="/about" className="hover:text-slate-100 transition-colors">
                 About

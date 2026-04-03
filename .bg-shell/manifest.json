@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "f8697305",
+    "label": "dev server",
+    "command": "cd /Users/dylanvazquez/Desktop/hardhat && npm run dev",
+    "cwd": "/Users/dylanvazquez/Desktop/hardhat",
+    "ownerSessionFile": "/Users/dylanvazquez/.gsd/sessions/--Users-dylanvazquez-Desktop-hardhat--/2026-04-03T13-22-16-026Z_b48124f9-73d0-4804-ba47-ec6d15fe663e.jsonl",
+    "persistAcrossSessions": false,
+    "startedAt": 1775224465154,
+    "processType": "server",
+    "group": null,
+    "readyPattern": null,
+    "readyPort": 3000,
+    "pid": 1527
+  }
+]

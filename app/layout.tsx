@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import NavBar from '@/components/NavBar'
 import Footer from '@/components/Footer'
+import ThemeProvider from '@/components/ThemeProvider'
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://hardhatsocial.net'),
@@ -37,11 +38,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-brand-dark text-brand-text-primary">
-        <NavBar />
-        <main>{children}</main>
-        <Footer />
+    <html lang="en" data-theme="dark">
+      <body className="flex min-h-screen flex-col antialiased" style={{ backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}>
+        <ThemeProvider>
+          <NavBar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   )

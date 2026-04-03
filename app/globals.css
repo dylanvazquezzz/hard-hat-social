@@ -2,8 +2,170 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Theme tokens ───────────────────────────────────────────────────────── */
+
+:root {
+  /* Dark theme (default) */
+  --bg-base:         #020617; /* slate-950 */
+  --bg-surface:      #0f172a; /* slate-900 */
+  --bg-surface-2:    #1e293b; /* slate-800 */
+  --bg-hover:        #334155; /* slate-700 */
+  --border:          #1e293b; /* slate-800 */
+  --border-mid:      #334155; /* slate-700 */
+  --text-primary:    #f8fafc; /* slate-50  */
+  --text-secondary:  #cbd5e1; /* slate-300 */
+  --text-muted:      #94a3b8; /* slate-400 */
+  --text-subtle:     #475569; /* slate-600 */
+  --brand-yellow:    #fbbf24;
+  --brand-yellow-dk: #f59e0b;
+  --brand-blue:      #3b82f6;
+}
+
+[data-theme="light"] {
+  --bg-base:         #f8fafc; /* slate-50  */
+  --bg-surface:      #ffffff; /* white     */
+  --bg-surface-2:    #f1f5f9; /* slate-100 */
+  --bg-hover:        #e2e8f0; /* slate-200 */
+  --border:          #e2e8f0; /* slate-200 */
+  --border-mid:      #cbd5e1; /* slate-300 */
+  --text-primary:    #0f172a; /* slate-900 */
+  --text-secondary:  #334155; /* slate-700 */
+  --text-muted:      #475569; /* slate-600 */
+  --text-subtle:     #94a3b8; /* slate-400 */
+  --brand-yellow:    #d97706; /* amber-600 — darker for light bg contrast */
+  --brand-yellow-dk: #b45309; /* amber-700 */
+  --brand-blue:      #2563eb; /* blue-600  */
+}
+
+/* ─── Base layer overrides that use the tokens ──────────────────────────── */
+
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-100 antialiased;
+    @apply antialiased;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
   }
+}
+
+/* ─── Light-mode class overrides ────────────────────────────────────────── */
+/* These cascade over Tailwind's hardcoded slate- classes so individual
+   components do not need to be rewritten. We target the structural
+   shells (nav, body, cards, inputs) and let content colors follow. */
+
+[data-theme="light"] body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+}
+
+/* Nav */
+[data-theme="light"] nav {
+  background-color: var(--bg-surface) !important;
+  border-color: var(--border) !important;
+}
+[data-theme="light"] nav a,
+[data-theme="light"] nav button {
+  color: var(--text-secondary);
+}
+[data-theme="light"] nav a:hover,
+[data-theme="light"] nav button:hover {
+  color: var(--text-primary);
+}
+
+/* Footer */
+[data-theme="light"] footer {
+  background-color: var(--bg-surface-2) !important;
+  border-color: var(--border) !important;
+}
+[data-theme="light"] footer p,
+[data-theme="light"] footer a {
+  color: var(--text-muted);
+}
+[data-theme="light"] footer a:hover {
+  color: var(--text-primary);
+}
+
+/* Cards / panels (slate-900, slate-800 backgrounds) */
+[data-theme="light"] .bg-slate-900,
+[data-theme="light"] .bg-slate-900\/50 {
+  background-color: var(--bg-surface) !important;
+}
+[data-theme="light"] .bg-slate-800 {
+  background-color: var(--bg-surface-2) !important;
+}
+[data-theme="light"] .bg-slate-950 {
+  background-color: var(--bg-base) !important;
+}
+
+/* Borders */
+[data-theme="light"] .border-slate-800 {
+  border-color: var(--border) !important;
+}
+[data-theme="light"] .border-slate-700 {
+  border-color: var(--border-mid) !important;
+}
+
+/* Text */
+[data-theme="light"] .text-slate-100,
+[data-theme="light"] .text-slate-50,
+[data-theme="light"] .text-white {
+  color: var(--text-primary) !important;
+}
+[data-theme="light"] .text-slate-200,
+[data-theme="light"] .text-slate-300 {
+  color: var(--text-secondary) !important;
+}
+[data-theme="light"] .text-slate-400,
+[data-theme="light"] .text-slate-500 {
+  color: var(--text-muted) !important;
+}
+[data-theme="light"] .text-slate-600 {
+  color: var(--text-subtle) !important;
+}
+
+/* Brand yellow — ensure contrast on light bg */
+[data-theme="light"] .text-brand-yellow {
+  color: var(--brand-yellow) !important;
+}
+[data-theme="light"] .bg-brand-yellow {
+  background-color: var(--brand-yellow) !important;
+}
+[data-theme="light"] .hover\:bg-brand-yellow-dark:hover {
+  background-color: var(--brand-yellow-dk) !important;
+}
+
+/* Dropdown menus */
+[data-theme="light"] .bg-slate-800.shadow-lg {
+  background-color: var(--bg-surface) !important;
+  border-color: var(--border) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+/* Inputs and forms */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  background-color: var(--bg-surface) !important;
+  border-color: var(--border-mid) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Hover states on bg-slate-700 */
+[data-theme="light"] .hover\:bg-slate-700:hover {
+  background-color: var(--bg-hover) !important;
+}
+[data-theme="light"] .hover\:bg-slate-800:hover {
+  background-color: var(--bg-surface-2) !important;
+}
+
+/* Badges / pills */
+[data-theme="light"] .bg-slate-700 {
+  background-color: var(--bg-hover) !important;
+}
+[data-theme="light"] .bg-slate-700 span,
+[data-theme="light"] .bg-slate-700 p {
+  color: var(--text-secondary) !important;
 }
